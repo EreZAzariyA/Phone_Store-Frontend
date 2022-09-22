@@ -2,6 +2,8 @@ import { Routes, Route } from "react-router-dom"
 import Login from "../Auth-Area/Login/Login";
 import Logout from "../Auth-Area/Logout/Logout";
 import Register from "../Auth-Area/Register/Register";
+import AddBrandPage from "../Pages/AddBrandPage/AddBrandPage";
+import AddPhonePage from "../Pages/AddPhonePage/AddPhonePage";
 import HomePage from "../Pages/HomePage/HomePage";
 import PhoneDetails from "../Phones-Area/PhoneDetails/PhoneDetails";
 
@@ -12,6 +14,8 @@ function Routing(): JSX.Element {
                         {/* Main Routes */}
                         <Route path="/" element={<HomePage />} />
                         <Route path="/phone-details/:phoneId" element={<PhoneDetails />} />
+                        <Route path="/add-new-phone" element={<AddPhonePage />} />
+                        <Route path="/add-new-brand" element={<AddBrandPage />} />
 
 
                         {/* Auth Routes */}

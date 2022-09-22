@@ -6,6 +6,7 @@ import { PhoneModel } from "../../../Models/phone-model";
 import storeServices from "../../../Services/StoreServices";
 import PhoneCard from "../../Phones-Area/PhoneCard/PhoneCard";
 import UndefineCard from "../../Phones-Area/undefineCard/undefineCard";
+import { store } from "../../../Redux/Store";
 
 function HomePage(): JSX.Element {
 
@@ -18,6 +19,16 @@ function HomePage(): JSX.Element {
 
         const brands = await storeServices.getAllBrands();
         setBrands(brands);
+
+        const unsubscribe = store.subscribe(() => {
+            const phones = store.getState().phones;
+            setPhones(phones);
+
+            const brands = store.getState().brands;
+            setBrands(brands);
+        });
+
+        return () => unsubscribe();
     }
 
     useEffect(() => {
@@ -27,7 +38,7 @@ function HomePage(): JSX.Element {
     const getPhonesByBrandId = async (e: SyntheticEvent) => {
         const brandId = (e.target as HTMLInputElement).value;
         if (brandId === "") {
-            const phones = await storeServices.getAllPhones();
+            const phones = store.getState().phones;
             setPhones(phones);
         } else {
             const phonesByBrandId = await storeServices.getPhonesByBrandId(brandId);

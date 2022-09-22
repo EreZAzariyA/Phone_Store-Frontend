@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Button, Container, Nav, Navbar, NavDropdown, Offcanvas } from "react-bootstrap";
+import { Button, Container, Nav, Navbar, Offcanvas } from "react-bootstrap";
 import AuthMenu from "../../Auth-Area/AuthMenu/AuthMenu";
 import { FiShoppingCart } from "react-icons/fi";
 import "./Navbar.css";
@@ -7,6 +7,7 @@ import Sidenav from "../Sidenav/Sidenav";
 import UserModel from "../../../Models/user-model";
 import { authStore } from "../../../Redux/Store";
 import Role from "../../../Models/role";
+import { NavLink } from "react-router-dom";
 
 function MyNavbar(): JSX.Element {
 
@@ -42,10 +43,18 @@ function MyNavbar(): JSX.Element {
                               <Navbar.Toggle aria-controls="basic-navbar-nav" />
                               <Navbar.Collapse id="basic-navbar-nav">
                                     <Nav className="me-auto">
-                                          <Nav.Link href="/">Home</Nav.Link>
+                                          <NavLink to="/" className="nav-link">
+                                                Home
+                                          </NavLink>
                                           {user?.roleId === Role.Admin &&
                                                 <>
-                                                      <Nav.Link href="/">Admin</Nav.Link>
+                                                      <NavLink to="/add-new-phone" className="nav-link">
+                                                            Add Phone
+                                                      </NavLink>
+
+                                                      <NavLink to="/add-new-brand" className="nav-link">
+                                                            Add Brand
+                                                      </NavLink>
                                                 </>
                                           }
                                     </Nav>

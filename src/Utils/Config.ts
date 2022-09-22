@@ -7,11 +7,8 @@ abstract class Config {
             store: {
                   phones: "",
                   brands: "",
-                  phonesByBrands: ""
-            },
-            admin: {
-                  addPhoneUrl: "",
-                  addBrandUrl: ""
+                  phonesByBrands: "",
+                  addBrand:""
             }
       }
 
@@ -24,11 +21,8 @@ abstract class Config {
                   store: {
                         phones: baseUrl + "all-phones/",
                         brands: baseUrl + "all-brands/",
-                        phonesByBrands: baseUrl + "phones-by-brandId/"
-                  },
-                  admin: {
-                        addPhoneUrl: baseUrl + "new-phone/",
-                        addBrandUrl: baseUrl + "new-brand/",
+                        phonesByBrands: baseUrl + "phones-by-brandId/",
+                        addBrand: baseUrl + "add-brands/"
                   }
             }
       }

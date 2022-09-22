@@ -1,15 +1,31 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button, Container, Nav, Navbar, NavDropdown, Offcanvas } from "react-bootstrap";
 import AuthMenu from "../../Auth-Area/AuthMenu/AuthMenu";
 import { FiShoppingCart } from "react-icons/fi";
 import "./Navbar.css";
 import Sidenav from "../Sidenav/Sidenav";
+import UserModel from "../../../Models/user-model";
+import { authStore } from "../../../Redux/Store";
+import Role from "../../../Models/role";
 
 function MyNavbar(): JSX.Element {
+
+      const [user, setUser] = useState<UserModel>();
       const [show, setShow] = useState(false);
 
       const handleClose = () => setShow(false);
       const handleShow = () => setShow(true);
+
+      useEffect(() => {
+            setUser(authStore.getState().user);
+
+            const unsubscribe = authStore.subscribe(() => {
+                  setUser(authStore.getState().user);
+            });
+
+            return () => unsubscribe();
+      }, []);
+
 
       return (
             <>
@@ -26,8 +42,14 @@ function MyNavbar(): JSX.Element {
                               <Navbar.Toggle aria-controls="basic-navbar-nav" />
                               <Navbar.Collapse id="basic-navbar-nav">
                                     <Nav className="me-auto">
-                                          <Nav.Link href="#home">Home</Nav.Link>
+                                          <Nav.Link href="/">Home</Nav.Link>
+                                          {user?.roleId === Role.Admin &&
+                                                <>
+                                                      <Nav.Link href="/">Admin</Nav.Link>
+                                                </>
+                                          }
                                     </Nav>
+
                               </Navbar.Collapse>
                         </Container>
                   </Navbar>

@@ -21,3 +21,16 @@
 .Sidenav .InCartCard:last-child {
 	border: none;
 }
+
+.login {
+	width: 100%;
+}
+
+.login>*>h1 {
+	display: none;
+}
+
+.login>* {
+	text-align: center;
+	margin: auto;
+}

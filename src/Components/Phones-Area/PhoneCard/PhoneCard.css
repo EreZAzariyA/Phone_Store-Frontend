@@ -2,3 +2,8 @@
       width: 18rem;
       margin-top: 10px;
 }
+
+.Card .img {
+      height: 250px;
+      width: 100%;
+}

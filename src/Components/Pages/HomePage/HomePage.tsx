@@ -1,9 +1,9 @@
-import { Col, Container, Form, InputGroup, Row } from "react-bootstrap";
+import { Col, Container, Form, Row } from "react-bootstrap";
 import { SyntheticEvent, useEffect, useState } from "react"
 import "./HomePage.css";
 import { BrandModel } from "../../../Models/brand-model";
 import { PhoneModel } from "../../../Models/phone-model";
-import storeServices from "../../../Services/SocialServices";
+import storeServices from "../../../Services/StoreServices";
 import PhoneCard from "../../Phones-Area/PhoneCard/PhoneCard";
 import UndefineCard from "../../Phones-Area/undefineCard/undefineCard";
 
@@ -35,12 +35,31 @@ function HomePage(): JSX.Element {
         }
     }
 
+    const searchInput = async (e: SyntheticEvent) => {
+        const searchInputValue = (e.target as HTMLInputElement).value;
+        const searchInputNewValue = searchInputValue.charAt(0).toUpperCase() + searchInputValue.slice(1);
+
+
+        const phonesBySearch = phones?.filter(p =>
+            p.name.startsWith(searchInputNewValue)
+        )
+        setPhones(phonesBySearch);
+
+        if (searchInputValue === "") {
+            const phones = await storeServices.getAllPhones();
+            setPhones(phones);
+        }
+
+    }
+
 
     return (
-        <>
-            <Container>
+        <Container fluid className="main">
+            {/* Inputs container */}
+            <Container fluid>
                 <Row>
-                    <Col>
+                    {/* Brand input */}
+                    <Col xxl={'6'} xl={'6'} lg={'6'} md={'6'} sm={'12'} xs={'12'} xxs={'12'}>
                         <Form.Group className="mb-3">
                             <Form.Select defaultValue={""} onChange={getPhonesByBrandId}>
                                 <option disabled>Select brand</option>
@@ -51,20 +70,24 @@ function HomePage(): JSX.Element {
                             </Form.Select>
                         </Form.Group>
                     </Col>
-                    <Col>
+
+                    {/* Search input */}
+                    <Col xxl={'6'} xl={'6'} lg={'6'} md={'6'} sm={'12'} xs={'12'} xxs={'12'}>
                         <Form.Group className="mb-3">
                             <Form.Control type="text"
                                 placeholder="Search your phone"
+                                onChange={searchInput}
                             />
                         </Form.Group>
                     </Col>
                 </Row>
             </Container>
-
-            <Container fluid>
-                <Row className="list">
+            {/* Main home list */}
+            <Container fluid className="list">
+                <Row>
+                    {/* If phones is still loading from the server */}
                     {phones === undefined &&
-                        <Row>
+                        <>
                             <Col xxl={'auto'} xl={'auto'} md={'auto'} sm={'auto'} xs={'auto'} xxs={'auto'}>
                                 <UndefineCard />
                             </Col>
@@ -74,9 +97,10 @@ function HomePage(): JSX.Element {
                             <Col xxl={'auto'} xl={'auto'} md={'auto'} sm={'auto'} xs={'auto'} xxs={'auto'}>
                                 <UndefineCard />
                             </Col>
-                        </Row>
+                        </>
                     }
 
+                    {/* Phones list*/}
                     {phones?.map(phone =>
                         <Col key={phone.phoneId} xxl={'auto'} xl={'auto'} md={'auto'} sm={'auto'} xs={'auto'} xxs={'auto'}>
                             <PhoneCard phone={phone} />
@@ -84,7 +108,7 @@ function HomePage(): JSX.Element {
                     )}
                 </Row>
             </Container>
-        </>
+        </Container>
     );
 }
 

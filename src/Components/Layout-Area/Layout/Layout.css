@@ -1,3 +1,7 @@
+.Layout {
+      height: 100%;
+}
+
 .Layout main {
       margin-top: 10px;
 }

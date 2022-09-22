@@ -37,7 +37,7 @@ abstract class Config {
 
 class DevelopmentConfig extends Config {
       public constructor() {
-            super("https://phone-store-beckend.herokuapp.com/api/")
+            super("http://localhost:5000/api/")
             //super("https://phone-store-beckend.herokuapp.com/api/")
 
       }

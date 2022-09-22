@@ -1,0 +1,17 @@
+@media only screen and (max-width: 992px) {
+
+      .Layout .auth {
+            margin: auto;
+      }
+
+}
+
+@media only screen and (min-width: 992px) {
+
+      .Layout .auth {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+      }
+
+}

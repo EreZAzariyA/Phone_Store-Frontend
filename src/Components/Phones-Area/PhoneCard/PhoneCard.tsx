@@ -19,7 +19,7 @@ function PhoneCard(props: PhoneCardProps): JSX.Element {
             <Card.Img variant="top" src={props.phone.picture} />
             <Card.Body>
                 <Card.Title>{props.phone.name}</Card.Title>
-                <Card.Subtitle>{getBrandName(props.phone.brandId))}</Card.Subtitle>
+                <Card.Subtitle>{props.phone.brandId}</Card.Subtitle>
             </Card.Body>
         </Card>
     );

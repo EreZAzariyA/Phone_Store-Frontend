@@ -16,6 +16,10 @@ function HomePage(): JSX.Element {
 
         const brands = await storeServices.getAllBrands();
         setBrands(brands);
+
+        console.log(phones);
+        console.log(brands);
+
     }
 
     useEffect(() => {
@@ -31,7 +35,7 @@ function HomePage(): JSX.Element {
                         <Form.Select defaultValue={""}>
                             <option value="" disabled>Select brand</option>
                             {brands?.map(brand =>
-                                <option value={brand.brandId}>{brand.brandName}</option>
+                                <option value={brand.brandId} key={brand.brandId}>{brand.brand}</option>
                             )}
                         </Form.Select>
                     </Form.Group>

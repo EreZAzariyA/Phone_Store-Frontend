@@ -3,8 +3,9 @@ import { Button, Container, Form, Offcanvas } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 import { NavLink, useNavigate } from "react-router-dom";
 import CredentialsModel from "../../../Models/credentials-model";
+import ShoppingCartModel from "../../../Models/shopping-cart model";
 import UserModel from "../../../Models/user-model";
-import { authStore } from "../../../Redux/Store";
+import { authStore, shoppingCartStore } from "../../../Redux/Store";
 import { authServices } from "../../../Services/AuthServices";
 import notifyService from "../../../Services/NotifyService";
 import "./Sidenav.css";
@@ -12,8 +13,27 @@ import "./Sidenav.css";
 function Sidenav(): JSX.Element {
 
     const [user, setUser] = useState<UserModel>();
+    const [shoppingCart, setShoppingCart] = useState<ShoppingCartModel>();
     const { register, handleSubmit } = useForm<CredentialsModel>();
     const navigate = useNavigate();
+
+    useEffect(() => {
+        setUser(authStore.getState().user);
+        setShoppingCart(shoppingCartStore.getState().shoppingCart);
+
+        const unsubscribe = authStore.subscribe(() => {
+            setUser(authStore.getState().user)
+        });
+        const unsubscribeMeTo = shoppingCartStore.subscribe(() => {
+            setShoppingCart(shoppingCartStore.getState().shoppingCart);
+        })
+
+        return () => {
+            unsubscribe()
+            unsubscribeMeTo()
+        }
+    }, []);
+
 
     async function submit(credentials: CredentialsModel) {
         try {
@@ -25,25 +45,19 @@ function Sidenav(): JSX.Element {
             notifyService.error(err);
         }
     }
-    useEffect(() => {
-        setUser(authStore.getState().user)
-
-        const unsubscribe = authStore.subscribe(() => {
-            setUser(authStore.getState().user)
-        });
-
-        return () => unsubscribe()
-    }, []);
-
-
-
 
     return (
         <Container fluid>
             {user &&
                 <>
                     <Offcanvas.Header>
-                        <h4>Hello {user?.firstName + " " + user?.lastName}</h4>
+                        <h4>
+                            Hello {user?.firstName + " " + user?.lastName}
+                        </h4>
+                        <p>
+
+                            {shoppingCart?.userId}
+                        </p>
                     </Offcanvas.Header>
                     <hr />
                     <Offcanvas.Body>

@@ -2,8 +2,8 @@ import { Routes, Route } from "react-router-dom"
 import Login from "../Auth-Area/Login/Login";
 import Logout from "../Auth-Area/Logout/Logout";
 import Register from "../Auth-Area/Register/Register";
-import AddBrandPage from "../Pages/AddBrandPage/AddBrandPage";
-import AddPhonePage from "../Pages/AddPhonePage/AddPhonePage";
+import AddPhonePage from "../Phones-Area/AddPhonePage/AddPhonePage";
+import AddBrandPage from "../Phones-Area/AddBrandPage/AddBrandPage";
 import HomePage from "../Pages/HomePage/HomePage";
 import PhoneDetails from "../Phones-Area/PhoneDetails/PhoneDetails";
 

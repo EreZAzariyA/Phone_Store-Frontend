@@ -7,8 +7,13 @@ abstract class Config {
             store: {
                   phones: "",
                   brands: "",
-                  phonesByBrands: "",
+                  phones_by_brands: "",
                   addBrand:""
+            },
+            shopping_carts: {
+                  shopping_cart_by_userId: "",
+                  items_in_cart: "",
+                  add_item_to_cart:""
             }
       }
 
@@ -21,8 +26,13 @@ abstract class Config {
                   store: {
                         phones: baseUrl + "all-phones/",
                         brands: baseUrl + "all-brands/",
-                        phonesByBrands: baseUrl + "phones-by-brandId/",
+                        phones_by_brands: baseUrl + "phones-by-brandId/",
                         addBrand: baseUrl + "add-brands/"
+                  },
+                  shopping_carts: {
+                        shopping_cart_by_userId: baseUrl + "shopping-carts/user-cart/",
+                        items_in_cart: baseUrl + "shopping-carts/items-in-cart/",
+                        add_item_to_cart: baseUrl + "shopping-carts/add-item-to-cart/"
                   }
             }
       }

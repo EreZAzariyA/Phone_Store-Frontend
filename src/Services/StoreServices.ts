@@ -32,7 +32,7 @@ class StoreServices {
       }
 
       async getPhonesByBrandId(brandId: string): Promise<PhoneModel[]> {
-            const response = await axios.get<PhoneModel[]>(config.urls.store.phonesByBrands + brandId);
+            const response = await axios.get<PhoneModel[]>(config.urls.store.phones_by_brands + brandId);
             const phones = response.data;
             return phones;
       }

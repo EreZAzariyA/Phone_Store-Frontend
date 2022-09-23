@@ -1,26 +1,25 @@
-import { Breadcrumb, Button, ButtonGroup, Card, Carousel, Col, Container, Modal, Placeholder, Row } from "react-bootstrap";
+import { Button, ButtonGroup, Card, Carousel, Col, Container, Modal, Placeholder, Row } from "react-bootstrap";
 import "./PhoneDetails.css";
 import { useState, useEffect } from "react";
 import { PhoneModel } from "../../../Models/phone-model";
 import { NavLink, useParams } from "react-router-dom";
 import { store } from "../../../Redux/Store";
-import storeServices from "../../../Services/StoreServices";
-import { BrandModel } from "../../../Models/brand-model";
+//import { BrandModel } from "../../../Models/brand-model";
 
 function PhoneDetails(): JSX.Element {
     const params = useParams();
     const [phone, setPhone] = useState<PhoneModel>();
     const [show, setShow] = useState(false);
-    const [brand, setBrand] = useState<BrandModel>();
+    //const [brand, setBrand] = useState<BrandModel>();
 
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
 
-    const getBrandName = (brandId: string) => {
-        const brands = store.getState().brands;
-        return brands?.find(b => b.brandId === brandId)?.brand;
-    }
+    // const getBrandName = (brandId: string) => {
+    //     const brands = store.getState().brands;
+    //     return brands?.find(b => b.brandId === brandId)?.brand;
+    // }
 
     useEffect(() => {
         const getData = async () => {
@@ -42,19 +41,20 @@ function PhoneDetails(): JSX.Element {
     return (
         <Container>
             <Row>
-                <Col xxl={'2'} xl={'2'} lg={'2'} md={'2'} sm={'2'} xs={'2'} xxs={'2'}>
-                    <NavLink to={"/"}>
+                <Col xxl='2' xl='2' lg='2' md='2' sm='2' xs='2' xxs='2'>
+                    <NavLink to="/">
                         <Button className="btn-sm" variant="secondary">
                             Back
                         </Button>
                     </NavLink>
                 </Col>
-                <Col xxl={'10'} xl={'10'} lg={'10'} md={'10'} sm={'10'} xs={'10'} xxs={'10'}>
+                <Col xxl='10' xl='10' lg='10' md='10' sm='10' xs='10' xxs='10'>
                     <h2>{phone?.name}</h2>
                 </Col>
             </Row>
 
             <Row>
+                {/* image carousel */}
                 <Col xxl='6' xl='6' lg='6' md='6' sm='12' xs='12'>
                     <Carousel variant="dark">
                         <Carousel.Item>
@@ -68,6 +68,7 @@ function PhoneDetails(): JSX.Element {
                         </Carousel.Item>
                     </Carousel>
                 </Col>
+                {/* details */}
                 <Col xxl='6' xl='6' lg='6' md='6' sm='12' xs='12'>
                     <Card style={{ height: '100%' }}>
                         <Card.Header>

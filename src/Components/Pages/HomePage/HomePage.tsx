@@ -6,7 +6,7 @@ import { PhoneModel } from "../../../Models/phone-model";
 import storeServices from "../../../Services/StoreServices";
 import PhoneCard from "../../Phones-Area/PhoneCard/PhoneCard";
 import UndefineCard from "../../Phones-Area/undefineCard/undefineCard";
-import { store } from "../../../Redux/Store";
+import { shoppingCartStore, store } from "../../../Redux/Store";
 
 function HomePage(): JSX.Element {
 
@@ -28,10 +28,13 @@ function HomePage(): JSX.Element {
             setBrands(brands);
         });
 
-        return () => unsubscribe();
+       
+        return () => {
+            unsubscribe()
+        };
     }
 
-    useEffect(() => {
+    useEffect(() => {        
         getData();
     }, []);
 
@@ -93,6 +96,7 @@ function HomePage(): JSX.Element {
                     </Col>
                 </Row>
             </Container>
+            
             {/* Main home list */}
             <Container fluid className="list">
                 <Row>

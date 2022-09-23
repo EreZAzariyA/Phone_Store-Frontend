@@ -64,7 +64,7 @@ export function shoppingCartReducer(currentShoppingCartState: ShoppingCartState 
                   newCartState.itemsInCart.push(action.payload);
                   localStorage.setItem("items_in_cart", JSON.stringify(newCartState.itemsInCart));
                   break
-            
+
             case ShoppingCartActionType.Logout:
                   localStorage.removeItem("shopping_cart");
                   localStorage.removeItem("items_in_cart");

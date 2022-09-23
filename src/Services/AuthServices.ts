@@ -15,6 +15,7 @@ class AuthServices {
       public async register(user: UserModel): Promise<void> {
             const response = await axios.post<string>(config.urls.auth.register, user);
             const token = response.data;
+            this.onRegister(token);
             authStore.dispatch(registerAction(token));
             authStore.dispatch(loginAction(token));
       };
@@ -40,10 +41,20 @@ class AuthServices {
                   console.log("You still don`t have a shopping cart. Create one to start shopping.");
             } else {
                   const itemsInCart = await shoppingCartServices.getItemsFromCartByCartId(shoppingCart.cartId);
+
                   shoppingCartStore.dispatch(fetchShoppingCartAction(shoppingCart));
                   shoppingCartStore.dispatch(fetchItemsFromShoppingCartAction(itemsInCart));
             }
 
+      }
+
+      public async onRegister(token: string) {
+            const decodedData = jwtDecode(token);
+            const user: UserModel = (decodedData as any).user;
+            const shoppingCart = await shoppingCartServices.getShoppingCartByUserId(user.userId);
+            shoppingCartStore.dispatch(fetchShoppingCartAction(shoppingCart));
+            const items = await shoppingCartServices.getItemsFromCartByCartId(shoppingCart.cartId);
+            shoppingCartStore.dispatch(fetchItemsFromShoppingCartAction(items));
       }
 }
 

@@ -82,7 +82,11 @@ function PhoneCard(props: PhoneCardProps): JSX.Element {
             return
         };
         setStock(stock - 1);
+    }
 
+    function cancel() {
+        setShow(false);
+        setStock(stock)
     }
 
     return (
@@ -151,7 +155,7 @@ function PhoneCard(props: PhoneCardProps): JSX.Element {
 
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={handleClose}>
+                    <Button variant="secondary" onClick={cancel}>
                         Close
                     </Button>
                     <Button variant="primary" onClick={addToCart}>

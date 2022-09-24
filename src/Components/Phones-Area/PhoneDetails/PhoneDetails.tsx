@@ -5,11 +5,14 @@ import { PhoneModel } from "../../../Models/phone-model";
 import { NavLink, useParams } from "react-router-dom";
 import storeServices from "../../../Services/StoreServices";
 import MyModal from "../MyModal";
+import UserModel from "../../../Models/user-model";
+import { authStore } from "../../../Redux/Store";
 
 function PhoneDetails(): JSX.Element {
     const params = useParams();
     const [phone, setPhone] = useState<PhoneModel>();
     const [show, setShow] = useState(false);
+    const [user, setUser] = useState<UserModel>();
 
     const handleShow = () => setShow(true);
     const handleClose = () => setShow(false);
@@ -22,6 +25,13 @@ function PhoneDetails(): JSX.Element {
 
     useEffect(() => {
         getData();
+        setUser(authStore.getState().user);
+
+        const unsubscribe = authStore.subscribe(() => {
+            setUser(authStore.getState().user);
+        });
+
+        return () => unsubscribe();
     }, [getData, params]);
 
     return (
@@ -77,7 +87,7 @@ function PhoneDetails(): JSX.Element {
                             </Card.Text>
                         </Card.Body>
                         <Card.Footer>
-                            <Button variant="secondary" onClick={handleShow}>
+                            <Button variant="secondary" onClick={handleShow} disabled={!user}>
                                 Add To Cart
                             </Button>
                         </Card.Footer>

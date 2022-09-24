@@ -3,31 +3,35 @@ import { Button, Container, Form, Offcanvas } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 import { NavLink, useNavigate } from "react-router-dom";
 import CredentialsModel from "../../../Models/credentials-model";
+import ItemInCartModel from "../../../Models/item-in-cart model";
 import ShoppingCartModel from "../../../Models/shopping-cart model";
 import UserModel from "../../../Models/user-model";
 import { authStore, shoppingCartStore } from "../../../Redux/Store";
 import { authServices } from "../../../Services/AuthServices";
 import notifyService from "../../../Services/NotifyService";
+import PhoneInCartCard from "../../Phones-Area/PhoneInCartCard/PhoneInCartCard";
 import "./Sidenav.css";
 
 function Sidenav(): JSX.Element {
 
     const [user, setUser] = useState<UserModel>();
     const [shoppingCart, setShoppingCart] = useState<ShoppingCartModel>();
+    const [itemsInCart, setItemsInCart] = useState<ItemInCartModel[]>();
     const { register, handleSubmit } = useForm<CredentialsModel>();
     const navigate = useNavigate();
 
     useEffect(() => {
         setUser(authStore.getState().user);
         setShoppingCart(shoppingCartStore.getState().shoppingCart);
+        setItemsInCart(shoppingCartStore.getState().itemsInCart);
 
         const unsubscribe = authStore.subscribe(() => {
             setUser(authStore.getState().user)
         });
         const unsubscribeMeTo = shoppingCartStore.subscribe(() => {
             setShoppingCart(shoppingCartStore.getState().shoppingCart);
-        })
-
+            setItemsInCart(shoppingCartStore.getState().itemsInCart);
+        });
         return () => {
             unsubscribe()
             unsubscribeMeTo()
@@ -54,16 +58,14 @@ function Sidenav(): JSX.Element {
                         <h4>
                             Hello {user?.firstName + " " + user?.lastName}
                         </h4>
-                        <p>
-
-                            {shoppingCart?.userId}
-                        </p>
                     </Offcanvas.Header>
                     <hr />
                     <Offcanvas.Body>
-                        Lorem, ipsum dolor sit amet consectetur adipisicing elit. Placeat repudiandae, nostrum voluptas provident maxime nisi officia sint dolor earum harum voluptatum vitae quod impedit vel, ut sit quo ab ipsam.
-                        Lorem, ipsum dolor sit amet consectetur adipisicing elit. Placeat repudiandae, nostrum voluptas provident maxime nisi officia sint dolor earum harum voluptatum vitae quod impedit vel, ut sit quo ab ipsam.
+                        {itemsInCart?.map(item =>
+                            <PhoneInCartCard key={item.phoneId} phone={item} />
+                        )}
                     </Offcanvas.Body>
+
                 </>
             }
             {!user &&

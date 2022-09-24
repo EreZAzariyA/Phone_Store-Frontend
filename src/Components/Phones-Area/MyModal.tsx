@@ -32,7 +32,7 @@ function MyModal(props: MyModalProps): JSX.Element {
             })
 
             return () => unsubscribe()
-      }, [])
+      }, [props.phone?.phoneId])
 
 
       const plus = () => {

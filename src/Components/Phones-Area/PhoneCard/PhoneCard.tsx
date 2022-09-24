@@ -23,35 +23,36 @@ function PhoneCard(props: PhoneCardProps): JSX.Element {
 
 
     useEffect(() => {
-        const user = authStore.getState().user;
-        setUser(user);
-
+        setUser(authStore.getState().user);
         if (user) {
-            const orderedStock = shoppingCartStore.getState().itemsInCart?.find(i => i.phoneId === props.phone.phoneId)?.stock;
-            if (orderedStock) {
+            const itemsInCart = shoppingCartStore.getState().itemsInCart;
+            const item = itemsInCart?.find(i => i.phoneId === props.phone.phoneId);
+            if (item) {
                 setInCart(true);
             }
         }
 
+
         const unsubscribe = authStore.subscribe(() => {
-            const user = authStore.getState().user;
-            setUser(user);
+            setUser(authStore.getState().user);
+
+            const unsubscribeMeTo = shoppingCartStore.subscribe(() => {
+                if (user) {
+                    const itemsInCart = shoppingCartStore.getState().itemsInCart;
+                    const item = itemsInCart?.find(i => i.phoneId === props.phone.phoneId);
+                    if (item) {
+                        setInCart(true);
+                    }
+                }
+
+            })
+
+            return () => unsubscribeMeTo();
         });
 
-        const unsubscribeMeTo = shoppingCartStore.subscribe(() => {
-            if (user) {
-                const orderedStock = shoppingCartStore.getState().itemsInCart?.find(i => i.phoneId === props.phone.phoneId)?.stock;
-                if (orderedStock) {
-                    setInCart(true);
-                }
-            }
-        })
+        return () => unsubscribe()
 
-        return () => {
-            unsubscribe()
-            unsubscribeMeTo()
-        }
-    }, [props.phone]);
+    },[user,props.phone]);
 
     return (
         <>

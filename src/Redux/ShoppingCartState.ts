@@ -1,5 +1,4 @@
 import ItemInCartModel from "../Models/item-in-cart model";
-import { PhoneModel } from "../Models/phone-model";
 import ShoppingCartModel from "../Models/shopping-cart model";
 
 
@@ -74,7 +73,6 @@ export function shoppingCartReducer(currentShoppingCartState: ShoppingCartState 
                   break
 
             case ShoppingCartActionType.UpdatedItem:
-
                   const itemIndex = newCartState.itemsInCart.findIndex(i => i.phoneId === action.payload.phoneId);
                   if (itemIndex !== -1) {
                         newCartState.itemsInCart.splice(itemIndex, 1);
@@ -84,7 +82,10 @@ export function shoppingCartReducer(currentShoppingCartState: ShoppingCartState 
                   break;
 
             case ShoppingCartActionType.RemoveItem:
-                  newCartState.itemsInCart.filter(i => i.phoneId !== action.payload);
+                  const itemIndexToDelete = newCartState.itemsInCart.findIndex(i => i.phoneId === action.payload.phoneId);
+                  if (itemIndexToDelete !== -1) {
+                        newCartState.itemsInCart.splice(itemIndexToDelete, 1);
+                  }
                   localStorage.setItem("items_in_cart", JSON.stringify(newCartState.itemsInCart));
                   break;
 

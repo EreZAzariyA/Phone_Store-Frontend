@@ -19,6 +19,17 @@ class StoreServices {
             }
       }
 
+      async getOnePhone(phoneId: string): Promise<PhoneModel> {
+            if (store.getState().phones?.length === 0) {
+                  const response = await axios.get<PhoneModel>(config.urls.store.onePhone + phoneId);
+                  const phone = response.data;
+                  return phone;
+            } else {
+                  const phone = store.getState().phones?.find(p => p.phoneId === phoneId);
+                  return phone;
+            }
+      }
+
       async getAllBrands(): Promise<BrandModel[]> {
             if (store.getState().brands?.length === 0) {
                   const response = await axios.get<BrandModel[]>(config.urls.store.brands);

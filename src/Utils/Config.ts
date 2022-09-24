@@ -6,6 +6,7 @@ abstract class Config {
             },
             store: {
                   phones: "",
+                  onePhone:"",
                   brands: "",
                   phones_by_brands: "",
                   addBrand:""
@@ -25,6 +26,7 @@ abstract class Config {
                   },
                   store: {
                         phones: baseUrl + "all-phones/",
+                        onePhone:baseUrl + "all-phones/" ,
                         brands: baseUrl + "all-brands/",
                         phones_by_brands: baseUrl + "phones-by-brandId/",
                         addBrand: baseUrl + "add-brands/"

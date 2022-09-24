@@ -1,42 +1,40 @@
 import { Button, ButtonGroup, Card, Carousel, Col, Container, Modal, Placeholder, Row } from "react-bootstrap";
 import "./PhoneDetails.css";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { PhoneModel } from "../../../Models/phone-model";
 import { NavLink, useParams } from "react-router-dom";
-import { store } from "../../../Redux/Store";
+import storeServices from "../../../Services/StoreServices";
 //import { BrandModel } from "../../../Models/brand-model";
 
 function PhoneDetails(): JSX.Element {
     const params = useParams();
     const [phone, setPhone] = useState<PhoneModel>();
     const [show, setShow] = useState(false);
-    //const [brand, setBrand] = useState<BrandModel>();
+    const [stock, setStock] = useState(1);
 
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
 
-    // const getBrandName = (brandId: string) => {
-    //     const brands = store.getState().brands;
-    //     return brands?.find(b => b.brandId === brandId)?.brand;
-    // }
+    const getData = useCallback(async () => {
+        const phoneId = params.phoneId;
+        const phone = await storeServices.getOnePhone(phoneId);
+        setPhone(phone);
+    }, [params])
 
     useEffect(() => {
-        const getData = async () => {
-            const phoneId = params.phoneId;
-            const phones = store.getState().phones
-            const phone = phones?.find(phone => phone.phoneId === phoneId);
-            setPhone(phone);
-        }
         getData();
+    }, [getData, params]);
 
-        const unsubscribe = store.subscribe(() => {
-            getData();
-        });
-
-        return () => unsubscribe();
-
-    }, [params]);
+    function plus() {
+        setStock(stock + 1);
+    }
+    function minus() {
+        if (stock === 1) {
+            return
+        };
+        setStock(stock - 1);
+    }
 
     return (
         <Container>
@@ -106,10 +104,11 @@ function PhoneDetails(): JSX.Element {
                 <Modal.Body>
                     <Modal.Title>Set Stock To Order</Modal.Title>
                     <ButtonGroup>
-                        <Button variant="success">
+                        <Button variant="success" onClick={plus}>
                             <strong>+</strong>
                         </Button>
-                        <Button variant="danger">
+                        <h1 style={{ margin: '10px' }}>{stock}</h1>
+                        <Button variant="danger" onClick={minus}>
                             <strong>–</strong>
                         </Button>
                     </ButtonGroup>

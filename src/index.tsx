@@ -6,6 +6,7 @@ import Layout from './Components/Layout-Area/Layout/Layout';
 import { BrowserRouter } from 'react-router-dom';
 import { ThemeProvider } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { store } from './Redux/Store';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -21,6 +22,13 @@ root.render(
       </ThemeProvider>
     </BrowserRouter>
   </React.StrictMode>
+
+  
 );
+
+export function getBrandName(brandId: string) {
+  const brands = store.getState().brands
+  return brands?.find(b => b.brandId === brandId)?.brand;
+}
 
 reportWebVitals();

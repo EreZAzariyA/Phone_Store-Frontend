@@ -1,40 +1,28 @@
-import { Button, ButtonGroup, Card, Carousel, Col, Container, Modal, Placeholder, Row } from "react-bootstrap";
+import { Button, Card, Carousel, Col, Container, Placeholder, Row } from "react-bootstrap";
 import "./PhoneDetails.css";
 import { useState, useEffect, useCallback } from "react";
 import { PhoneModel } from "../../../Models/phone-model";
 import { NavLink, useParams } from "react-router-dom";
 import storeServices from "../../../Services/StoreServices";
-//import { BrandModel } from "../../../Models/brand-model";
+import MyModal from "../MyModal";
 
 function PhoneDetails(): JSX.Element {
     const params = useParams();
     const [phone, setPhone] = useState<PhoneModel>();
     const [show, setShow] = useState(false);
-    const [stock, setStock] = useState(1);
 
-    const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
-
+    const handleClose = () => setShow(false);
 
     const getData = useCallback(async () => {
         const phoneId = params.phoneId;
         const phone = await storeServices.getOnePhone(phoneId);
         setPhone(phone);
-    }, [params])
+    }, [params]);
 
     useEffect(() => {
         getData();
     }, [getData, params]);
-
-    function plus() {
-        setStock(stock + 1);
-    }
-    function minus() {
-        if (stock === 1) {
-            return
-        };
-        setStock(stock - 1);
-    }
 
     return (
         <Container>
@@ -97,32 +85,7 @@ function PhoneDetails(): JSX.Element {
                 </Col>
             </Row>
 
-            <Modal show={show} onHide={handleClose}>
-                <Modal.Header closeButton>
-                    <Modal.Title>{phone?.name}</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <Modal.Title>Set Stock To Order</Modal.Title>
-                    <ButtonGroup>
-                        <Button variant="success" onClick={plus}>
-                            <strong>+</strong>
-                        </Button>
-                        <h1 style={{ margin: '10px' }}>{stock}</h1>
-                        <Button variant="danger" onClick={minus}>
-                            <strong>–</strong>
-                        </Button>
-                    </ButtonGroup>
-
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={handleClose}>
-                        Close
-                    </Button>
-                    <Button variant="primary" onClick={handleClose}>
-                        Save Changes
-                    </Button>
-                </Modal.Footer>
-            </Modal>
+            <MyModal phone={phone} show={show} close={handleClose} save={handleClose} />
         </Container>
     );
 }

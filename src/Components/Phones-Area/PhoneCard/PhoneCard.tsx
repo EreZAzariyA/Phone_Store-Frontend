@@ -1,13 +1,12 @@
-import { Button, ButtonGroup, Card, Carousel, Modal } from "react-bootstrap";
+import { Button, Card, Carousel } from "react-bootstrap";
 import { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import { PhoneModel } from "../../../Models/phone-model";
-import { authStore, shoppingCartStore, store } from "../../../Redux/Store";
+import { authStore, shoppingCartStore } from "../../../Redux/Store";
 import "./PhoneCard.css";
 import UserModel from "../../../Models/user-model";
-import shoppingCartServices from "../../../Services/ShoppingCartsServices";
-import ItemInCartModel from "../../../Models/item-in-cart model";
-import notifyService from "../../../Services/NotifyService";
+import MyModal from "../MyModal";
+import { getBrandName } from "../../..";
 
 interface PhoneCardProps {
     phone: PhoneModel
@@ -18,33 +17,18 @@ function PhoneCard(props: PhoneCardProps): JSX.Element {
     const [user, setUser] = useState<UserModel>();
     const [inCart, setInCart] = useState(false);
     const [show, setShow] = useState(false);
-    const [stock, setStock] = useState(1);
 
     const handleShow = () => setShow(true);
     const handleClose = () => setShow(false);
 
-    const addToCart = async () => {
-        setShow(false);
-        const itemToAdd = new ItemInCartModel();
-        itemToAdd.cartId = shoppingCartStore.getState().shoppingCart?.cartId;
-        itemToAdd.phoneId = props.phone.phoneId;
-        itemToAdd.stock = stock;
-        itemToAdd.totalPrice = stock * props.phone.price;
-        if (shoppingCartStore.getState().itemsInCart?.find(i => i.phoneId === props.phone.phoneId)) {
-            alert("Need to update");
-        }
-        await shoppingCartServices.addItemIntoShoppingCart(itemToAdd);
-        setInCart(true);
-        notifyService.success("Added")
-    };
 
     useEffect(() => {
         const user = authStore.getState().user;
         setUser(user);
+
         if (user) {
             const orderedStock = shoppingCartStore.getState().itemsInCart?.find(i => i.phoneId === props.phone.phoneId)?.stock;
             if (orderedStock) {
-                setStock(orderedStock);
                 setInCart(true);
             }
         }
@@ -53,11 +37,11 @@ function PhoneCard(props: PhoneCardProps): JSX.Element {
             const user = authStore.getState().user;
             setUser(user);
         });
+
         const unsubscribeMeTo = shoppingCartStore.subscribe(() => {
             if (user) {
                 const orderedStock = shoppingCartStore.getState().itemsInCart?.find(i => i.phoneId === props.phone.phoneId)?.stock;
                 if (orderedStock) {
-                    setStock(orderedStock);
                     setInCart(true);
                 }
             }
@@ -67,27 +51,7 @@ function PhoneCard(props: PhoneCardProps): JSX.Element {
             unsubscribe()
             unsubscribeMeTo()
         }
-    }, []);
-
-    function getBrandName(brandId: string) {
-        const brands = store.getState().brands
-        return brands?.find(b => b.brandId === brandId)?.brand;
-    }
-
-    function plus() {
-        setStock(stock + 1);
-    }
-    function minus() {
-        if (stock === 1) {
-            return
-        };
-        setStock(stock - 1);
-    }
-
-    function cancel() {
-        setShow(false);
-        setStock(stock)
-    }
+    }, [props.phone]);
 
     return (
         <>
@@ -125,7 +89,7 @@ function PhoneCard(props: PhoneCardProps): JSX.Element {
                 <Card.Footer>
                     <NavLink to={"/"}>
                         {!inCart &&
-                            <Button variant="primary" onClick={handleShow}>
+                            <Button variant="primary" disabled={!user} onClick={handleShow}>
                                 Add To Cart
                             </Button>
                         }
@@ -135,34 +99,11 @@ function PhoneCard(props: PhoneCardProps): JSX.Element {
                             </Button>
                         }
                     </NavLink>
+
                 </Card.Footer>
             </Card>
-            <Modal show={show} onHide={handleClose}>
-                <Modal.Header closeButton>
-                    <Modal.Title>{props.phone?.name}</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <Modal.Title>Set Stock To Order</Modal.Title>
-                    <ButtonGroup>
-                        <Button variant="success" onClick={plus}>
-                            <strong>+</strong>
-                        </Button>
-                        <h1 style={{ margin: '10px' }}>{stock}</h1>
-                        <Button variant="danger" onClick={minus}>
-                            <strong>–</strong>
-                        </Button>
-                    </ButtonGroup>
 
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={cancel}>
-                        Close
-                    </Button>
-                    <Button variant="primary" onClick={addToCart}>
-                        Save Changes
-                    </Button>
-                </Modal.Footer>
-            </Modal>
+            <MyModal phone={props.phone} show={show} close={handleClose} save={handleClose} />
         </>
     );
 }

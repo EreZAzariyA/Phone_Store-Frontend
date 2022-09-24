@@ -14,7 +14,9 @@ abstract class Config {
             shopping_carts: {
                   shopping_cart_by_userId: "",
                   items_in_cart: "",
-                  add_item_to_cart:""
+                  add_item_to_cart: "",
+                  update: "",
+                  remove:""
             }
       }
 
@@ -34,7 +36,9 @@ abstract class Config {
                   shopping_carts: {
                         shopping_cart_by_userId: baseUrl + "shopping-carts/user-cart/",
                         items_in_cart: baseUrl + "shopping-carts/items-in-cart/",
-                        add_item_to_cart: baseUrl + "shopping-carts/add-item-to-cart/"
+                        add_item_to_cart: baseUrl + "shopping-carts/add-item-to-cart/",
+                        update: baseUrl + "shopping-carts/update-item-in-cart/",
+                        remove:baseUrl + "shopping-carts/delete-from-cart/"
                   }
             }
       }

@@ -35,24 +35,24 @@ function PhoneCard(props: PhoneCardProps): JSX.Element {
 
         const unsubscribe = authStore.subscribe(() => {
             setUser(authStore.getState().user);
-
-            const unsubscribeMeTo = shoppingCartStore.subscribe(() => {
-                if (user) {
-                    const itemsInCart = shoppingCartStore.getState().itemsInCart;
-                    const item = itemsInCart?.find(i => i.phoneId === props.phone.phoneId);
-                    if (item) {
-                        setInCart(true);
-                    }
-                }
-
-            })
-
-            return () => unsubscribeMeTo();
         });
 
-        return () => unsubscribe()
+        const unsubscribeMeTo = shoppingCartStore.subscribe(() => {
+            if (user) {
+                const itemsInCart = shoppingCartStore.getState().itemsInCart;
+                const item = itemsInCart?.find(i => i.phoneId === props.phone.phoneId);
+                if (item) {
+                    setInCart(true);
+                }
+            }
 
-    },[user,props.phone]);
+        })
+        return () => {
+            unsubscribe()
+            unsubscribeMeTo()
+        }
+
+    }, [user, props.phone]);
 
     return (
         <>

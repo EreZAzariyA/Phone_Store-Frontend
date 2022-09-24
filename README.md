@@ -1,5 +1,8 @@
 # Getting Started with Create React App
 
+# Project online on AWS:
+https://master.d22j79g78mbhkh.amplifyapp.com/
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts

@@ -3,6 +3,7 @@ import "./PhoneInCartCard.css";
 import { useState, useEffect, useCallback } from "react"
 import { PhoneModel } from "../../../Models/phone-model";
 import storeServices from "../../../Services/StoreServices";
+import { numberWithCommas } from "../../..";
 interface PhoneInCartCardProps {
     phone: ItemInCartModel;
 }
@@ -23,6 +24,8 @@ function PhoneInCartCard(props: PhoneInCartCardProps): JSX.Element {
     return (
         <div className="PhoneInCartCard">
             <p>{phone?.name}</p>
+            <br />
+            <p>{numberWithCommas(phone?.price)}₪</p>
         </div>
     );
 }

@@ -52,6 +52,8 @@ function HomePage(): JSX.Element {
     const searchInput = async (e: SyntheticEvent) => {
         const searchInputValue = (e.target as HTMLInputElement).value;
         const searchInputNewValue = searchInputValue.charAt(0).toUpperCase() + searchInputValue.slice(1);
+        console.log(searchInputNewValue);
+        
 
 
         const phonesBySearch = phones?.filter(p =>

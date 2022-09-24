@@ -1,14 +1,16 @@
 import { useEffect, useState } from "react";
-import { Button, Container, Form, Offcanvas } from "react-bootstrap";
+import { Button, Container, Form, Offcanvas, Table } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 import { NavLink, useNavigate } from "react-router-dom";
 import CredentialsModel from "../../../Models/credentials-model";
 import ItemInCartModel from "../../../Models/item-in-cart model";
+import { PhoneModel } from "../../../Models/phone-model";
 import ShoppingCartModel from "../../../Models/shopping-cart model";
 import UserModel from "../../../Models/user-model";
 import { authStore, shoppingCartStore } from "../../../Redux/Store";
 import { authServices } from "../../../Services/AuthServices";
 import notifyService from "../../../Services/NotifyService";
+import storeServices from "../../../Services/StoreServices";
 import PhoneInCartCard from "../../Phones-Area/PhoneInCartCard/PhoneInCartCard";
 import "./Sidenav.css";
 
@@ -38,6 +40,15 @@ function Sidenav(): JSX.Element {
         }
     }, []);
 
+    // const getPhoneNameByPhoneId = async (phoneId: string) => {
+    //     let phoneName: string = "";
+    //     await storeServices.getOnePhone(phoneId)?.then(res => {
+    //         let phoneName = res;
+    //         return phoneName
+    //     });
+    //     return phoneName
+    // }
+
 
     async function submit(credentials: CredentialsModel) {
         try {
@@ -54,16 +65,35 @@ function Sidenav(): JSX.Element {
         <Container fluid>
             {user &&
                 <>
-                    <Offcanvas.Header>
+                    <Offcanvas.Header closeButton>
                         <h4>
                             Hello {user?.firstName + " " + user?.lastName}
                         </h4>
                     </Offcanvas.Header>
-                    <hr />
                     <Offcanvas.Body>
-                        {itemsInCart?.map(item =>
-                            <PhoneInCartCard key={item.phoneId} phone={item} />
-                        )}
+                        <Table striped bordered hover>
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Price Per One</th>
+                                    <th>Stock</th>
+                                    <th>Price Per Stock</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {itemsInCart?.map(item =>
+                                    <>
+                                        <tr key={item.phoneId}>
+                                            <td>{item?.phoneId}</td>
+                                            <td>000</td>
+                                            <td>{item?.stock}</td>
+                                            <td>{item?.stock * 2}</td>
+                                        </tr>
+                                    </>
+                                )}
+
+                            </tbody>
+                        </Table>
                     </Offcanvas.Body>
 
                 </>

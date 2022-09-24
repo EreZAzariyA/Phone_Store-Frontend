@@ -31,4 +31,8 @@ export function getBrandName(brandId: string) {
   return brands?.find(b => b.brandId === brandId)?.brand;
 }
 
+export function numberWithCommas(x: number) {
+  return x?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
 reportWebVitals();

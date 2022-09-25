@@ -8,6 +8,7 @@ import UserModel from "../../../Models/user-model";
 import { authStore } from "../../../Redux/Store";
 import Role from "../../../Models/role";
 import { NavLink } from "react-router-dom";
+import { BsThreeDotsVertical } from "react-icons/bs"
 
 function MyNavbar(): JSX.Element {
 
@@ -34,13 +35,15 @@ function MyNavbar(): JSX.Element {
                         <Container fluid>
                               <Navbar.Brand>
                                     <Button variant="primary" onClick={handleShow}>
-                                          <FiShoppingCart size={"4vh"} color="secondary" />
+                                          <FiShoppingCart size={"3vh"} color="secondary" />
                                     </Button>
                               </Navbar.Brand>
                               <div className="auth">
                                     <AuthMenu />
                               </div>
-                              <Navbar.Toggle aria-controls="basic-navbar-nav" />
+                              <Navbar.Toggle aria-controls="basic-navbar-nav">
+                                    <BsThreeDotsVertical className="myBtn" color="white" size={"3vh"}/>
+                              </Navbar.Toggle>
                               <Navbar.Collapse id="basic-navbar-nav">
                                     <Nav className="me-auto">
                                           <NavLink to="/" className="nav-link">

@@ -7,3 +7,9 @@
 	overflow: auto;
 	height: 100%;
 }
+
+.stockBtn {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+}

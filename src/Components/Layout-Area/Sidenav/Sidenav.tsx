@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { SyntheticEvent, useEffect, useState } from "react";
 import { Button, Container, Form, Offcanvas, Table } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 import { NavLink, useNavigate } from "react-router-dom";
@@ -6,12 +6,12 @@ import { numberWithCommas } from "../../..";
 import CredentialsModel from "../../../Models/credentials-model";
 import ItemInCartModel from "../../../Models/item-in-cart model";
 import { PhoneModel } from "../../../Models/phone-model";
+import Role from "../../../Models/role";
 import ShoppingCartModel from "../../../Models/shopping-cart model";
 import UserModel from "../../../Models/user-model";
 import { authStore, shoppingCartStore, store } from "../../../Redux/Store";
 import { authServices } from "../../../Services/AuthServices";
 import notifyService from "../../../Services/NotifyService";
-import storeServices from "../../../Services/StoreServices";
 import "./Sidenav.css";
 
 function Sidenav(): JSX.Element {
@@ -54,7 +54,7 @@ function Sidenav(): JSX.Element {
             unsubscribe()
             unsubscribeMeTo()
         }
-    });
+    }, []);
 
     const getPhoneFromCartByPhoneId = (phoneId: string) => {
         const phone: PhoneModel = store.getState().phones?.find(p => p.phoneId === phoneId)
@@ -73,70 +73,106 @@ function Sidenav(): JSX.Element {
         }
     }
 
+    function plus(e: SyntheticEvent) {
+        const phoneId = (e.target as HTMLInputElement).value;
+        alert(phoneId);
+    }
+    function minus(e: SyntheticEvent) {
+        const phoneId = (e.target as HTMLInputElement).value;
+        alert(phoneId);
+    }
+
 
     return (
         <Container fluid className="sideNav">
-            {user &&
+            {user?.roleId === Role?.User &&
                 <>
                     <Offcanvas.Header closeButton>
-                        <h4>
+                        <Offcanvas.Title>
+
                             Hello {user?.firstName + " " + user?.lastName}
-                        </h4>
+                        </Offcanvas.Title>
                     </Offcanvas.Header>
-                    <Offcanvas.Title>
-                        <>
-                            Created on date: {shoppingCart?.createDate}
-                        </>
-                    </Offcanvas.Title>
+
                     <Offcanvas.Body id="offcanvas-body">
                         {itemsInCart?.length === 0 &&
                             <>
                                 <h1>You still don`t have items</h1>
                             </>
                         }
+
                         {
                             itemsInCart?.length > 0 &&
-                            <Table responsive striped bordered hover>
-                                <thead>
-                                    <tr>
-                                        <th>Name</th>
-                                        <th>Price Per One</th>
-                                        <th>Stock</th>
-                                        <th>Price Per Stock</th>
-                                        <th>Picture</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {itemsInCart?.map(item =>
+                            <>
+                                <Table responsive striped bordered hover>
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Price Per One</th>
+                                            <th>Stock</th>
+                                            <th>Price Per Stock</th>
+                                            <th>Picture</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {itemsInCart?.map(item =>
 
-                                        <tr key={item.phoneId}>
-                                            <td>{getPhoneFromCartByPhoneId(item?.phoneId)?.name}</td>
-                                            <td>{numberWithCommas(getPhoneFromCartByPhoneId(item?.phoneId)?.price)}₪</td>
-                                            <td>{item?.stock}</td>
-                                            <td>{numberWithCommas(getPhoneFromCartByPhoneId(item?.phoneId)?.price * item?.stock)}₪</td>
-                                            <td><img src={getPhoneFromCartByPhoneId(item?.phoneId)?.picture} alt="" className="phoneImg" /></td>
+                                            <tr key={item.phoneId}>
+                                                <td>
+                                                    {getPhoneFromCartByPhoneId(item?.phoneId)?.name}
+                                                </td>
+                                                <td>
+                                                    {numberWithCommas(getPhoneFromCartByPhoneId(item?.phoneId)?.price)}₪
+                                                </td>
+                                                <td className="stockBtn">
+                                                    <button onClick={plus} value={item?.phoneId}>
+                                                        +
+                                                    </button>
+                                                    {item?.stock}
+                                                    <button onClick={minus}
+                                                        value={item?.phoneId}>
+                                                        -
+                                                    </button>
+                                                </td>
+                                                <td>
+                                                    {numberWithCommas(getPhoneFromCartByPhoneId(item?.phoneId)?.price * item?.stock)}₪
+                                                </td>
+                                                <td>
+                                                    <img src={getPhoneFromCartByPhoneId(item?.phoneId)?.picture} alt="" className="phoneImg" />
+                                                </td>
+                                            </tr>
+                                        )}
+
+                                        <tr>
+                                            <td colSpan={2}>Total price</td>
+                                            <td colSpan={3}>{numberWithCommas(totalPrice)}₪</td>
                                         </tr>
 
-                                    )}
-                                    <tr>
-                                        <td colSpan={2}>Total price</td>
-                                        <td colSpan={3}>{numberWithCommas(totalPrice)}₪</td>
-                                    </tr>
+                                    </tbody>
+                                </Table>
+                                <p>
+                                    Continue to order
+                                </p>
+                                <NavLink to={"/order"}>
+                                    <Button variant="success">
 
-                                </tbody>
-                            </Table>
+                                        Order
+                                    </Button>
+                                </NavLink>
+                            </>
                         }
-                        <p>
-                            Continue to order
-                        </p>
-                            <NavLink to={"/"}>
-                                <Button variant="success">
-
-                                    Order
-                                </Button>
-                            </NavLink>
                     </Offcanvas.Body>
 
+                </>
+            }
+            {user?.roleId === Role?.Admin &&
+                <>
+                    <Offcanvas.Header closeButton>
+                        <Offcanvas.Title>
+                            Hello Admin {user?.firstName + " " + user?.lastName}
+
+                        </Offcanvas.Title>
+                    </Offcanvas.Header>
                 </>
             }
 
@@ -185,6 +221,8 @@ function Sidenav(): JSX.Element {
                     </Offcanvas.Body>
                 </>
             }
+
+
         </Container>
     );
 }

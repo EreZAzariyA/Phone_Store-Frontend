@@ -58,7 +58,7 @@ function MyModal(props: MyModalProps): JSX.Element {
                         await shoppingCartServices.updateStockInCart(phoneToUpdate);
                         notifyService.success("Updated...");
                   } catch (err: any) {
-                        alert(err);
+                        alert(err.massage);
                   }
             } else {
                   try {

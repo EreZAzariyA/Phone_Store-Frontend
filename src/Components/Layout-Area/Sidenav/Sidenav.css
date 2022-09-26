@@ -1,36 +1,9 @@
-.Sidenav {
+.phoneImg {
+	width: 100%;
+
+}
+
+.sideNav {
+	overflow: auto;
 	height: 100%;
-}
-
-.Sidenav .offcanvas-body {
-	will-change: auto;
-	width: 100%;
-	overflow: hidden;
-
-}
-
-.Sidenav .offcanvas-title {
-	text-decoration: underline;
-}
-
-
-.Sidenav .InCartCard {
-	border-bottom: 1px solid black;
-}
-
-.Sidenav .InCartCard:last-child {
-	border: none;
-}
-
-.login {
-	width: 100%;
-}
-
-.login>*>h1 {
-	display: none;
-}
-
-.login>* {
-	text-align: center;
-	margin: auto;
 }

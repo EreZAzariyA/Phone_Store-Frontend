@@ -28,7 +28,7 @@ function AuthMenu(): JSX.Element {
                     <span className="input-text" id="basic-addon1">
                         Hello Guest
                         <NavLink to="/auth/login">
-                            <BiLogIn size={"2rem"} color="white" />
+                            <BiLogIn size={"25px"} color="white" />
                         </NavLink>
                     </span>
                 </>
@@ -38,7 +38,7 @@ function AuthMenu(): JSX.Element {
                 <>
                     <span>Hello {user.firstName + " " + user.lastName}</span>
                     <NavLink to="/auth/logout">
-                        <BiLogOut size={"2rem"} color="white" />
+                        <BiLogOut size={"25px"} color="white" />
                     </NavLink>
 
                 </>

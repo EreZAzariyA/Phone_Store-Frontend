@@ -20,6 +20,8 @@ function HomePage(): JSX.Element {
         const brands = await storeServices.getAllBrands();
         setBrands(brands);
 
+        console.log(brands);
+        
         const unsubscribe = store.subscribe(() => {
             const phones = store.getState().phones;
             setPhones(phones);

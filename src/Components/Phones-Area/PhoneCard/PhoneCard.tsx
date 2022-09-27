@@ -7,6 +7,7 @@ import "./PhoneCard.css";
 import UserModel from "../../../Models/user-model";
 import MyModal from "../MyModal";
 import { getBrandName } from "../../..";
+import StarRatings from 'react-star-ratings';
 
 interface PhoneCardProps {
     phone: PhoneModel
@@ -82,6 +83,11 @@ function PhoneCard(props: PhoneCardProps): JSX.Element {
                     <Card.Subtitle>
                         {getBrandName(props.phone.brandId)}
                     </Card.Subtitle>
+                        <StarRatings
+                            key={props.phone.phoneId}
+                            rating={props.phone.rating}
+                            starRatedColor="yellow"
+                            starDimension="20px" />
                     <Card.Text>
                         {props.phone.description}. Lorem ipsum dolor sit amet consectetur adipisicing elit.
                     </Card.Text>

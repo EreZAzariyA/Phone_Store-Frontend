@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom"
+import { Routes, Route, useNavigate } from "react-router-dom"
 import Login from "../Auth-Area/Login/Login";
 import Logout from "../Auth-Area/Logout/Logout";
 import Register from "../Auth-Area/Register/Register";
@@ -16,6 +16,7 @@ import Page404 from "./Page404/Page404";
 function Routing(): JSX.Element {
 
       const [user, setUser] = useState<UserModel>();
+      const navigate = useNavigate();
 
       useEffect(() => {
             setUser(authStore.getState().user);
@@ -31,15 +32,16 @@ function Routing(): JSX.Element {
                   <Routes>
                         {/* Main Routes */}
                         <Route path="/" element={<HomePage />} />
-                        <Route path="/order" element={<OrderPage />} />
                         <Route path="/phone-details/:phoneId" element={<PhoneDetails />} />
-                        {user?.roleId === Role?.Admin ?
+
+                        {user &&
+                              <Route path="/order" element={<OrderPage />} />
+                        }
+                        {user?.roleId === Role?.Admin &&
                               <>
                                     <Route path="/add-new-phone" element={<AddPhonePage />} />
                                     <Route path="/add-new-brand" element={<AddBrandPage />} />
                               </>
-                              :
-                              null
                         }
 
                         {/* Auth Routes */}

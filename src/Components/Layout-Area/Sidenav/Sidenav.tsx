@@ -60,7 +60,7 @@ function Sidenav(): JSX.Element {
             unsubscribe()
             unsubscribeMeTo()
         }
-    }, []);
+    });
 
     const getPhoneFromCartByPhoneId = (phoneId: string) => {
         const phone: PhoneModel = store.getState().phones?.find(p => p.phoneId === phoneId)
@@ -95,10 +95,8 @@ function Sidenav(): JSX.Element {
             {user?.roleId === Role?.User &&
                 <>
                     <Row>
-
                         <Offcanvas.Header closeButton>
                             <Offcanvas.Title>
-
                                 Hello {user?.firstName + " " + user?.lastName}
                             </Offcanvas.Title>
                         </Offcanvas.Header>
@@ -182,25 +180,25 @@ function Sidenav(): JSX.Element {
                                 </>
                             }
                         </Offcanvas.Body>
-
                     </Row>
                 </>
             }
-            
-            {user?.roleId === Role?.Admin &&
+
+            {
+                user?.roleId === Role?.Admin &&
                 <>
                     <Row>
                         <Offcanvas.Header closeButton>
                             <Offcanvas.Title>
                                 Hello Admin {user?.firstName + " " + user?.lastName}
-
                             </Offcanvas.Title>
                         </Offcanvas.Header>
                     </Row>
                 </>
             }
 
-            {!user &&
+            {
+                !user &&
                 <>
                     <Offcanvas.Header closeButton>
                         <h4>Hello Guest</h4>
@@ -247,7 +245,7 @@ function Sidenav(): JSX.Element {
             }
 
 
-        </Container>
+        </Container >
     );
 }
 

@@ -1,5 +1,3 @@
-# Getting Started with Create React App
-
 # Project Is Online On AWS:
 https://master.d22j79g78mbhkh.amplifyapp.com/
 

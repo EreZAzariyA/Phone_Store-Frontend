@@ -1,6 +1,6 @@
 # Phone Store - Frontend
 
-# Project Is Online On AWS:
+## Project Is Online On AWS:
 https://master.d2uue2rzr0ph2x.amplifyapp.com/
 
 # Technologies:

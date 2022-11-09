@@ -1,7 +1,7 @@
 # Phone Store - Frontend
 
 # Project Is Online On AWS:
-https://master.d3mcshqnbukuif.amplifyapp.com/
+https://master.d2uue2rzr0ph2x.amplifyapp.com/
 
 # Technologies:
 React, Typescript, Bootstrap, Redux, Notify.

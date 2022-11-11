@@ -6,17 +6,17 @@ abstract class Config {
             },
             store: {
                   phones: "",
-                  onePhone:"",
+                  onePhone: "",
                   brands: "",
                   phones_by_brands: "",
-                  addBrand:""
+                  addBrand: ""
             },
             shopping_carts: {
                   shopping_cart_by_userId: "",
                   items_in_cart: "",
                   add_item_to_cart: "",
                   update: "",
-                  remove:""
+                  remove: ""
             }
       }
 
@@ -28,7 +28,7 @@ abstract class Config {
                   },
                   store: {
                         phones: baseUrl + "all-phones/",
-                        onePhone:baseUrl + "all-phones/" ,
+                        onePhone: baseUrl + "all-phones/",
                         brands: baseUrl + "all-brands/",
                         phones_by_brands: baseUrl + "phones-by-brandId/",
                         addBrand: baseUrl + "add-brands/"
@@ -38,7 +38,7 @@ abstract class Config {
                         items_in_cart: baseUrl + "shopping-carts/items-in-cart/",
                         add_item_to_cart: baseUrl + "shopping-carts/add-item-to-cart/",
                         update: baseUrl + "shopping-carts/update-item-in-cart/",
-                        remove:baseUrl + "shopping-carts/delete-from-cart/"
+                        remove: baseUrl + "shopping-carts/delete-from-cart/"
                   }
             }
       }
@@ -47,7 +47,7 @@ abstract class Config {
 
 class DevelopmentConfig extends Config {
       public constructor() {
-            super("http://localhost:5000/api/")
+            super("https://7v7uwlv9pc.execute-api.eu-central-1.amazonaws.com/api/");
             //super("https://phone-store-beckend.herokuapp.com/api/")
 
       }
@@ -55,7 +55,7 @@ class DevelopmentConfig extends Config {
 
 class ProductionConfig extends Config {
       public constructor() {
-            super("https://phone-store-beckend.herokuapp.com/api/")
+            super("https://7v7uwlv9pc.execute-api.eu-central-1.amazonaws.com/api/");
       }
 }
 

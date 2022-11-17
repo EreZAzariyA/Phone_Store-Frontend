@@ -4,7 +4,7 @@ import Logout from "../Auth-Area/Logout/Logout";
 import Register from "../Auth-Area/Register/Register";
 import AddPhonePage from "../Phones-Area/AddPhonePage/AddPhonePage";
 import AddBrandPage from "../Phones-Area/AddBrandPage/AddBrandPage";
-import HomePage from "../Pages/HomePage/HomePage";
+import HomePage from "../Pages/HomePage";
 import PhoneDetails from "../Phones-Area/PhoneDetails/PhoneDetails";
 import OrderPage from "../Pages/OrderPage/OrderPage";
 import { useEffect, useState } from "react";
@@ -31,7 +31,7 @@ function Routing(): JSX.Element {
             <>
                   <Routes>
                         {/* Main Routes */}
-                        <Route path="/" element={<HomePage />} />
+                        {/* <Route path="/" element={<HomePage />} /> */}
                         <Route path="/phone-details/:phoneId" element={<PhoneDetails />} />
 
                         {user &&

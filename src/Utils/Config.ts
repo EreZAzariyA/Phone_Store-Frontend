@@ -47,9 +47,7 @@ abstract class Config {
 
 class DevelopmentConfig extends Config {
       public constructor() {
-            super("https://7v7uwlv9pc.execute-api.eu-central-1.amazonaws.com/api/");
-            //super("https://phone-store-beckend.herokuapp.com/api/")
-
+            super("http://localhost:5001/api/");
       }
 }
 

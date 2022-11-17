@@ -1,0 +1,42 @@
+import { Button, Card, Carousel, Image, Row } from "react-bootstrap";
+import { NavLink } from "react-router-dom";
+import { PhoneModel } from "../../Models/phone-model"
+
+interface PhoneCardProps {
+      phone: PhoneModel;
+}
+const PhoneCard = (props: PhoneCardProps) => {
+      return (
+            <Card className="m-1 p-2">
+                  <Card.Img variant='top' as='div'>
+                        <Carousel variant="dark">
+                              <Carousel.Item className="w-100">
+                                    <Image height='250' src={props.phone.picture} alt={props.phone.name + ' imageURL'} />
+                              </Carousel.Item>
+                              <Carousel.Item className="w-100">
+                                    <Image height='250' src={props.phone.picture} alt={props.phone.name + ' imageURL'} />
+                              </Carousel.Item>
+                        </Carousel>
+                  </Card.Img>
+
+                  <Card.Title>
+                        {props.phone?.name}
+                  </Card.Title>
+
+                  <Row className="m-auto">
+                        <NavLink to={`/phone/${props.phone.phoneId}`}>
+                              <Button size="sm" variant="dark" className="mb-2">
+                                    See Product
+                              </Button>
+                        </NavLink>
+
+                        {/* <Button size="sm" variant="outline-danger">
+                              Buy now
+                        </Button> */}
+                  </Row>
+
+            </Card>
+      )
+}
+
+export default PhoneCard;

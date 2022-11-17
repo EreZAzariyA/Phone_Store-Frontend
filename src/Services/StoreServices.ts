@@ -43,9 +43,14 @@ class StoreServices {
       }
 
       async getPhonesByBrandId(brandId: string): Promise<PhoneModel[]> {
-            const response = await axios.get<PhoneModel[]>(config.urls.store.phones_by_brands + brandId);
-            const phones = response.data;
-            return phones;
+            if (store.getState().phones.length === 0) {
+                  const response = await axios.get<PhoneModel[]>(config.urls.store.phones_by_brands + brandId);
+                  const phones = response.data;
+                  return phones;
+            } else {
+                  const phonesByBrand = store.getState().phones.filter(phone => phone.brandId === brandId);
+                  return phonesByBrand;
+            }
       }
 
       async addNewBrand(brand: BrandModel): Promise<BrandModel> {
@@ -62,6 +67,16 @@ class StoreServices {
             return addedPhone;
       }
 
+      async getOneBrand(brandId: string): Promise<BrandModel> {
+            if (store.getState().brands.length === 0) {
+                  const response = await axios.get(config.urls.store.brands + brandId);
+                  const brand = response.data;
+                  return brand
+            } else {
+                  const brand = store.getState().brands.find(brand => brand.brandId === brandId);
+                  return brand;
+            }
+      }
 }
 const storeServices = new StoreServices();
 export default storeServices;

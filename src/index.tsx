@@ -2,11 +2,11 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
-import Layout from './Components/Layout-Area/Layout/Layout';
 import { BrowserRouter } from 'react-router-dom';
 import { ThemeProvider } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { store } from './Redux/Store';
+import App from './App';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -15,15 +15,15 @@ root.render(
   <React.StrictMode>
     <BrowserRouter>
       <ThemeProvider
-        breakpoints={['xxl', 'xxl', 'xl', 'lg', 'md', 'sm', 'xs', 'xs']}
+        breakpoints={['xxl', 'xxl', 'xl', 'lg', 'md', 'sm', 'xs', 'xxs']}
         minBreakpoint="xs"
       >
-        <Layout />
+        <App />
       </ThemeProvider>
     </BrowserRouter>
   </React.StrictMode>
 
-  
+
 );
 
 export function getBrandName(brandId: string) {

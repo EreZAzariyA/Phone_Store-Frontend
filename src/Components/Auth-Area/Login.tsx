@@ -17,7 +17,7 @@ const Login = () => {
                   notifyService.success('Your In');
                   navigate('/');
             } catch (err: any) {
-                  notifyService.error(err.message);
+                  notifyService.error(err);
             }
       };
 

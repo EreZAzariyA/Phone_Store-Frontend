@@ -7,5 +7,5 @@ export class PhoneModel {
       public price: number;
       public picture: string;
 
-      public memorySizes?: string[]; // External (Not include in database)
+      public memorySizes?: number[]; // External (Not include in database)
 }

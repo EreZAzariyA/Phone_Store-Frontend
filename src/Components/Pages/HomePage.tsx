@@ -35,13 +35,25 @@ function HomePage(props: HomePageProps): JSX.Element {
             </Row>
 
             <Row className="pt-2 w-75 m-auto">
-                <Row>
-                    {props.brands?.map(brand =>
-                        <Col key={brand?.brandId} xs='12' sm='6' md='4' xl='3' >
-                            <BrandCard brand={brand} />
-                        </Col>
-                    )}
-                </Row>
+                <Container>
+                    <Row>
+                        <h1>
+                            Our Top 3 Products
+                        </h1>
+                    </Row>
+                    <Row>
+                        <h1>
+                            Our Top 3 Brands
+                        </h1>
+                    </Row>
+                    <Row>
+                        {props.brands?.map(brand =>
+                            <Col key={brand?.brandId} xs='12' sm='6' md='4' xl='3' >
+                                <BrandCard brand={brand} />
+                            </Col>
+                        )}
+                    </Row>
+                </Container>
             </Row>
         </Container>
     );

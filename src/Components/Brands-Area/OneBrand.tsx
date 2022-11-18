@@ -5,7 +5,6 @@ import { BrandModel } from "../../Models/brand-model";
 import { PhoneModel } from "../../Models/phone-model";
 import storeServices from "../../Services/StoreServices";
 import PhoneCard from "../Phones-Area/PhoneCard";
-import BrandCard from "./BrandCard";
 
 const OneBrand = () => {
 
@@ -13,39 +12,43 @@ const OneBrand = () => {
       const [phones, setPhones] = useState<PhoneModel[]>();
       const params = useParams();
 
-      useEffect(() => {
-            const brandId = params.brandId;
-            getBrandByParams(brandId);
-      }, [params?.brandId]);
-
-
       const getBrandByParams = useCallback(async (brandId: string) => {
             const brand = await storeServices.getOneBrand(brandId);
             setBrand(brand);
             getPhonesByBrandId(brand?.brandId);
       }, []);
 
-      const getPhonesByBrandId = useCallback(async (brandId: string) => {
+      useEffect(() => {
+            const brandId = params.brandId;
+            getBrandByParams(brandId);
+      }, [params?.brandId, getBrandByParams]);
+
+
+      const getPhonesByBrandId = (async (brandId: string) => {
             const phones = await storeServices.getPhonesByBrandId(brandId);
             setPhones(phones);
-      }, []);
+      });
 
 
 
       return (
-            <Container >
+            <Container>
+                  {/* Back button */}
+                  <Row className="mt-2 mb-1">
+                        <Col xs='2' sm='2'>
+                              <NavLink className='text-decoration-none' to='/'>
+                                    Go Back
+                              </NavLink>
+                        </Col>
+                  </Row>
+
                   <h1>{brand?.brand}</h1>
 
-                  <NavLink to='/'>
-                        <Button size="sm" className="d-none d-lg-flex" style={{ position: 'absolute', right: '15px', top: '5rem' }}>
-                              Back
-                        </Button>
-                  </NavLink>
                   <Row>
                         <Container>
                               <Row>
                                     {phones?.map(phone =>
-                                          <Col lg='4' md='6' sm='6' xs='12' key={phone.phoneId}>
+                                          <Col lg='3' md='6' sm='6' xs='12' key={phone.phoneId}>
                                                 <PhoneCard phone={phone} />
                                           </Col>
                                     )}
@@ -81,7 +84,7 @@ const OthersBrands = (brandId: string) => {
 
       useEffect(() => {
             getOthersBrands();
-      }, []);
+      }, [getOthersBrands]);
 
       return (
             <>
@@ -98,26 +101,6 @@ const OthersBrands = (brandId: string) => {
                         </Card>
 
                   )}
-            </ >
+            </>
       )
-}
-
-const OthersPhones = (brandId: string) => {
-      const [othersPhones, setOthersPhones] = useState<PhoneModel[]>();
-
-      const getOthersPhones = useCallback(async () => {
-            const allPhones = await storeServices.getAllPhones();
-            const othersPhones = allPhones.filter(phones => phones?.brandId !== brandId);
-            setOthersPhones(othersPhones);
-      }, [brandId]);
-
-      useEffect(() => {
-            getOthersPhones();
-      });
-
-      return (
-            <Container>
-
-            </Container>
-      );
 }

@@ -30,9 +30,6 @@ const PhoneCard = (props: PhoneCardProps) => {
                               </Button>
                         </NavLink>
 
-                        {/* <Button size="sm" variant="outline-danger">
-                              Buy now
-                        </Button> */}
                   </Row>
 
             </Card>

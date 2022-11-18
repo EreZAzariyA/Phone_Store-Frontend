@@ -3,6 +3,8 @@ import { useForm } from "react-hook-form";
 import { NavLink, useNavigate } from "react-router-dom";
 import { AiOutlineArrowRight } from "react-icons/ai";
 import UserModel from "../../Models/user-model";
+import { authServices } from "../../Services/AuthServices";
+import notifyService from "../../Services/NotifyService";
 
 export const formStyle = {
       width: '400px',
@@ -19,11 +21,13 @@ const Register = () => {
       const navigate = useNavigate();
       const { register, handleSubmit, formState } = useForm<UserModel>();
 
-      const submit = (user: UserModel) => {
+      const submit =async (user: UserModel) => {
             try {
+                  await authServices.register(user);
+                  notifyService.success("Your in...");
                   navigate('/');
             } catch (err: any) {
-                  alert(err.message);
+                  notifyService.error(err);
             }
       };
 

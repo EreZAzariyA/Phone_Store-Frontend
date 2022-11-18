@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button, Col, Container, Dropdown, Nav, Navbar, Row } from "react-bootstrap";
+import { Button, Col, Container, Dropdown, Nav, Navbar, Offcanvas, Row } from "react-bootstrap";
 import { FiShoppingCart } from "react-icons/fi";
 import { BiUser } from "react-icons/bi";
 import { NavLink } from "react-router-dom";
@@ -11,6 +11,8 @@ import DropdownItem from "react-bootstrap/esm/DropdownItem";
 import DropdownMenu from "react-bootstrap/esm/DropdownMenu";
 import { authServices } from "../../Services/AuthServices";
 import notifyService from "../../Services/NotifyService";
+import AdminPanel from "./AdminPanel";
+import { AiOutlineSetting } from "react-icons/ai";
 
 export const logout = async () => {
       await authServices.logout();
@@ -18,6 +20,10 @@ export const logout = async () => {
 };
 const Header = () => {
       const [user, setUser] = useState<UserModel>();
+      const [show, setShow] = useState(false);
+
+      const handleClose = () => setShow(false);
+      const handleShow = () => setShow(true);
 
       useEffect(() => {
             const user = authStore.getState().user;
@@ -44,6 +50,7 @@ const Header = () => {
                                     </h1>
                               </Nav.Link>
                         </Col>
+
                         <Col lg='8'>
                               <Navbar>
                                     <Container className="w-75 d-flex flex-row justify-content-around">
@@ -51,10 +58,19 @@ const Header = () => {
                                     </Container>
                               </Navbar>
                         </Col>
+
                         <Col lg='1'>
-                              <Nav.Link as={NavLink} to='/cart' className="mt-1">
-                                    <FiShoppingCart color="white" size='25px' />
-                              </Nav.Link>
+                              {(!user || user?.roleId === Role.User)
+                                    &&
+                                    <Nav.Link as={NavLink} to="/cart">
+                                          <FiShoppingCart color="white" className="mt-2" size='25px' />
+                                    </Nav.Link>
+                              }
+                              {user?.roleId === Role.Admin &&
+                                    <Button variant="link" onClick={handleShow} style={{ color: 'white' }}>
+                                          <AiOutlineSetting size='25px' />
+                                    </Button>
+                              }
                         </Col>
                   </Row>
 
@@ -70,9 +86,17 @@ const Header = () => {
                                           </h1>
                                     </Nav.Link>
 
-                                    <Nav.Link as={NavLink} to="/cart">
-                                          <FiShoppingCart color="white" size='25px' />
-                                    </Nav.Link>
+                                    {(!user || user?.roleId === Role.User)
+                                          &&
+                                          <Nav.Link as={NavLink} to="/cart">
+                                                <FiShoppingCart color="white" size='25px' />
+                                          </Nav.Link>
+                                    }
+                                    {user?.roleId === Role.Admin &&
+                                          <Button variant="link" onClick={handleShow} style={{ color: 'white' }}>
+                                                <AiOutlineSetting size='25px' />
+                                          </Button>
+                                    }
 
                                     <Navbar.Collapse className="mt-3">
                                           {NavItems(true, user)}
@@ -80,6 +104,10 @@ const Header = () => {
                               </Container>
                         </Navbar>
                   </Row>
+
+                  <Offcanvas show={show} placement='end' onHide={handleClose}>
+                        <AdminPanel />
+                  </Offcanvas>
             </Container>
       )
 }
@@ -95,24 +123,28 @@ const NavItems = (isMd: boolean, user: UserModel) => {
                         </Nav.Link>
                   </Nav.Item>
                   {isMd && <hr />}
+
                   <Nav.Item>
                         <Nav.Link eventKey={2} as={NavLink} to='/brands'>
                               Brands
                         </Nav.Link>
                   </Nav.Item>
                   {isMd && <hr />}
+
                   <Nav.Item>
                         <Nav.Link eventKey={3} as={NavLink} to='/accessories'>
                               Accessories
                         </Nav.Link>
                   </Nav.Item>
                   {isMd && <hr />}
+                  
                   <Nav.Item>
                         <Nav.Link eventKey={4} as={NavLink} to='/about'>
                               About
                         </Nav.Link>
                   </Nav.Item>
 
+                  {/* LG nav items */}
                   {!isMd &&
                         <Nav.Item style={{ position: 'absolute', right: '0' }}>
                               {!user &&
@@ -120,40 +152,22 @@ const NavItems = (isMd: boolean, user: UserModel) => {
                                           <BiUser size='25px' />
                                     </Nav.Link>
                               }
-                              {user &&
-                                    <Dropdown>
+
+                              {user?.roleId === Role.User &&
+                                    <Dropdown align={{ lg: 'end' }}>
                                           <DropdownToggle as={Nav.Link} >
                                                 <BiUser size='25px' />
                                           </DropdownToggle>
 
-                                          <DropdownMenu variant="dark" align={{ lg: 'end' }}>
-                                                {user?.roleId === Role.Admin &&
-                                                      <>
-                                                            <Dropdown.Header>
-                                                                  Hello Admin
-                                                            </Dropdown.Header>
-                                                            <Dropdown.Divider />
+                                          <DropdownMenu>
 
-                                                            <DropdownItem>
-                                                                  new
-                                                            </DropdownItem>
+                                                <Dropdown.Header>
+                                                      Hello {user.firstName + " " + user.lastName}
+                                                </Dropdown.Header>
 
-
-                                                      </>
-                                                }
-                                                {user?.roleId === Role.User &&
-                                                      <>
-                                                            <Dropdown.Header>
-                                                                  Hello {user.firstName + " " + user.lastName}
-                                                            </Dropdown.Header>
-
-                                                            <DropdownItem>
-                                                                  new
-                                                            </DropdownItem>
-
-
-                                                      </>
-                                                }
+                                                <DropdownItem>
+                                                      new
+                                                </DropdownItem>
 
                                                 <Dropdown.Divider />
 
@@ -163,9 +177,11 @@ const NavItems = (isMd: boolean, user: UserModel) => {
                                           </DropdownMenu>
                                     </Dropdown>
                               }
+
                         </Nav.Item>
                   }
 
+                  {/* MD nav items */}
                   {isMd &&
                         <>
                               <hr />
@@ -186,38 +202,27 @@ const NavItems = (isMd: boolean, user: UserModel) => {
                                           </Row>
                                     </Nav.Item>
                               }
+
                               {user?.roleId === Role.Admin &&
-                                    <Dropdown>
-                                          <DropdownToggle as={Nav.Link} >
-                                                <BiUser size='25px' />
-                                          </DropdownToggle>
-
-                                          <DropdownMenu variant="dark">
-                                                <Dropdown.Header>
-                                                      Hello Admin
-                                                </Dropdown.Header>
-                                                <Dropdown.Divider />
-
-                                                <DropdownItem>
-                                                      new
-                                                </DropdownItem>
-
-
-                                                <Dropdown.Divider />
-
-                                                <DropdownItem className="w-50 m-auto">
-                                                      <Button size='sm' variant="danger" onClick={logout}>
-                                                            Logout
-                                                      </Button>
-                                                </DropdownItem>
-                                          </DropdownMenu>
-                                    </Dropdown>
+                                    <Button size='sm' variant="danger" onClick={logout}>
+                                          Logout
+                                    </Button>
                               }
                               {user?.roleId === Role.User &&
                                     <Nav.Item>
-                                          <Button size='sm' variant="danger" onClick={logout}>
-                                                Logout
-                                          </Button>
+                                          <Row className="w-50 m-auto">
+                                                <Col sm='6' xs='6'>
+                                                      <Navbar.Text>
+                                                            Hello {user?.firstName + " " + user?.lastName}
+                                                      </Navbar.Text>
+                                                </Col>
+                                                <Col sm='6' xs='6'>
+
+                                                      <Button size='sm' variant="danger" onClick={logout}>
+                                                            Logout
+                                                      </Button>
+                                                </Col>
+                                          </Row>
                                     </Nav.Item>
                               }
                         </>

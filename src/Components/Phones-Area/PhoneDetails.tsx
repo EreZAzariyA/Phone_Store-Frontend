@@ -53,7 +53,7 @@ const PhoneDetails = () => {
             });
 
             return () => authSubscribe();
-      });
+      }, [params.phoneId, getPhoneById, check]);
 
 
 

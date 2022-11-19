@@ -76,7 +76,7 @@ const Header = (props: HeaderProps) => {
 
                                     {(!props.user || props.user?.roleId === Role.User)
                                           &&
-                                          <Nav.Link as={NavLink} to="/cart">
+                                          <Nav.Link as={NavLink} to="/cart" className="m-1">
                                                 <FiShoppingCart color="white" size='25px' />
                                           </Nav.Link>
                                     }

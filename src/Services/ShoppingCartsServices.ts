@@ -1,8 +1,9 @@
 import axios from "axios";
 import ItemInCartModel from "../Models/item-in-cart model";
 import ShoppingCartModel from "../Models/shopping-cart model";
+import { addItemIntoGuestCartCartAction } from "../Redux/GuestState";
 import { addItemToCartAction, fetchItemsFromShoppingCartAction, fetchShoppingCartAction, removeItemFromCartAction, updateItemInCartAction } from "../Redux/ShoppingCartState";
-import { shoppingCartStore } from "../Redux/Store";
+import { authStore, guestsStore, shoppingCartStore } from "../Redux/Store";
 import config from "../Utils/Config";
 
 class ShoppingCartsServices {
@@ -30,10 +31,15 @@ class ShoppingCartsServices {
 
       // Add item into shopping-cart:
       public async addItemIntoShoppingCart(itemToAdd: ItemInCartModel): Promise<ItemInCartModel> {
-            const response = await axios.post<ItemInCartModel>(config.urls.shopping_carts.add_item_to_cart, itemToAdd);
-            const addedItem = response.data;
-            shoppingCartStore.dispatch(addItemToCartAction(itemToAdd));
-            return addedItem;
+            if (authStore.getState().user) {     
+                  const response = await axios.post<ItemInCartModel>(config.urls.shopping_carts.add_item_to_cart, itemToAdd);
+                  const addedItem = response.data;
+                  shoppingCartStore.dispatch(addItemToCartAction(itemToAdd));
+                  return addedItem;
+            } else {
+                  guestsStore.dispatch(addItemIntoGuestCartCartAction(itemToAdd));
+                  return itemToAdd
+            }
       }
 
       public async updateStockInCart(phoneToUpdate: ItemInCartModel): Promise<ItemInCartModel> {

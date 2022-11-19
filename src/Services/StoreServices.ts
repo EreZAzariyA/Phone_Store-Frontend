@@ -9,7 +9,7 @@ class StoreServices {
 
       async getAllPhones(): Promise<PhoneModel[]> {
             if (store.getState().phones?.length === 0) {
-                  const response = await axios.get<PhoneModel[]>(config.urls.store.phones);
+                  const response = await axios.get<PhoneModel[]>(config.urls.phones);
                   const phones = response.data;
                   store.dispatch(fetchAllPhonesAction(phones));
                   return phones;
@@ -21,7 +21,7 @@ class StoreServices {
 
       async getOnePhone(phoneId: string): Promise<PhoneModel> {
             if (store.getState().phones?.length === 0) {
-                  const response = await axios.get<PhoneModel>(config.urls.store.onePhone + phoneId);
+                  const response = await axios.get<PhoneModel>(config.urls.phones + phoneId);
                   const phone = response.data;
                   return phone;
             } else {
@@ -32,7 +32,7 @@ class StoreServices {
 
       async getAllBrands(): Promise<BrandModel[]> {
             if (store.getState().brands?.length === 0) {
-                  const response = await axios.get<BrandModel[]>(config.urls.store.brands);
+                  const response = await axios.get<BrandModel[]>(config.urls.brands);
                   const brands = response.data;
                   store.dispatch(fetchAllBrandsAction(brands));
                   return brands;
@@ -44,7 +44,7 @@ class StoreServices {
 
       async getPhonesByBrandId(brandId: string): Promise<PhoneModel[]> {
             if (store.getState().phones.length === 0) {
-                  const response = await axios.get<PhoneModel[]>(config.urls.store.phones_by_brands + brandId);
+                  const response = await axios.get<PhoneModel[]>(config.urls.phones + "phones-by-brandId/" + brandId);
                   const phones = response.data;
                   return phones;
             } else {
@@ -54,14 +54,14 @@ class StoreServices {
       }
 
       async addNewBrand(brand: BrandModel): Promise<BrandModel> {
-            const response = await axios.post<BrandModel>(config.urls.store.addBrand, brand);
+            const response = await axios.post<BrandModel>(config.urls.brands, brand);
             const addedBrand = response.data;
             store.dispatch(addNewBrandAction(addedBrand));
             return addedBrand;
       }
 
       async addNewPhone(phone: PhoneModel): Promise<PhoneModel> {
-            const response = await axios.post<PhoneModel>(config.urls.store.phones, phone);
+            const response = await axios.post<PhoneModel>(config.urls.phones, phone);
             const addedPhone = response.data;
             store.dispatch(addNewPhoneAction(addedPhone));
             return addedPhone;
@@ -69,7 +69,7 @@ class StoreServices {
 
       async getOneBrand(brandId: string): Promise<BrandModel> {
             if (store.getState().brands.length === 0) {
-                  const response = await axios.get(config.urls.store.brands + brandId);
+                  const response = await axios.get(config.urls.brands + brandId);
                   const brand = response.data;
                   return brand
             } else {

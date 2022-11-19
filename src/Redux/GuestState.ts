@@ -39,6 +39,13 @@ export function guestsReducer(currentGuestsState: GuestsState = new GuestsState(
       switch (action.type) {
 
             case GuestsActionType.AddItemIntoGuestCartAction:
+                  if (newGuestsState.itemsInGuestCart.find(item => item.phoneId === action.payload.phoneId)) {
+                        const newList =  newGuestsState.itemsInGuestCart.filter(item => item?.phoneId !== action.payload.phoneId);
+                        newList.push(action.payload);
+                        newGuestsState.itemsInGuestCart = newList;
+                        localStorage.setItem('itemsInGuestCart', JSON.stringify(newGuestsState.itemsInGuestCart));
+                        break;
+                  }
                   newGuestsState.itemsInGuestCart.push(action.payload);
                   localStorage.setItem('itemsInGuestCart', JSON.stringify(newGuestsState.itemsInGuestCart));
                   break;

@@ -4,13 +4,8 @@ abstract class Config {
                   register: "",
                   login: ""
             },
-            store: {
-                  phones: "",
-                  onePhone: "",
-                  brands: "",
-                  phones_by_brands: "",
-                  addBrand: ""
-            },
+            phones: "",
+            brands: "",
             shopping_carts: {
                   shopping_cart_by_userId: "",
                   items_in_cart: "",
@@ -26,13 +21,8 @@ abstract class Config {
                         register: baseUrl + "auth/register",
                         login: baseUrl + "auth/login"
                   },
-                  store: {
-                        phones: baseUrl + "all-phones/",
-                        onePhone: baseUrl + "all-phones/",
-                        brands: baseUrl + "all-brands/",
-                        phones_by_brands: baseUrl + "phones-by-brandId/",
-                        addBrand: baseUrl + "add-brands/"
-                  },
+                  phones: baseUrl + "phones/",
+                  brands: baseUrl + "brands/",
                   shopping_carts: {
                         shopping_cart_by_userId: baseUrl + "shopping-carts/user-cart/",
                         items_in_cart: baseUrl + "shopping-carts/items-in-cart/",

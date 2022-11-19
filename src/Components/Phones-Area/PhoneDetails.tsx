@@ -5,11 +5,12 @@ import { numberWithCommas } from "../..";
 import { PhoneModel } from "../../Models/phone-model";
 import storeServices from "../../Services/StoreServices";
 import undefineImage from "../../Assets/undefine-card-img.jpg";
-import { authStore, shoppingCartStore } from "../../Redux/Store";
+import { authStore, guestsStore, shoppingCartStore } from "../../Redux/Store";
 import UserModel from "../../Models/user-model";
 import ItemInCartModel from "../../Models/item-in-cart model";
 import shoppingCartServices from "../../Services/ShoppingCartsServices";
 import notifyService from "../../Services/NotifyService";
+import { addItemIntoGuestCartCartAction, removeItemFromGuestCartAction } from "../../Redux/GuestState";
 
 const PhoneDetails = () => {
       const [user, setUser] = useState<UserModel>();
@@ -25,17 +26,25 @@ const PhoneDetails = () => {
             phone.memorySizes = [64, 512, 256, 128];
       }, []);
 
+      // Check the items list and set "In Cart" (true/false):
       const check = useCallback(async (phoneId: string) => {
+            // If there is a user
             if (user) {
-                  const shoppingCartId = shoppingCartStore.getState().shoppingCart?.cartId;
+                  const shoppingCartId = shoppingCartStore.getState().shoppingCart.cartId;
                   const itemsInUserCart = await shoppingCartServices.getItemsFromCartByCartId(shoppingCartId);
-
-                  if (itemsInUserCart.find(item => item?.phoneId === phoneId)) {
+                  const itemInCart = itemsInUserCart?.find(item => item?.phoneId === phoneId);
+                  if (itemInCart) {
                         setInCart(true);
-                        const stock = itemsInUserCart.find(item => item?.phoneId === phoneId)?.stock
+                        const stock = itemInCart?.stock
                         setStock(stock);
-                  } else {
-                        setInCart(false);
+                  }
+            } else {
+                  // If there is no user (Guest):
+                  const itemsInGuestCart = guestsStore.getState().itemsInGuestCart;
+                  const item = itemsInGuestCart.find(item => item.phoneId === phoneId);
+                  if (item) {
+                        setInCart(true);
+                        setStock(item?.stock)
                   }
             }
       }, [user]);
@@ -46,14 +55,17 @@ const PhoneDetails = () => {
             check(phoneId);
 
             const user = authStore.getState().user;
-            setUser(user);
-
+            if (user) {
+                  setUser(user);
+            }
             const authSubscribe = authStore.subscribe(() => {
-                  setUser(authStore.getState().user);
+                  if (user) {
+                        setUser(user);
+                  }
             });
 
             return () => authSubscribe();
-      }, [params.phoneId, getPhoneById, check]);
+      }, [check, getPhoneById, params.phoneId]);
 
 
 
@@ -72,18 +84,33 @@ const PhoneDetails = () => {
 
       const addToCart = async () => {
             const itemToAdd = new ItemInCartModel();
-            itemToAdd.cartId = shoppingCartStore.getState().shoppingCart.cartId;
+            itemToAdd.cartId = shoppingCartStore.getState().shoppingCart?.cartId || "new_guest_cart";
             itemToAdd.phoneId = phone?.phoneId;
             itemToAdd.stock = stock;
             itemToAdd.totalPrice = phone?.price * stock;
 
             try {
-                  await shoppingCartServices.addItemIntoShoppingCart(itemToAdd);
-                  notifyService.success("Added...");
-                  navigate(`/brands/${phone?.brandId}`)
+                  if (itemToAdd.stock > 0) {
+                        await shoppingCartServices.addItemIntoShoppingCart(itemToAdd);
+                        if (!inCart) {
+                              notifyService.success("Added...");
+                        } else {
+                              notifyService.success("Updated...");
+                        }
+                  } else if (itemToAdd.stock === 0) {
+                        if (user) {
+                              await shoppingCartServices.removePhoneFromCart(itemToAdd.phoneId, itemToAdd.cartId);
+                              notifyService.error("Deleted...");
+                        } else {
+
+                              guestsStore.dispatch(removeItemFromGuestCartAction(itemToAdd?.phoneId));
+                              notifyService.error("Deleted...");
+                        }
+                  }
             } catch (err: any) {
                   notifyService.error(err);
             }
+
       }
 
       return (

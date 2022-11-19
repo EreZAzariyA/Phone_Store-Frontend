@@ -129,7 +129,7 @@ const PhoneDetails = () => {
                         <Col sm='6' xs='12'>
                               {/* When image still lode from the server */}
                               {
-                                    phone?.picture === undefined && <Image src={undefineImage} alt={"undefine image"} />
+                                    phone?.picture === undefined && <Image src={undefineImage} width='70%' alt={"undefine image"} />
                               }
                               {/* When there is an image */}
                               {phone?.picture &&

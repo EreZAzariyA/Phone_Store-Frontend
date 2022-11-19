@@ -8,11 +8,11 @@ import Header from './Components/Layout-Area/Header';
 import BrandsPage from './Components/Pages/BrandsPage';
 import CartPage from './Components/Pages/CartPage';
 import HomePage from './Components/Pages/HomePage';
-import PhoneDetails from './Components/Phones-Area/PhoneDetails';
+import PhoneDetails from './Components/Phones-Area/PhonePage';
 import { BrandModel } from './Models/brand-model';
 import { PhoneModel } from './Models/phone-model';
 import UserModel from './Models/user-model';
-import { store } from './Redux/Store';
+import { authStore, store } from './Redux/Store';
 import storeServices from './Services/StoreServices';
 
 function App() {
@@ -27,6 +27,9 @@ function App() {
     const brands = await storeServices.getAllBrands();
     setBrands(brands);
 
+    const user = authStore.getState().user;
+    setUser(user);
+
     const unsubscribe = store.subscribe(() => {
       const phones = store.getState().phones;
       setPhones(phones);
@@ -34,14 +37,22 @@ function App() {
       const brands = store.getState().brands;
       setBrands(brands);
     });
-    return () => unsubscribe();
+
+    const authUnsubscribe = authStore.subscribe(() => {
+      setUser(authStore.getState().user);
+    });
+
+    return () => {
+      unsubscribe()
+      authUnsubscribe();
+    };
   }, []);
 
 
   return (
     <Container fluid>
       <Row as='header'>
-        <Header />
+        <Header user={user} />
       </Row>
 
       <Row>

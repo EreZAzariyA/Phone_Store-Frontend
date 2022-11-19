@@ -1,10 +1,9 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button, Col, Container, Dropdown, Nav, Navbar, Offcanvas, Row } from "react-bootstrap";
 import { FiShoppingCart } from "react-icons/fi";
 import { BiUser } from "react-icons/bi";
 import { NavLink } from "react-router-dom";
 import UserModel from "../../Models/user-model";
-import { authStore } from "../../Redux/Store";
 import DropdownToggle from "react-bootstrap/esm/DropdownToggle";
 import Role from "../../Models/role";
 import DropdownItem from "react-bootstrap/esm/DropdownItem";
@@ -18,26 +17,15 @@ export const logout = async () => {
       await authServices.logout();
       notifyService.error("Your out...");
 };
-const Header = () => {
-      const [user, setUser] = useState<UserModel>();
+
+interface HeaderProps {
+      user: UserModel;
+}
+const Header = (props: HeaderProps) => {
       const [show, setShow] = useState(false);
 
       const handleClose = () => setShow(false);
       const handleShow = () => setShow(true);
-
-      useEffect(() => {
-            const user = authStore.getState().user;
-            setUser(user);
-
-            const authSubscribe = authStore.subscribe(() => {
-                  setUser(authStore.getState().user);
-            });
-
-            return () => authSubscribe();
-      }, []);
-
-
-
       return (
             <Container className="pt-2 pb-1" style={{ backgroundColor: 'black', color: 'white' }}>
 
@@ -54,19 +42,19 @@ const Header = () => {
                         <Col lg='8'>
                               <Navbar>
                                     <Container className="w-75 d-flex flex-row justify-content-around">
-                                          {NavItems(false, user)}
+                                          {NavItems(false, props.user)}
                                     </Container>
                               </Navbar>
                         </Col>
 
                         <Col lg='1'>
-                              {(!user || user?.roleId === Role.User)
+                              {(!props.user || props.user?.roleId === Role.User)
                                     &&
                                     <Nav.Link as={NavLink} to="/cart">
                                           <FiShoppingCart color="white" className="mt-2" size='25px' />
                                     </Nav.Link>
                               }
-                              {user?.roleId === Role.Admin &&
+                              {props.user?.roleId === Role.Admin &&
                                     <Button variant="link" onClick={handleShow} style={{ color: 'white' }}>
                                           <AiOutlineSetting size='25px' />
                                     </Button>
@@ -86,20 +74,20 @@ const Header = () => {
                                           </h1>
                                     </Nav.Link>
 
-                                    {(!user || user?.roleId === Role.User)
+                                    {(!props.user || props.user?.roleId === Role.User)
                                           &&
                                           <Nav.Link as={NavLink} to="/cart">
                                                 <FiShoppingCart color="white" size='25px' />
                                           </Nav.Link>
                                     }
-                                    {user?.roleId === Role.Admin &&
+                                    {props.user?.roleId === Role.Admin &&
                                           <Button variant="link" onClick={handleShow} style={{ color: 'white' }}>
                                                 <AiOutlineSetting size='25px' />
                                           </Button>
                                     }
 
                                     <Navbar.Collapse className="mt-3">
-                                          {NavItems(true, user)}
+                                          {NavItems(true, props.user)}
                                     </Navbar.Collapse>
                               </Container>
                         </Navbar>
@@ -137,7 +125,7 @@ const NavItems = (isMd: boolean, user: UserModel) => {
                         </Nav.Link>
                   </Nav.Item>
                   {isMd && <hr />}
-                  
+
                   <Nav.Item>
                         <Nav.Link eventKey={4} as={NavLink} to='/about'>
                               About

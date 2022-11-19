@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Button, Card, Carousel, Col, Container, Form, Image, InputGroup, Row, ToggleButton } from "react-bootstrap"
-import { NavLink, useNavigate, useParams } from "react-router-dom";
+import { NavLink, useParams } from "react-router-dom";
 import { numberWithCommas } from "../..";
 import { PhoneModel } from "../../Models/phone-model";
 import storeServices from "../../Services/StoreServices";
@@ -10,62 +10,61 @@ import UserModel from "../../Models/user-model";
 import ItemInCartModel from "../../Models/item-in-cart model";
 import shoppingCartServices from "../../Services/ShoppingCartsServices";
 import notifyService from "../../Services/NotifyService";
-import { addItemIntoGuestCartCartAction, removeItemFromGuestCartAction } from "../../Redux/GuestState";
 
-const PhoneDetails = () => {
+const PhonePage = () => {
       const [user, setUser] = useState<UserModel>();
       const [phone, setPhone] = useState<PhoneModel>();
+      const [itemsInCart, setItemsInCart] = useState<ItemInCartModel[]>();
       const [inCart, setInCart] = useState<boolean>(false);
       const [stock, setStock] = useState<number>(1);
       const params = useParams();
-      const navigate = useNavigate();
 
-      const getPhoneById = useCallback(async (phoneId: string) => {
+      const checkItemsInCart = useCallback((phoneId: string) => {
+            const itemInCart = itemsInCart?.find(item => item?.phoneId === phoneId);
+            if (itemInCart) {
+                  return setInCart(true);
+            } else {
+                  return setInCart(false);
+            }
+      }, [itemsInCart]);
+
+      const getPhoneByParams = useCallback(async () => {
+            const phoneId = params.phoneId;
             const phone = await storeServices.getOnePhone(phoneId);
             setPhone(phone);
+            checkItemsInCart(phone.phoneId);
             phone.memorySizes = [64, 512, 256, 128];
+      }, [params.phoneId, checkItemsInCart]);
+
+      const getItemsFromCart = useCallback(async (user: UserModel) => {
+            if (user) {
+                  const shoppingCartId = shoppingCartStore.getState().shoppingCart?.cartId;
+
+                  const itemsInUserCart = await shoppingCartServices.getItemsFromCartByCartId(shoppingCartId);
+                  setItemsInCart(itemsInUserCart);
+
+            } else if (!user) {
+                  const itemsInGuestCart = guestsStore.getState().itemsInGuestCart;
+                  setItemsInCart(itemsInGuestCart);
+            }
+
       }, []);
 
-      // Check the items list and set "In Cart" (true/false):
-      const check = useCallback(async (phoneId: string) => {
-            // If there is a user
-            if (user) {
-                  const shoppingCartId = shoppingCartStore.getState().shoppingCart.cartId;
-                  const itemsInUserCart = await shoppingCartServices.getItemsFromCartByCartId(shoppingCartId);
-                  const itemInCart = itemsInUserCart?.find(item => item?.phoneId === phoneId);
-                  if (itemInCart) {
-                        setInCart(true);
-                        const stock = itemInCart?.stock
-                        setStock(stock);
-                  }
-            } else {
-                  // If there is no user (Guest):
-                  const itemsInGuestCart = guestsStore.getState().itemsInGuestCart;
-                  const item = itemsInGuestCart.find(item => item.phoneId === phoneId);
-                  if (item) {
-                        setInCart(true);
-                        setStock(item?.stock)
-                  }
-            }
-      }, [user]);
+
 
       useEffect(() => {
-            const phoneId = params.phoneId;
-            getPhoneById(phoneId);
-            check(phoneId);
-
             const user = authStore.getState().user;
-            if (user) {
+            setUser(user);
+            getPhoneByParams();
+            getItemsFromCart(user);
+
+            const subscribe = authStore.subscribe(() => {
+                  const user = authStore.getState().user;
                   setUser(user);
-            }
-            const authSubscribe = authStore.subscribe(() => {
-                  if (user) {
-                        setUser(user);
-                  }
             });
 
-            return () => authSubscribe();
-      }, [check, getPhoneById, params.phoneId]);
+            return () => subscribe();
+      }, [getItemsFromCart, getPhoneByParams, user]);
 
 
 
@@ -84,7 +83,7 @@ const PhoneDetails = () => {
 
       const addToCart = async () => {
             const itemToAdd = new ItemInCartModel();
-            itemToAdd.cartId = shoppingCartStore.getState().shoppingCart?.cartId || "new_guest_cart";
+            itemToAdd.cartId = shoppingCartStore.getState().shoppingCart?.cartId || "guest_cart";
             itemToAdd.phoneId = phone?.phoneId;
             itemToAdd.stock = stock;
             itemToAdd.totalPrice = phone?.price * stock;
@@ -94,18 +93,13 @@ const PhoneDetails = () => {
                         await shoppingCartServices.addItemIntoShoppingCart(itemToAdd);
                         if (!inCart) {
                               notifyService.success("Added...");
-                        } else {
+                        } else if (inCart) {
                               notifyService.success("Updated...");
                         }
                   } else if (itemToAdd.stock === 0) {
-                        if (user) {
-                              await shoppingCartServices.removePhoneFromCart(itemToAdd.phoneId, itemToAdd.cartId);
-                              notifyService.error("Deleted...");
-                        } else {
+                        await shoppingCartServices.removePhoneFromCart(itemToAdd.phoneId, itemToAdd.cartId);
+                        notifyService.error("Deleted...");
 
-                              guestsStore.dispatch(removeItemFromGuestCartAction(itemToAdd?.phoneId));
-                              notifyService.error("Deleted...");
-                        }
                   }
             } catch (err: any) {
                   notifyService.error(err);
@@ -220,8 +214,10 @@ const PhoneDetails = () => {
                               </Row>
                         </Col>
                   </Row >
-
-                  <Row className="mt-4">
+                  <br />
+                  <br />
+                  <hr className="mt-5" />
+                  <Row>
                         {/* Others brands */}
                         <Container>
                               <Row>
@@ -236,7 +232,7 @@ const PhoneDetails = () => {
       )
 }
 
-export default PhoneDetails;
+export default PhonePage;
 
 
 const OthersPhones = (phone: PhoneModel) => {
@@ -252,8 +248,8 @@ const OthersPhones = (phone: PhoneModel) => {
       return (
             <>
                   {othersPhones?.map(p =>
-                        <Card key={p.phoneId} as={Col} xs='6' sm='4' md='2' className="m-1 m-md-auto p-1">
-                              <Card.Img src={p?.picture} variant='top' height='100%' alt='' />
+                        <Card key={p.phoneId} className="m-1 m-md-auto p-1 w-auto">
+                              <Card.Img src={p?.picture} variant='top' height='150' alt='' />
 
                               <Card.Title>
                                     {p.name}

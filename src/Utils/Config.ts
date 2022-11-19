@@ -4,6 +4,10 @@ abstract class Config {
                   register: "",
                   login: ""
             },
+            store: {
+                  topThree: "",
+                  topBrands:""
+            },
             phones: "",
             brands: "",
             shopping_carts: {
@@ -20,6 +24,10 @@ abstract class Config {
                   auth: {
                         register: baseUrl + "auth/register",
                         login: baseUrl + "auth/login"
+                  },
+                  store: {
+                        topThree: baseUrl + "top-three",
+                        topBrands:baseUrl + "top-brands"
                   },
                   phones: baseUrl + "phones/",
                   brands: baseUrl + "brands/",

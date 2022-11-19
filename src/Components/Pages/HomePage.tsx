@@ -5,6 +5,8 @@ import img from "../../Assets/iPhone-14.jpg";
 import moreImg from "../../Assets/Galaxy-S22-Ultra.jpg";
 import { NavLink } from "react-router-dom";
 import BrandCard from "../Brands-Area/BrandCard";
+import TopThreeProducts from "./TopPhones";
+import TopBrands from "./TopBrands";
 
 interface HomePageProps {
     brands: BrandModel[];
@@ -14,7 +16,7 @@ interface HomePageProps {
 function HomePage(props: HomePageProps): JSX.Element {
 
     return (
-        <Container fluid>
+        <Container>
             <Row style={{ backgroundColor: 'black' }}>
                 <Carousel variant="light">
                     <Carousel.Item>
@@ -34,26 +36,31 @@ function HomePage(props: HomePageProps): JSX.Element {
                 </Carousel>
             </Row>
 
-            <Row className="pt-2 w-75 m-auto">
+            <Row className="pt-2">
+                <Container fluid>
+                    <Row>
+                        <TopThreeProducts />
+                    </Row>
+                    <Row>
+                        <TopBrands />
+                        <hr />
+                    </Row>
+                </Container>
+
+            </Row>
+
+            <Row className=' m-auto'>
                 <Container>
-                    <Row>
-                        <h1>
-                            Our Top 3 Products
-                        </h1>
-                    </Row>
-                    <Row>
-                        <h1>
-                            Our Top 3 Brands
-                        </h1>
-                    </Row>
+                    <h1>All Our Brands</h1>
                     <Row>
                         {props.brands?.map(brand =>
-                            <Col key={brand?.brandId} xs='12' sm='6' md='4' xl='3' >
+                            <Col key={brand?.brandId} xs='6' sm='6' md='4' xl='3'>
                                 <BrandCard brand={brand} />
                             </Col>
                         )}
                     </Row>
                 </Container>
+
             </Row>
         </Container>
     );

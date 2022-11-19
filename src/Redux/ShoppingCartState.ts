@@ -4,7 +4,7 @@ import ShoppingCartModel from "../Models/shopping-cart model";
 
 export class ShoppingCartState {
       public shoppingCart: ShoppingCartModel = null;
-      public itemsInCart: ItemInCartModel[] = null;
+      public itemsInCart: ItemInCartModel[] = [];
 
       constructor() {
             const cart = localStorage.getItem("shopping_cart");

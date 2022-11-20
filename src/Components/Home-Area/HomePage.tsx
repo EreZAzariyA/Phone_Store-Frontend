@@ -1,4 +1,4 @@
-import { Button, Carousel, Col, Container, Image, Row } from "react-bootstrap";
+import { Button, Carousel, Container, Image, Row } from "react-bootstrap";
 import { BrandModel } from "../../Models/brand-model";
 import { PhoneModel } from "../../Models/phone-model";
 import img from "../../Assets/iPhone-14.jpg";
@@ -16,7 +16,7 @@ interface HomePageProps {
 function HomePage(props: HomePageProps): JSX.Element {
 
     return (
-        <Container>
+        <Container style={{ fontFamily: 'Crimson Pro, serif' }}>
             <Row style={{ backgroundColor: 'black' }}>
                 <Carousel variant="light">
                     <Carousel.Item>
@@ -37,7 +37,7 @@ function HomePage(props: HomePageProps): JSX.Element {
             </Row>
 
             <Row className="pt-2">
-                <Container fluid>
+                <Container fluid >
                     <Row>
                         <TopThreeProducts />
                     </Row>
@@ -49,14 +49,12 @@ function HomePage(props: HomePageProps): JSX.Element {
 
             </Row>
 
-            <Row className=' m-auto'>
+            <Row>
                 <Container>
                     <h1>All Our Brands</h1>
-                    <Row>
+                    <Row className="justify-content-center">
                         {props.brands?.map(brand =>
-                            <Col key={brand?.brandId} xs='6' sm='6' md='4' xl='3'>
-                                <BrandCard brand={brand} />
-                            </Col>
+                            <BrandCard key={brand?.brandId} brand={brand} />
                         )}
                     </Row>
                 </Container>

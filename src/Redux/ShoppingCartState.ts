@@ -82,10 +82,8 @@ export function shoppingCartReducer(currentShoppingCartState: ShoppingCartState 
                   break;
 
             case ShoppingCartActionType.RemoveItem:
-                  const itemIndexToDelete = newCartState.itemsInCart.findIndex(i => i.phoneId === action.payload.phoneId);
-                  if (itemIndexToDelete !== -1) {
-                        newCartState.itemsInCart.splice(itemIndexToDelete, 1);
-                  }
+                  const newList = newCartState.itemsInCart.filter(i => i.phoneId !== action.payload);
+                  newCartState.itemsInCart = newList;
                   localStorage.setItem("items_in_cart", JSON.stringify(newCartState.itemsInCart));
                   break;
 

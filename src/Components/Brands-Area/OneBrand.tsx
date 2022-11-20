@@ -1,10 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
-import { Button, Card, Col, Container, Row } from "react-bootstrap"
+import { Col, Container, Row } from "react-bootstrap"
 import { NavLink, useParams } from "react-router-dom";
 import { BrandModel } from "../../Models/brand-model";
 import { PhoneModel } from "../../Models/phone-model";
-import storeServices from "../../Services/StoreServices";
+import brandsServices from "../../Services/BrandsServices";
+import phonesServices from "../../Services/PhonesServices";
 import PhoneCard from "../Phones-Area/PhoneCard";
+import OthersBrands from "./OthersBrand";
 
 const OneBrand = () => {
 
@@ -12,27 +14,26 @@ const OneBrand = () => {
       const [phones, setPhones] = useState<PhoneModel[]>();
       const params = useParams();
 
-      const getBrandByParams = useCallback(async (brandId: string) => {
-            const brand = await storeServices.getOneBrand(brandId);
+      const getBrandByParams = useCallback(async () => {
+            const brandId = params.brandId;
+            const brand = await brandsServices.getOneBrand(brandId);
             setBrand(brand);
             getPhonesByBrandId(brand?.brandId);
-      }, []);
+      }, [params.brandId]);
 
       useEffect(() => {
-            const brandId = params.brandId;
-            getBrandByParams(brandId);
-      }, [params?.brandId, getBrandByParams]);
+            getBrandByParams();
+      }, [getBrandByParams]);
 
 
       const getPhonesByBrandId = (async (brandId: string) => {
-            const phones = await storeServices.getPhonesByBrandId(brandId);
+            const phones = await phonesServices.getPhonesByBrandId(brandId);
             setPhones(phones);
       });
 
 
-
       return (
-            <Container>
+            <Container className="w-75">
                   {/* Back button */}
                   <Row className="mt-2 mb-1">
                         <Col xs='2' sm='2'>
@@ -46,11 +47,9 @@ const OneBrand = () => {
 
                   <Row>
                         <Container>
-                              <Row>
+                              <Row className="m-auto justify-content-center">
                                     {phones?.map(phone =>
-                                          <Col lg='3' md='6' sm='6' xs='12' key={phone.phoneId}>
-                                                <PhoneCard phone={phone} />
-                                          </Col>
+                                          <PhoneCard key={phone?.phoneId} phone={phone} />
                                     )}
                               </Row>
                         </Container>
@@ -62,7 +61,7 @@ const OneBrand = () => {
                                     <h2>You May Also Like</h2>
                               </Row>
                               <Row className="flex-nowrap overflow-auto">
-                                    {OthersBrands(brand?.brandId)}
+                                    <OthersBrands brandId={brand?.brandId} />
                               </Row>
                         </Container>
 
@@ -72,35 +71,3 @@ const OneBrand = () => {
 }
 export default OneBrand;
 
-
-const OthersBrands = (brandId: string) => {
-      const [othersBrands, setOthersBrands] = useState<BrandModel[]>();
-
-      const getOthersBrands = useCallback(async () => {
-            const allBrands = await storeServices.getAllBrands();
-            const othersBrands = allBrands.filter(brand => brand.brandId !== brandId);
-            setOthersBrands(othersBrands);
-      }, [brandId]);
-
-      useEffect(() => {
-            getOthersBrands();
-      }, [getOthersBrands]);
-
-      return (
-            <>
-                  {othersBrands?.map(brand =>
-                        <Card key={brand?.brandId} as={Col} xs='6' sm='4' md='2' className="m-1 m-md-auto p-1">
-                              <Card.Img variant="top" height='150px' src={brand?.img} alt={brand?.brand + ' ImageURL'} />
-                              <Card.Body>
-                                    <NavLink to={`/brands/${brand?.brandId}`}>
-                                          <Button size='sm' variant="dark">
-                                                See Products
-                                          </Button>
-                                    </NavLink>
-                              </Card.Body>
-                        </Card>
-
-                  )}
-            </>
-      )
-}

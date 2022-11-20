@@ -9,7 +9,7 @@ interface BrandCardProps {
 
 const BrandCard = (props: BrandCardProps) => {
       return (
-            <Card className="m-1 p-2">
+            <Card className="m-1 w-auto p-2">
                   <Card.Img variant="top" className='mb-1' height={'150'} src={props.brand?.img} />
 
                   <Card.Body>

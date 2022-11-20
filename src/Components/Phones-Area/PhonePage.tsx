@@ -3,13 +3,14 @@ import { Button, Card, Carousel, Col, Container, Form, Image, InputGroup, Row, T
 import { NavLink, useParams } from "react-router-dom";
 import { numberWithCommas } from "../..";
 import { PhoneModel } from "../../Models/phone-model";
-import storeServices from "../../Services/StoreServices";
 import undefineImage from "../../Assets/undefine-card-img.jpg";
 import { authStore, guestsStore, shoppingCartStore } from "../../Redux/Store";
 import UserModel from "../../Models/user-model";
 import ItemInCartModel from "../../Models/item-in-cart model";
 import shoppingCartServices from "../../Services/ShoppingCartsServices";
 import notifyService from "../../Services/NotifyService";
+import phonesServices from "../../Services/PhonesServices";
+import { myLorem } from "../../App";
 
 const PhonePage = () => {
       const [user, setUser] = useState<UserModel>();
@@ -19,53 +20,66 @@ const PhonePage = () => {
       const [stock, setStock] = useState<number>(1);
       const params = useParams();
 
-      const checkItemsInCart = useCallback((phoneId: string) => {
-            const itemInCart = itemsInCart?.find(item => item?.phoneId === phoneId);
-            if (itemInCart) {
-                  return setInCart(true);
-            } else {
-                  return setInCart(false);
-            }
-      }, [itemsInCart]);
-
-      const getPhoneByParams = useCallback(async () => {
+      // Get phone by params:
+      const getPhone = useCallback(async () => {
             const phoneId = params.phoneId;
-            const phone = await storeServices.getOnePhone(phoneId);
+            const phone = await phonesServices.getOnePhoneById(phoneId);
             setPhone(phone);
-            checkItemsInCart(phone.phoneId);
-            phone.memorySizes = [64, 512, 256, 128];
-      }, [params.phoneId, checkItemsInCart]);
+      }, [params.phoneId]);
 
-      const getItemsFromCart = useCallback(async (user: UserModel) => {
-            if (user) {
-                  const shoppingCartId = shoppingCartStore.getState().shoppingCart?.cartId;
-
-                  const itemsInUserCart = await shoppingCartServices.getItemsFromCartByCartId(shoppingCartId);
-                  setItemsInCart(itemsInUserCart);
-
-            } else if (!user) {
-                  const itemsInGuestCart = guestsStore.getState().itemsInGuestCart;
-                  setItemsInCart(itemsInGuestCart);
-            }
-
-      }, []);
-
-
-
-      useEffect(() => {
+      // Get user: (If there is one)
+      const getUser = useCallback(() => {
             const user = authStore.getState().user;
             setUser(user);
-            getPhoneByParams();
-            getItemsFromCart(user);
 
-            const subscribe = authStore.subscribe(() => {
+            const unsubscribe = authStore.subscribe(() => {
                   const user = authStore.getState().user;
                   setUser(user);
             });
+            return () => unsubscribe();
+      }, []);
 
-            return () => subscribe();
-      }, [getItemsFromCart, getPhoneByParams, user]);
+      // Check if the current phone in user OR guest cart
+      const check = useCallback(() => {
+            const item = itemsInCart?.find(item => item?.phoneId === phone?.phoneId);
 
+            if (item) {
+                  setInCart(true);
+            } else {
+                  setInCart(false);
+            }
+      }, [phone?.phoneId, itemsInCart]);
+
+      // Get user OR guest items:
+      const getItemsFromCart = useCallback(() => {
+            if (!user) {
+                  const itemsInCart = guestsStore.getState().itemsInGuestCart;
+                  setItemsInCart(itemsInCart);
+                  const unsubscribe = guestsStore.subscribe(() => {
+                        const itemsInCart = guestsStore.getState().itemsInGuestCart;
+                        setItemsInCart(itemsInCart);
+                        check();
+                  });
+                  return () => unsubscribe();
+            } else if (user) {
+                  const itemsInCart = shoppingCartStore.getState().itemsInCart;
+                  setItemsInCart(itemsInCart);
+                  const unsubscribe = shoppingCartStore.subscribe(() => {
+                        const itemsInCart = shoppingCartStore.getState().itemsInCart;
+                        setItemsInCart(itemsInCart);
+                        check();
+                  });
+                  return () => unsubscribe();
+            }
+      }, [user, check]);
+
+
+      useEffect(() => {
+            getUser();
+            getPhone();
+            getItemsFromCart();
+            check();
+      }, [getPhone, getUser, getItemsFromCart, itemsInCart, check]);
 
 
       const plus = () => {
@@ -108,7 +122,7 @@ const PhonePage = () => {
       }
 
       return (
-            <Container>
+            <Container className="w-75">
                   {/* Back button */}
                   <Row className="mt-2 mb-2">
                         <Col xs='3' sm='2'>
@@ -141,8 +155,8 @@ const PhonePage = () => {
                                     </Carousel>
                               }
                         </Col>
-
-                        <Col sm='5' xs='12' className='p-2' style={{ textAlign: 'left' }}>
+                        {/* Phone details */}
+                        <Col sm='6' xs='12' className='p-2' style={{ textAlign: 'left' }}>
                               <h2>
                                     {phone?.name}
                                     {phone?.name === undefined &&
@@ -165,7 +179,7 @@ const PhonePage = () => {
                                     }
                               </div>
 
-                              <h6 className="pt-2 pb-2">
+                              <h5 className="pt-2 pb-2 fw-bolder" style={{ fontFamily: 'sans-serif' }}>
                                     {phone?.price &&
                                           <>
                                                 {"$ " + numberWithCommas(phone?.price)}
@@ -174,7 +188,7 @@ const PhonePage = () => {
                                     {phone?.price === undefined &&
                                           <p className="w-25 placeholder placeholder-wave placeholder-xs" />
                                     }
-                              </h6>
+                              </h5>
 
                               <Form className="pt-2 pb-5" >
                                     {phone?.memorySizes?.map(size =>
@@ -214,6 +228,21 @@ const PhonePage = () => {
                               </Row>
                         </Col>
                   </Row >
+                  
+                  <Row className="mt-3">
+                        <Col md='8'>
+                              <h3 className="text-decoration-underline">Description</h3>
+                              <Row className="text-sm-start">
+                                    {phone?.description + " " + myLorem}
+                                    <br />
+                                    <br />
+                                    {myLorem}
+                              </Row>
+                        </Col>
+                        <Col md='4'>
+
+                        </Col>
+                  </Row>
                   <br />
                   <br />
                   <hr className="mt-5" />
@@ -240,7 +269,7 @@ const OthersPhones = (phone: PhoneModel) => {
 
 
       useMemo(async () => {
-            const phonesBySameBrand = await storeServices.getPhonesByBrandId(phone?.brandId);
+            const phonesBySameBrand = await phonesServices.getPhonesByBrandId(phone?.brandId);
             const othersPhones = phonesBySameBrand.filter(p => p?.phoneId !== phone?.phoneId);
             setOthersPhones(othersPhones);
       }, [phone]);

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button, Col, Container, Dropdown, Nav, Navbar, Offcanvas, Row } from "react-bootstrap";
 import { FiShoppingCart } from "react-icons/fi";
 import { BiUser } from "react-icons/bi";
@@ -26,6 +26,12 @@ const Header = (props: HeaderProps) => {
 
       const handleClose = () => setShow(false);
       const handleShow = () => setShow(true);
+
+      // Close admin panel if admin logout
+      useEffect(() => {
+            handleClose();
+      }, [props.user]);
+
       return (
             <Container className="pt-2 pb-1" style={{ backgroundColor: 'black', color: 'white' }}>
 

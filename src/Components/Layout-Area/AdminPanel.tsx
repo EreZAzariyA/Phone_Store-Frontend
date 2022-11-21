@@ -1,4 +1,5 @@
 import { Button, Container, Nav, Offcanvas } from "react-bootstrap"
+import { NavLink } from "react-router-dom";
 import { logout } from "./Header";
 
 const AdminPanel = () => {
@@ -17,11 +18,27 @@ const AdminPanel = () => {
                         <Nav className="flex-column">
 
                               <Nav.Link className="mt-2">
-                                    Add New Phone
+                                    All Phones
+                              </Nav.Link>
+                              
+                              <Nav.Link className="mt-2">
+                                    All Brands
+                              </Nav.Link>
+
+                              <Nav.Link className="mt-2" as={NavLink} to="/products/new" eventKey={0.3}>
+                                    New Phone
                               </Nav.Link>
 
                               <Nav.Link className="mt-2">
-                                    Add New Brand
+                                    New Brand
+                              </Nav.Link>
+
+                              <Nav.Link className="mt-2">
+                                    Update Top Products
+                              </Nav.Link>
+
+                              <Nav.Link className="mt-2">
+                                    Update Top brands
                               </Nav.Link>
                         </Nav>
                   </Offcanvas.Body>

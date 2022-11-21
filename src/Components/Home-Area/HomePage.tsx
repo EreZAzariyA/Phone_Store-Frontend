@@ -1,12 +1,12 @@
-import { Button, Carousel, Container, Image, Row } from "react-bootstrap";
+import { Button, Card, Carousel, Container, Image, Row } from "react-bootstrap";
 import { BrandModel } from "../../Models/brand-model";
 import { PhoneModel } from "../../Models/phone-model";
 import img from "../../Assets/iPhone-14.jpg";
 import moreImg from "../../Assets/Galaxy-S22-Ultra.jpg";
 import { NavLink } from "react-router-dom";
-import BrandCard from "../Brands-Area/BrandCard";
 import TopThreeProducts from "./TopPhones";
 import TopBrands from "./TopBrands";
+import { FcNext } from "react-icons/fc";
 
 interface HomePageProps {
     brands: BrandModel[];
@@ -36,7 +36,7 @@ function HomePage(props: HomePageProps): JSX.Element {
                 </Carousel>
             </Row>
 
-            <Row className="pt-2">
+            <Row className="pt-2 mb-2">
                 <Container fluid >
                     <Row>
                         <TopThreeProducts />
@@ -52,9 +52,19 @@ function HomePage(props: HomePageProps): JSX.Element {
             <Row>
                 <Container>
                     <h1>All Our Brands</h1>
-                    <Row className="justify-content-center">
+                    <Row>
                         {props.brands?.map(brand =>
-                            <BrandCard key={brand?.brandId} brand={brand} />
+                            <Card key={brand?.brandId} className="m-auto mt-2 w-auto p-0">
+                                <Card.Img variant="top" height={'150'} src={brand?.img} />
+
+                                <Card.Body>
+                                    <NavLink to={`/brands/${brand.brandId}`}>
+                                        <Button variant="light">
+                                            Shop <FcNext />
+                                        </Button>
+                                    </NavLink>
+                                </Card.Body>
+                            </Card>
                         )}
                     </Row>
                 </Container>

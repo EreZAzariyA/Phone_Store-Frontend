@@ -33,10 +33,10 @@ const OneBrand = () => {
 
 
       return (
-            <Container className="w-75">
+            <Container>
                   {/* Back button */}
-                  <Row className="mt-2 mb-1">
-                        <Col xs='2' sm='2'>
+                  <Row xs='4' className="mt-2 mb-1">
+                        <Col>
                               <NavLink className='text-decoration-none' to='/'>
                                     Go Back
                               </NavLink>
@@ -46,8 +46,9 @@ const OneBrand = () => {
                   <h1>{brand?.brand}</h1>
 
                   <Row>
-                        <Container>
+                        <Container className="w-75">
                               <Row className="m-auto justify-content-center">
+
                                     {phones?.map(phone =>
                                           <PhoneCard key={phone?.phoneId} phone={phone} />
                                     )}
@@ -56,11 +57,11 @@ const OneBrand = () => {
                   </Row >
                   <Row>
                         {/* Others brands */}
-                        <Container>
+                        <Container className="w-auto">
                               <Row>
                                     <h2>You May Also Like</h2>
                               </Row>
-                              <Row className="flex-nowrap overflow-auto">
+                              <Row className="flex-nowrap overflow-auto ">
                                     <OthersBrands brandId={brand?.brandId} />
                               </Row>
                         </Container>

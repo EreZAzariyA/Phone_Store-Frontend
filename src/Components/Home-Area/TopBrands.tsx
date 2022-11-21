@@ -31,14 +31,12 @@ const TopBrands = () => {
 
                   <Row className="flex-nowrap overflow-auto m-auto">
                         {topBrands?.map(product =>
-                              <Card key={product?.brandId} className="m-1 p-1 w-auto" >
+                              <Card key={product?.brandId} className="m-1 p-1 w-auto text-decoration-none mb-3" as={NavLink} to={`/brands/${product?.brandId}`}>
                                     <Card.Img variant="top" height='200' src={getProductById(product?.brandId)?.img} />
 
-                                    <NavLink to={`/brands/${product?.brandId}`} className='mt-2 mb-1'>
-                                          <Button size='sm' variant="dark">
-                                                Go see
-                                          </Button>
-                                    </NavLink>
+                                    <Button size='sm' variant="dark" className="w-auto m-auto mt-1 mb-1">
+                                          Go see
+                                    </Button>
                               </Card>
                         )}
 

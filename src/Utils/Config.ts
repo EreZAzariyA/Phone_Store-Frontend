@@ -6,7 +6,7 @@ abstract class Config {
             },
             store: {
                   topThree: "",
-                  topBrands:""
+                  topBrands: ""
             },
             phones: "",
             brands: "",
@@ -27,7 +27,7 @@ abstract class Config {
                   },
                   store: {
                         topThree: baseUrl + "top-three",
-                        topBrands:baseUrl + "top-brands"
+                        topBrands: baseUrl + "top-brands"
                   },
                   phones: baseUrl + "phones/",
                   brands: baseUrl + "brands/",

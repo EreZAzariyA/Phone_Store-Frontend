@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
-import { Card, Col, Button } from "react-bootstrap";
+import { Card, Button } from "react-bootstrap";
 import { NavLink } from "react-router-dom";
 import { BrandModel } from "../../Models/brand-model";
 import brandsServices from "../../Services/BrandsServices";
@@ -24,14 +24,14 @@ const OthersBrands = (props: OthersBrandsProps) => {
       return (
             <>
                   {othersBrands?.map(brand =>
-                        <Card key={brand?.brandId} as={Col} xs='6' sm='4' md='2' className="m-1 m-md-auto p-1">
+                        <Card key={brand?.brandId} style={{ width: '12rem' }} className='m-1' as={NavLink} to={`/brands/${brand?.brandId}`}>
+
                               <Card.Img variant="top" height='150px' src={brand?.img} alt={brand?.brand + ' ImageURL'} />
+
                               <Card.Body>
-                                    <NavLink to={`/brands/${brand?.brandId}`}>
-                                          <Button size='sm' variant="dark">
-                                                See Products
-                                          </Button>
-                                    </NavLink>
+                                    <Button size='sm' variant="dark">
+                                          See Products
+                                    </Button>
                               </Card.Body>
                         </Card>
 

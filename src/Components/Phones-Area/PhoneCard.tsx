@@ -1,4 +1,4 @@
-import { Button, Card, Carousel, Col, Image, Row } from "react-bootstrap";
+import { Button, Card, Carousel, Image, Row } from "react-bootstrap";
 import { NavLink } from "react-router-dom";
 import { PhoneModel } from "../../Models/phone-model"
 
@@ -7,14 +7,14 @@ interface PhoneCardProps {
 }
 const PhoneCard = (props: PhoneCardProps) => {
       return (
-            <Card className="m-1" as={Col} xl='3' lg='3' md='5' >
+            <Card style={{ width: '15rem' }} className='m-1'>
                   <Card.Img variant='top' as='div'>
                         <Carousel variant="dark">
                               <Carousel.Item>
-                                    <Image width='100%' src={props.phone.picture} alt={props.phone.name + ' imageURL'} />
+                                    <Image height='200' src={props.phone.picture} alt={props.phone.name + ' imageURL'} />
                               </Carousel.Item>
                               <Carousel.Item>
-                                    <Image width='100%' src={props.phone.picture} alt={props.phone.name + ' imageURL'} />
+                                    <Image height='200' src={props.phone.picture} alt={props.phone.name + ' imageURL'} />
                               </Carousel.Item>
                         </Carousel>
                   </Card.Img>

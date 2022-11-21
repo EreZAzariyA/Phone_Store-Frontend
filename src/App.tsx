@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Container, Row } from 'react-bootstrap';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Navigate, Route } from 'react-router-dom';
 import Login from './Components/Auth-Area/Login';
 import Register from './Components/Auth-Area/Register';
 import OneBrand from './Components/Brands-Area/OneBrand';
@@ -15,6 +15,7 @@ import UserModel from './Models/user-model';
 import { authStore, store } from './Redux/Store';
 import brandsServices from './Services/BrandsServices';
 import phonesServices from './Services/PhonesServices';
+import AddPhone from './Components/Phones-Area/AddPhone';
 
 function App() {
   const [user, setUser] = useState<UserModel>();
@@ -54,7 +55,7 @@ function App() {
 
   return (
     <Container fluid>
-      <Row as='header'>
+      <Row>
         <Header user={user} />
       </Row>
 
@@ -73,7 +74,10 @@ function App() {
               <Route path='/auth/register' element={<Register />} />
             </>
           }
+          {/* Admin Panel */}
+          <Route path='/products/new' element={<AddPhone />} />
 
+          <Route path='*' element={<Navigate to="/" />} />
         </Routes>
 
       </Row>

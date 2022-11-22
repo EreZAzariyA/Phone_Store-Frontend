@@ -33,10 +33,14 @@ const TopThreeProducts = () => {
                         {topThree?.map(item =>
                               <Card key={item?.phoneId} className="m-1 p-1 w-auto text-decoration-none mb-3" as={NavLink} to={`/phone/${item?.phoneId}`}>
                                     <Card.Img variant="top" height='200' src={getProductById(item?.phoneId)?.picture} />
-
-                                    <Button size='sm' variant="dark" className="w-auto m-auto mt-1 mb-1">
-                                          Go see
-                                    </Button>
+                                    <Card.Body>
+                                          <Card.Title style={{ color: "black" }}>
+                                                {getProductById(item?.phoneId)?.name}
+                                          </Card.Title>
+                                          <Button size='sm' variant="dark">
+                                                Go see
+                                          </Button>
+                                    </Card.Body>
                               </Card>
                         )}
 
@@ -48,7 +52,7 @@ const TopThreeProducts = () => {
                   <p className="text-muted">Based on users orders</p>
                   <hr className='m-auto mt-2 mb-2' />
 
-            </Container>
+            </Container >
       )
 }
 

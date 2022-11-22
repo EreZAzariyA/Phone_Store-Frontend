@@ -3,6 +3,7 @@ import { Card, Button } from "react-bootstrap";
 import { NavLink } from "react-router-dom";
 import { BrandModel } from "../../Models/brand-model";
 import brandsServices from "../../Services/BrandsServices";
+import { FcNext } from "react-icons/fc";
 
 interface OthersBrandsProps {
       brandId: string;
@@ -29,8 +30,8 @@ const OthersBrands = (props: OthersBrandsProps) => {
                               <Card.Img variant="top" height='150px' src={brand?.img} alt={brand?.brand + ' ImageURL'} />
 
                               <Card.Body>
-                                    <Button size='sm' variant="dark">
-                                          See Products
+                                    <Button variant="light">
+                                          Shop <FcNext />
                                     </Button>
                               </Card.Body>
                         </Card>

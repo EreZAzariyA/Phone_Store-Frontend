@@ -44,6 +44,8 @@ const TopBrands = () => {
                               undefineTopBrands()
                         }
                   </Row>
+                  <hr className='m-auto mt-2 mb-2' />
+
             </Container >
       )
 }

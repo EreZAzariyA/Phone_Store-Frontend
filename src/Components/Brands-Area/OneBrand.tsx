@@ -43,12 +43,12 @@ const OneBrand = () => {
                         </Col>
                   </Row>
 
+                  {/* Page title */}
                   <h1>{brand?.brand}</h1>
 
                   <Row>
-                        <Container className="w-75">
-                              <Row className="m-auto justify-content-center">
-
+                        <Container>
+                              <Row className="justify-content-center">
                                     {phones?.map(phone =>
                                           <PhoneCard key={phone?.phoneId} phone={phone} />
                                     )}

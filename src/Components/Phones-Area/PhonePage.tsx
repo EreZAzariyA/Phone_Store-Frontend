@@ -138,28 +138,28 @@ const PhonePage = () => {
                         <Row>
                               {/* Image-carousel */}
                               <Col sm='6' xs='12'>
-                                    {/* When image still lode from the server */}
-                                    {
-                                          phone?.picture === undefined && <Image src={undefineImage} width='70%' alt={"undefine image"} />
+                                    {/* When image still lode from the server*/}
+                                    {phone?.picture === undefined && <Image src={undefineImage} width='70%' alt={"undefine image"} />
                                     }
+
                                     {/* When there is an image */}
                                     {phone?.picture &&
-                                          <Carousel variant="dark" style={{ borderRadius: '10px' }}>
+                                          <Carousel variant="dark">
                                                 <Carousel.Item>
                                                       {
-                                                            <Image src={phone?.picture} width='70%' alt={`${phone?.name + 'ImageURL'}`} />
+                                                            <Image src={phone?.picture} width='100%' alt={`${phone?.name + 'ImageURL'}`} />
                                                       }
                                                 </Carousel.Item>
                                                 <Carousel.Item>
                                                       {
-                                                            <Image src={phone?.picture} width='70%' alt={`${phone?.name + 'ImageURL'}`} />
+                                                            <Image src={phone?.picture} width='100%' alt={`${phone?.name + 'ImageURL'}`} />
                                                       }
                                                 </Carousel.Item>
                                           </Carousel>
                                     }
                               </Col>
                               {/* Phone details */}
-                              <Col sm='6' xs='12' className='p-2' style={{ textAlign: 'left' }}>
+                              <Col sm='6' xs='12' className='p-1' style={{ textAlign: 'left' }}>
                                     <h2>
                                           {phone?.name}
                                           {phone?.name === undefined &&
@@ -230,7 +230,7 @@ const PhonePage = () => {
                                           </Col>
                                     </Row>
                               </Col>
-                        </Row >
+                        </Row>
 
                         <Row className="mt-3 m-auto">
                               <Col md='8'>
@@ -243,7 +243,7 @@ const PhonePage = () => {
                                     </Row>
                               </Col>
                               <Col md='4'>
-
+                                    <h3 className="text-decoration-underline">In The Box</h3>
                               </Col>
                         </Row>
 

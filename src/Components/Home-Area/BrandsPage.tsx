@@ -3,7 +3,7 @@ import { Container } from "react-bootstrap"
 const BrandsPage = () => {
       return (
             <Container>
-                  brands
+                  All Our Brands
             </Container>
       )
 }

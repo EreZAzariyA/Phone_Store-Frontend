@@ -37,13 +37,12 @@ function HomePage(props: HomePageProps): JSX.Element {
             </Row>
 
             <Row className="pt-2 mb-2">
-                <Container fluid >
+                <Container>
                     <Row>
                         <TopThreeProducts />
                     </Row>
                     <Row>
                         <TopBrands />
-                        <hr />
                     </Row>
                 </Container>
 
@@ -51,10 +50,10 @@ function HomePage(props: HomePageProps): JSX.Element {
 
             <Row>
                 <Container>
-                    <h1>All Our Brands</h1>
-                    <Row>
+                    <h1>Our Top Brands</h1>
+                    <Row className="justify-content-center">
                         {props.brands?.map(brand =>
-                            <Card key={brand?.brandId} className="m-auto mt-2 w-auto p-0">
+                            <Card key={brand?.brandId} style={{ width: '15rem' }} className="m-1">
                                 <Card.Img variant="top" height={'150'} src={brand?.img} />
 
                                 <Card.Body>

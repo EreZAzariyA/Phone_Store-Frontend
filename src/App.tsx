@@ -16,6 +16,8 @@ import { authStore, store } from './Redux/Store';
 import brandsServices from './Services/BrandsServices';
 import phonesServices from './Services/PhonesServices';
 import AddPhone from './Components/Phones-Area/AddPhone';
+import AboutPage from './Components/AboutArea/AboutPage';
+import OrderPage from './Components/Cart-Area/OrderPage';
 
 function App() {
   const [user, setUser] = useState<UserModel>();
@@ -67,6 +69,8 @@ function App() {
           <Route path='/brands' element={null} />
           <Route path='/phone/:phoneId' element={<PhoneDetails />} />
           <Route path='/cart' element={<CartPage />} />
+          <Route path='/order' element={<OrderPage />} />
+          <Route path='/about' element={<AboutPage />} />
 
           {!user &&
             <>

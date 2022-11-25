@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
-import { Container, Row, Spinner } from "react-bootstrap"
+import { Button, Container, Row, Spinner } from "react-bootstrap"
+import { NavLink } from "react-router-dom";
 import ItemInCartModel from "../../Models/item-in-cart model";
 import UserModel from "../../Models/user-model";
 import { authStore, guestsStore, shoppingCartStore } from "../../Redux/Store";
@@ -64,6 +65,12 @@ const CartPage = () => {
                               <ItemInCartCard key={itemInCart?.phoneId} itemInCart={itemInCart} />
                         )}
                   </Row>
+
+                  <NavLink to='/order'>
+                        <Button className="mt-2">
+                              Continue To Order
+                        </Button>
+                  </NavLink>
 
             </Container>
       )

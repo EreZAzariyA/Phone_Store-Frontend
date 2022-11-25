@@ -1,7 +1,7 @@
 <div align="center">
  
-# Phone Store - Online Web (Frontend). 
-***Project uploaded to AWS Amplify: [Phone-Store](https://master.d3eqhxr7e40pa9.amplifyapp.com/)***
+# Phone Store - Online Web. (Frontend)
+###  ***Project Uploaded To AWS-Amplify: [Visit-Store](https://master.d3eqhxr7e40pa9.amplifyapp.com/)***
 
 ### Built With
  [![Typescript][Typescript.com]][Typescript-url]
@@ -11,36 +11,41 @@
 
 ### Usage
 
-#### User
-*** Register & Login *** <br/>
-*** Add Product To Shopping-Cart *** <br/>
-*** Update Stock To Order *** <br/>
-*** Remove Product From Shopping-Cart *** <br/>
-*** Make A New Order *** <br/>
+<table border="0">
+ <tr>
+    <td><b style="font-size:30px">Admin</b></td>
+    <td><b style="font-size:30px">User</b></td>
+ </tr>
+ 
+ <tr>
+    <td> Login </td>
+    <td> Register & Login </td>
+ </tr>
+ <tr>
+    <td> Add New Product or Brand To Store </td>
+    <td> Add Product To Shopping-Cart </td>
+ </tr>
+ <tr>
+    <td> Update Product or Brand Details </td>
+    <td> Update Stock To Order </td>
+ </tr>
+ <tr>
+    <td> Remove Product or Brand From Store </td>
+    <td> Remove Product From Shopping-Cart </td>
+ </tr>
+ <tr>
+    <td> Confirm An Order </td>
+    <td> Make A New Order </td>
+ </tr>
+ <tr>
+  <td> Edit Top-Products/Brands Area </td>
+  <td> </td>
+ </tr>
+</table>
 
-#### Admin
-*** Add New Product/Brand To Store *** <br/>
-*** Update Product/Brand Details *** <br/>
-*** Remove Product/Brand From Store *** <br/>
-*** Edit Top-Products/Brands Area *** <br/>
-*** Confirm An Order *** <br/>
+### ***[This Web Sending Requestes To My Server](https://github.com/EreZAzariyA/Phone_Store-Backend)***
 
-
- <ul>
-  <li>
-   Created with [Create React App](https://github.com/facebook/create-react-app).
-  </li>
-  <li>
-   Project wairted fully by TypeScript language.
-  </li>
-  <li>
-   The project was designed by React-Bootstrap.
-  </li>
-  <li>
-   Global state controlled by Redux.
-  </li>
- </ul>  
-  
+# ENJOY!
 <div/>
 
 

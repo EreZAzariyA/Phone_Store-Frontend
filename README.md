@@ -11,10 +11,24 @@
 
 ### Usage
 
+#### User
+*** Register & Login *** <br/>
+*** Add Product To Shopping-Cart *** <br/>
+*** Update Stock To Order *** <br/>
+*** Remove Product From Shopping-Cart *** <br/>
+*** Make A New Order *** <br/>
 
- <ol>
+#### Admin
+*** Add New Product/Brand To Store *** <br/>
+*** Update Product/Brand Details *** <br/>
+*** Remove Product/Brand From Store *** <br/>
+*** Edit Top-Products/Brands Area *** <br/>
+*** Confirm An Order *** <br/>
+
+
+ <ul>
   <li>
-   Created with [Create React App](https://github.com/facebook/create-react-app) .
+   Created with [Create React App](https://github.com/facebook/create-react-app).
   </li>
   <li>
    Project wairted fully by TypeScript language.
@@ -25,7 +39,7 @@
   <li>
    Global state controlled by Redux.
   </li>
- </ol>  
+ </ul>  
   
 <div/>
 

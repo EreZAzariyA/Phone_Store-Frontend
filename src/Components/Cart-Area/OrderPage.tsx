@@ -1,17 +1,19 @@
 import { useCallback, useEffect, useState } from "react";
-import { Button, Card, Col, Container, FloatingLabel, Form, Row, Spinner } from "react-bootstrap";
+import { Button, Card, Col, Container, FloatingLabel, Form, Row, Spinner, Table } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 import { NavLink } from "react-router-dom";
+import { numberWithCommas } from "../..";
 import ItemInCartModel from "../../Models/item-in-cart model";
 import OrderModel from "../../Models/order-model";
 import UserModel from "../../Models/user-model";
 import { authStore, guestsStore, shoppingCartStore, store } from "../../Redux/Store";
 import { errStyle } from "../Auth-Area/Register";
 
-const formStyle: React.CSSProperties = {
+const colStyle: React.CSSProperties = {
       textAlign: 'center',
       backgroundColor: 'white',
       borderRadius: '10px',
+      margin: '5px'
 }
 
 
@@ -19,6 +21,7 @@ const OrderPage = () => {
 
       const [user, setUser] = useState<UserModel>();
       const [isGuest, setIsGuest] = useState(false);
+      const [totalPrice, setTotalPrice] = useState(0);
       const [itemsInCart, setItemsInCart] = useState<ItemInCartModel[]>();
       const { register, handleSubmit, formState, setValue } = useForm<OrderModel>();
 
@@ -44,9 +47,10 @@ const OrderPage = () => {
             if (!user) {
                   const itemInGuestCart = guestsStore.getState().itemsInGuestCart;
                   setItemsInCart(itemInGuestCart);
+            } else {
+                  const itemsInCart = shoppingCartStore.getState().itemsInCart;
+                  setItemsInCart(itemsInCart);
             }
-            const itemsInCart = shoppingCartStore.getState().itemsInCart;
-            setItemsInCart(itemsInCart);
       }, [user]);
 
       useEffect(() => {
@@ -68,8 +72,12 @@ const OrderPage = () => {
             return product;
       }
 
+      const orderConfirm = useCallback(() => {
+
+      }, []);
+
       return (
-            <Container className="mt-3">
+            <Container>
                   {/* Back Button */}
                   <Row>
                         <Col>
@@ -79,11 +87,11 @@ const OrderPage = () => {
                         </Col>
                   </Row>
 
-                  {/* Check-out */}
-                  <Row className="mt-2">
+                  {/* Check-out & Summery */}
+                  <Row className="mt-2 p-3 flex-md-nowrap justify-content-center">
                         {/* Form */}
-                        <Col sm='8' >
-                              <Form className="p-2" style={formStyle} onSubmit={handleSubmit(submit)}>
+                        <Col md='8' lg='8' xl='8' style={colStyle} >
+                              <Form onSubmit={handleSubmit(submit)}>
                                     <h1>CHECKOUT</h1>
 
                                     <Form.Text style={{ textAlign: 'justify' }}>
@@ -97,7 +105,7 @@ const OrderPage = () => {
                                           <Col>
                                                 <FloatingLabel label={"Email"}>
                                                       <Form.Control
-                                                            className={`form-control ${formState.errors?.email ? 'is-invalid' : "" || !formState.touchedFields.email ? "is-valid" : ''}`}
+                                                            className={`form-control ${formState.errors?.email ? 'is-invalid' : ""}`}
                                                             type="email"
                                                             disabled={!isGuest}
                                                             {...register('email', {
@@ -200,34 +208,65 @@ const OrderPage = () => {
                                     <Button variant="success" type="submit" className="mt-3">Confirm</Button>
 
                               </Form>
-
                         </Col>
 
                         {/* Products List */}
-                        <Col sm='4'>
-                              <Form style={formStyle}>
+                        <Col md='4' lg='4' xl='4' style={colStyle}>
+                              <Form>
                                     <h1>Summery</h1>
                                     <br />
-                                    {itemsInCart ? itemsInCart?.map(i =>
-                                          <Card key={i.cartId} className='m-1'>
-                                                <Row className="flex-nowrap w-100">
-                                                      <Col xs='5' sm='5'>
-                                                            <Card.Img variant="top" src={getProductByItemId(i?.phoneId)?.picture} alt='' />
+                                    {itemsInCart === undefined && <Spinner animation="border" />}
+                                    {itemsInCart?.map(i =>
+                                          <Card key={i.phoneId} className='m-1'>
+                                                <Row className="flex-md-nowrap w-100">
+                                                      <Col md='5'>
+                                                            <Card.Img src={getProductByItemId(i?.phoneId)?.picture} width='100' alt='' />
                                                       </Col>
-                                                      <Col xs='6' sm='6'>
-                                                            <Card.Body>
-                                                                  asd
-                                                            </Card.Body>
+                                                      <Col md='6'>
+                                                            <Card.Title>
+                                                                  {getProductByItemId(i?.phoneId)?.name}
+                                                            </Card.Title>
+                                                            <Card.Text className="text-muted">
+                                                                  {'$ ' + numberWithCommas(getProductByItemId(i?.phoneId)?.price)}
+                                                            </Card.Text>
                                                       </Col>
-                                                      <Col xs='1' sm='1'>
-                                                            <Form.Check type="checkbox" />
+                                                      <Col md='2'>
+                                                            <p>x{i?.stock}</p>
+                                                            <Form.Check type="checkbox" defaultChecked disabled />
                                                       </Col>
-
                                                 </Row>
                                           </Card>
-                                    ) : <Spinner animation="border" />}
+                                    )}
                               </Form>
+                              <Table variant="light" hover striped className="mt-2">
+                                    <tbody>
+                                          <tr>
+                                                <td>
+                                                      Total
+                                                </td>
+                                                <th>
+                                                      {totalPrice + '$'}
+                                                </th>
+                                          </tr>
+                                          <tr>
+                                                <td>
+                                                      Shipping
+                                                </td>
+                                                <th>
+                                                      50$
+                                                </th>
+                                          </tr>
+                                          <tr>
+                                                <td>
+                                                      Vat (Included)
+                                                </td>
+                                                <th>
+                                                      Vat
+                                                </th>
+                                          </tr>
+                                    </tbody>
 
+                              </Table>
                         </Col>
                   </Row>
             </Container>

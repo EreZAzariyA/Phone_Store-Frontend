@@ -15,6 +15,7 @@ export class GuestsState {
 export enum GuestsActionType {
       FetchGuestItemsAction = "FetchGuestItemsAction",
       AddItemIntoGuestCartAction = "AddItemIntoGuestCartAction",
+      UpdateItemInCart = "UpdateItemInCart",
       RemoveItemFromGuestCart = "RemoveItemFromGuestCart"
 }
 export interface GuestsAction {
@@ -29,6 +30,9 @@ export function fetchGuestItemsAction(itemInCart: ItemInCartModel[]): GuestsActi
 export function addItemIntoGuestCartCartAction(itemToAdd: ItemInCartModel): GuestsAction {
       return { type: GuestsActionType.AddItemIntoGuestCartAction, payload: itemToAdd };
 };
+export function updateItemInGuestCart(itemToUpdate: ItemInCartModel): GuestsAction {
+      return { type: GuestsActionType.UpdateItemInCart, payload: itemToUpdate };
+};
 export function removeItemFromGuestCartAction(itemIdToDelete: string): GuestsAction {
       return { type: GuestsActionType.RemoveItemFromGuestCart, payload: itemIdToDelete };
 };
@@ -39,15 +43,15 @@ export function guestsReducer(currentGuestsState: GuestsState = new GuestsState(
       switch (action.type) {
 
             case GuestsActionType.AddItemIntoGuestCartAction:
-                  if (newGuestsState.itemsInGuestCart.find(item => item.phoneId === action.payload.phoneId)) {
-                        const newList =  newGuestsState.itemsInGuestCart.filter(item => item?.phoneId !== action.payload.phoneId);
-                        newList.push(action.payload);
-                        newGuestsState.itemsInGuestCart = newList;
-                        localStorage.setItem('itemsInGuestCart', JSON.stringify(newGuestsState.itemsInGuestCart));
-                        break;
-                  }
                   newGuestsState.itemsInGuestCart.push(action.payload);
                   localStorage.setItem('itemsInGuestCart', JSON.stringify(newGuestsState.itemsInGuestCart));
+                  break;
+
+            case GuestsActionType.UpdateItemInCart:
+                  const newListToUpdate = newGuestsState.itemsInGuestCart.filter(item => item?.phoneId !== action.payload.phoneId);
+                  newListToUpdate.push(action.payload);
+
+                  localStorage.setItem('itemsInGuestCart', JSON.stringify(newListToUpdate));
                   break;
 
             case GuestsActionType.RemoveItemFromGuestCart:

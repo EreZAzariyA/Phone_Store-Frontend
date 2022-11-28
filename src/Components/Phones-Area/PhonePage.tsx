@@ -159,7 +159,7 @@ const PhonePage = () => {
                                     }
                               </Col>
                               {/* Phone details */}
-                              <Col sm='6' xs='12' className='p-1' style={{ textAlign: 'left' }}>
+                              <Col sm='6' xs='12' className='p-0' style={{ textAlign: 'left' }}>
                                     <h2>
                                           {phone?.name}
                                           {phone?.name === undefined &&
@@ -248,8 +248,8 @@ const PhonePage = () => {
                         </Row>
 
                         <hr className="mt-5" />
-                        <Row>
                               {/* Others phones */}
+                        <Row>
                               <Container className="w-auto">
                                     <Row>
                                           <h2>You May Also Like</h2>

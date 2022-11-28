@@ -1,7 +1,7 @@
 import axios from "axios";
 import ItemInCartModel from "../Models/item-in-cart model";
 import ShoppingCartModel from "../Models/shopping-cart model";
-import { addItemIntoGuestCartCartAction, removeItemFromGuestCartAction } from "../Redux/GuestState";
+import { addItemIntoGuestCartCartAction, removeItemFromGuestCartAction, updateItemInGuestCart } from "../Redux/GuestState";
 import { addItemToCartAction, fetchItemsFromShoppingCartAction, fetchShoppingCartAction, removeItemFromCartAction, updateItemInCartAction } from "../Redux/ShoppingCartState";
 import { authStore, guestsStore, shoppingCartStore } from "../Redux/Store";
 import config from "../Utils/Config";
@@ -43,10 +43,15 @@ class ShoppingCartsServices {
       }
 
       public async updateStockInCart(phoneToUpdate: ItemInCartModel): Promise<ItemInCartModel> {
-            const response = await axios.patch<ItemInCartModel>(config.urls.shopping_carts.update, phoneToUpdate);
-            const updatedItem = response.data;
-            shoppingCartStore.dispatch(updateItemInCartAction(updatedItem));
-            return updatedItem;
+            if (authStore.getState().user) {
+                  const response = await axios.patch<ItemInCartModel>(config.urls.shopping_carts.update, phoneToUpdate);
+                  const updatedItem = response.data;
+                  shoppingCartStore.dispatch(updateItemInCartAction(updatedItem));
+                  return updatedItem;
+            } else {
+                  guestsStore.dispatch(updateItemInGuestCart(phoneToUpdate));
+                  return phoneToUpdate
+            }
       }
 
       public async removePhoneFromCart(phoneIdToRemove: string, cartId: string): Promise<void> {

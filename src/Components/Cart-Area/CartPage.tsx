@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { Button, Container, Row, Spinner } from "react-bootstrap"
+import { Button, Container, Nav, Row, Spinner } from "react-bootstrap"
 import { NavLink } from "react-router-dom";
 import ItemInCartModel from "../../Models/item-in-cart model";
 import UserModel from "../../Models/user-model";
@@ -66,8 +66,8 @@ const CartPage = () => {
                         )}
                   </Row>
 
-                  <NavLink to='/order'>
-                        <Button className="mt-2">
+                  <NavLink to={itemsInCart?.length === 0 ? null : '/order'} >
+                        <Button className="mt-2" disabled={itemsInCart?.length === 0}>
                               Continue To Order
                         </Button>
                   </NavLink>

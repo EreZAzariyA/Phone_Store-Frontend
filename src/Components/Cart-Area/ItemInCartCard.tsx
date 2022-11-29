@@ -51,10 +51,8 @@ const ItemInCartCard = (props: ItemInCartCardProps) => {
                         itemPlus.cartId = props.itemInCart.cartId;
                         itemPlus.phoneId = props.itemInCart.phoneId;
                         itemPlus.stock = stock + 1;
-                        itemPlus.totalPrice = props.itemInCart.stock * phone?.price;
-
-                        const g = await shoppingCartServices.updateStockInCart(itemPlus);
-                        console.log(g);
+                        itemPlus.totalPrice = (stock + 1) * phone?.price;
+                        await shoppingCartServices.updateStockInCart(itemPlus);
                         notifyService.success('updated....');
                   } catch (err: any) {
                         notifyService.error(err);
@@ -73,9 +71,7 @@ const ItemInCartCard = (props: ItemInCartCardProps) => {
                         itemPlus.phoneId = props.itemInCart.phoneId;
                         itemPlus.stock = stock - 1;
                         itemPlus.totalPrice = props.itemInCart.stock * phone?.price;
-
-                        const g = await shoppingCartServices.updateStockInCart(itemPlus);
-                        console.log(g);
+                        await shoppingCartServices.updateStockInCart(itemPlus);
                         notifyService.success('updated....');
                   } catch (err: any) {
                         notifyService.error(err);

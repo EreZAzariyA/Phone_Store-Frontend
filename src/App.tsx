@@ -18,6 +18,14 @@ import phonesServices from './Services/PhonesServices';
 import AddPhone from './Components/Phones-Area/AddPhone';
 import AboutPage from './Components/AboutArea/AboutPage';
 import OrderPage from './Components/Cart-Area/OrderPage';
+import { PayPalScriptProvider } from '@paypal/react-paypal-js';
+
+const initialOptions = {
+  "client-id": 'AQHfFUh7eN0RF70uWAcKJfsYUCjJEMHHTO7rkzAYPZLVYWAIG0aNYGfvd5bFgLibfRtYDRRdisI76fiL',
+  currency: "USD",
+  intent: "capture",
+  "data-client-token": "",
+};
 
 function App() {
   const [user, setUser] = useState<UserModel>();
@@ -55,44 +63,49 @@ function App() {
   });
 
 
+
   return (
-    <Container fluid>
-      <Row>
-        <Header user={user} />
-      </Row>
+    <PayPalScriptProvider options={{ "client-id": 'AQHfFUh7eN0RF70uWAcKJfsYUCjJEMHHTO7rkzAYPZLVYWAIG0aNYGfvd5bFgLibfRtYDRRdisI76fiL', currency: 'USD', vault: 'false' }}>
 
-      <Row>
-        <Routes>
-          <Route path='/' element={<HomePage brands={brands} phones={phones} />} />
-          <Route path='/brands' element={<BrandsPage />} />
-          <Route path='/brands/:brandId' element={<OneBrand />} />
-          <Route path='/brands' element={null} />
-          <Route path='/phone/:phoneId' element={<PhoneDetails />} />
-          <Route path='/cart' element={<CartPage />} />
-          <Route path='/order' element={<OrderPage />} />
-          <Route path='/about' element={<AboutPage />} />
+      <Container fluid>
+        <Row>
+          <Header user={user} />
+        </Row>
 
-          {!user &&
-            <>
-              <Route path='/auth/login' element={<Login />} />
-              <Route path='/auth/register' element={<Register />} />
-            </>
-          }
-          {/* Admin Panel */}
-          <Route path='/products/new' element={<AddPhone />} />
+        <Row>
+          <Routes>
+            <Route path='/' element={<HomePage brands={brands} phones={phones} />} />
+            <Route path='/brands' element={<BrandsPage />} />
+            <Route path='/brands/:brandId' element={<OneBrand />} />
+            <Route path='/brands' element={null} />
+            <Route path='/phone/:phoneId' element={<PhoneDetails />} />
+            <Route path='/cart' element={<CartPage />} />
+            <Route path='/order' element={<OrderPage />} />
+            <Route path='/about' element={<AboutPage />} />
 
-          <Route path='*' element={<Navigate to="/" />} />
-        </Routes>
+            {!user &&
+              <>
+                <Route path='/auth/login' element={<Login />} />
+                <Route path='/auth/register' element={<Register />} />
+              </>
+            }
+            {/* Admin Panel */}
+            <Route path='/products/new' element={<AddPhone />} />
 
-      </Row>
+            <Route path='*' element={<Navigate to="/" />} />
+          </Routes>
 
-      <Row as='footer' style={{ color: 'white' }}>
-        {/* <Footer /> */}
-        Footer
-      </Row>
+        </Row>
+
+        <Row as='footer' style={{ color: 'white' }}>
+          {/* <Footer /> */}
+          Footer
+        </Row>
 
 
-    </Container>
+      </Container>
+    </PayPalScriptProvider>
+
   );
 }
 

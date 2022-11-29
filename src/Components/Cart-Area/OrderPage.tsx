@@ -7,6 +7,7 @@ import ItemInCartModel from "../../Models/item-in-cart model";
 import OrderModel from "../../Models/order-model";
 import UserModel from "../../Models/user-model";
 import { authStore, guestsStore, shoppingCartStore, store } from "../../Redux/Store";
+import Paypal from "../../Services/PaypalButton";
 import { errStyle } from "../Auth-Area/Register";
 
 const colStyle: React.CSSProperties = {
@@ -16,9 +17,7 @@ const colStyle: React.CSSProperties = {
       margin: '5px'
 }
 
-
 const OrderPage = () => {
-
       const [user, setUser] = useState<UserModel>();
       const [isGuest, setIsGuest] = useState(false);
       const [totalPrice, setTotalPrice] = useState(0);
@@ -33,21 +32,27 @@ const OrderPage = () => {
                   setIsGuest(true);
             }
             const subscribe = authStore.subscribe(() => {
-                  const user = authStore.getState().user;
-                  if (user) {
-                        setUser(user);
-                  } else if (!user) {
+                  setUser(authStore.getState().user);
+                  if (!user) {
                         setIsGuest(true);
                   }
             });
             return () => subscribe();
       }, []);
 
+      const getTotalPrice = useCallback(() => {
+            let sum: number = 0;
+            itemsInCart?.forEach(item => {
+                  sum += item?.totalPrice
+            });
+            setTotalPrice(sum);
+      }, [itemsInCart]);
+
       const getUserItems = useCallback(() => {
             if (!user) {
                   const itemInGuestCart = guestsStore.getState().itemsInGuestCart;
                   setItemsInCart(itemInGuestCart);
-            } else {
+            } else if (user) {
                   const itemsInCart = shoppingCartStore.getState().itemsInCart;
                   setItemsInCart(itemsInCart);
             }
@@ -58,8 +63,9 @@ const OrderPage = () => {
             getUserItems();
             setValue('email', user ? user?.email : "");
             setValue('fullName', user ? user?.firstName + " " + user?.lastName : "");
+            getTotalPrice();
 
-      }, [getUser, getUserItems, itemsInCart, setValue, user]);
+      }, [getUser, getUserItems, itemsInCart, setValue, user, getTotalPrice]);
 
       const submit = (order: OrderModel) => {
 
@@ -72,9 +78,6 @@ const OrderPage = () => {
             return product;
       }
 
-      const orderConfirm = useCallback(() => {
-
-      }, []);
 
       return (
             <Container>
@@ -139,8 +142,8 @@ const OrderPage = () => {
                                                 </FloatingLabel>
                                           </Col>
                                     </Row>
-                                    <hr />
 
+                                    <hr />
                                     <Form.Text style={{ textAlign: 'justify' }}>
                                           <h6>
                                                 Shopping Details
@@ -148,7 +151,6 @@ const OrderPage = () => {
                                     </Form.Text>
 
                                     <Row>
-
                                           {/* Zip Code */}
                                           <Col>
                                                 <FloatingLabel
@@ -184,7 +186,6 @@ const OrderPage = () => {
                                                 </FloatingLabel>
                                           </Col>
 
-
                                           {/* Address */}
                                           <FloatingLabel
                                                 label={"Address"}
@@ -204,6 +205,38 @@ const OrderPage = () => {
                                           </FloatingLabel>
                                     </Row>
 
+                                    <hr />
+                                    <Form.Text style={{ textAlign: 'justify' }}>
+                                          <h6>
+                                                Payment-Method
+                                          </h6>
+                                    </Form.Text>
+
+                                    <Row>
+                                          <Form as='div'>
+
+                                                <Form.Check
+                                                      inline
+                                                      type="radio"
+                                                      label={"Credit-Card"}
+                                                      name={'card'}
+                                                />
+                                                <Form.Check
+                                                      inline
+                                                      type="radio"
+                                                      label={"PayPal"}
+                                                      name={'card'}
+                                                />
+                                                <Form.Check
+                                                      inline
+                                                      type="radio"
+                                                      label={"PayPal"}
+                                                      name={'card'}
+                                                />
+                                          </Form>
+
+                                          <Paypal />
+                                    </Row>
 
                                     <Button variant="success" type="submit" className="mt-3">Confirm</Button>
 
@@ -212,32 +245,31 @@ const OrderPage = () => {
 
                         {/* Products List */}
                         <Col md='4' lg='4' xl='4' style={colStyle}>
-                              <Form>
-                                    <h1>Summery</h1>
-                                    <br />
-                                    {itemsInCart === undefined && <Spinner animation="border" />}
-                                    {itemsInCart?.map(i =>
-                                          <Card key={i.phoneId} className='m-1'>
-                                                <Row className="flex-md-nowrap w-100">
-                                                      <Col md='5'>
-                                                            <Card.Img src={getProductByItemId(i?.phoneId)?.picture} width='100' alt='' />
-                                                      </Col>
-                                                      <Col md='6'>
-                                                            <Card.Title>
-                                                                  {getProductByItemId(i?.phoneId)?.name}
-                                                            </Card.Title>
-                                                            <Card.Text className="text-muted">
-                                                                  {'$ ' + numberWithCommas(getProductByItemId(i?.phoneId)?.price)}
-                                                            </Card.Text>
-                                                      </Col>
-                                                      <Col md='2'>
-                                                            <p>x{i?.stock}</p>
-                                                            <Form.Check type="checkbox" defaultChecked disabled />
-                                                      </Col>
-                                                </Row>
-                                          </Card>
-                                    )}
-                              </Form>
+                              <h1>Summery</h1>
+                              <br />
+                              {itemsInCart === undefined && <Spinner animation="border" />}
+                              {itemsInCart?.map(i =>
+                                    <Card key={i.phoneId} className='m-1'>
+                                          <Row className="flex-md-nowrap w-100">
+                                                <Col md='5'>
+                                                      <Card.Img src={getProductByItemId(i?.phoneId)?.picture} width='100' alt='' />
+                                                </Col>
+                                                <Col md='7'>
+                                                      <Card.Title>
+                                                            {getProductByItemId(i?.phoneId)?.name}
+                                                      </Card.Title>
+                                                      <Card.Text className="text-muted">
+                                                            {'$' + numberWithCommas(getProductByItemId(i?.phoneId)?.price) + ' x ' + i?.stock}
+                                                            <br />
+                                                            <span className="text-decoration-underline">
+                                                                  {'$' + numberWithCommas(getProductByItemId(i?.phoneId)?.price * i?.stock)}
+                                                            </span>
+                                                      </Card.Text>
+                                                </Col>
+                                          </Row>
+                                    </Card>
+
+                              )}
                               <Table variant="light" hover striped className="mt-2">
                                     <tbody>
                                           <tr>
@@ -245,12 +277,12 @@ const OrderPage = () => {
                                                       Total
                                                 </td>
                                                 <th>
-                                                      {totalPrice + '$'}
+                                                      {numberWithCommas(totalPrice + 50) + '$'}
                                                 </th>
                                           </tr>
                                           <tr>
                                                 <td>
-                                                      Shipping
+                                                      Shipping (Included)
                                                 </td>
                                                 <th>
                                                       50$
@@ -258,10 +290,10 @@ const OrderPage = () => {
                                           </tr>
                                           <tr>
                                                 <td>
-                                                      Vat (Included)
+                                                      Vat (Included 17%)
                                                 </td>
                                                 <th>
-                                                      Vat
+                                                      {numberWithCommas((17 / 100) * totalPrice) + '$'}
                                                 </th>
                                           </tr>
                                     </tbody>

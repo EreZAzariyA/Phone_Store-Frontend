@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { Button, Container, Nav, Row, Spinner } from "react-bootstrap"
+import { Button, Container, Row, Spinner } from "react-bootstrap"
 import { NavLink } from "react-router-dom";
 import ItemInCartModel from "../../Models/item-in-cart model";
 import UserModel from "../../Models/user-model";
@@ -46,20 +46,21 @@ const CartPage = () => {
       useEffect(() => {
             getUser()
             getItemsFromCart();
-
-      }, [getItemsFromCart, getUser]);
+      }, [getUser, getItemsFromCart]);
 
       return (
             <Container>
                   <h1>Your-Cart</h1>
-                  {itemsInCart?.length === 0 &&
-                        <h4>Cart Is Empty</h4>
-                  }
+                  {/* When items loaded */}
                   {itemsInCart === undefined &&
                         <Spinner animation="border" role="status" className="p-4 m-4 me-auto">
                               <span className="visually-hidden">Loading...</span>
-                        </Spinner>
-                  }
+                        </Spinner>}
+
+                  {/* If there is no items */}
+                  {itemsInCart?.length === 0 && <h4>Cart Is Empty</h4>}
+                  
+                  {/* Mapping the items */}
                   <Row className="m-auto justify-content-center">
                         {itemsInCart?.map(itemInCart =>
                               <ItemInCartCard key={itemInCart?.phoneId} itemInCart={itemInCart} />

@@ -28,6 +28,10 @@ const ItemInCartCard = (props: ItemInCartCardProps) => {
       }, [getPhoneByItemId, props.itemInCart]);
 
       const deleteFromCart = async () => {
+            const q = window.confirm("Are you sure?");
+            if (!q) {
+                  return;
+            }
             const user = authStore.getState().user;
             try {
                   if (user) {
@@ -35,7 +39,7 @@ const ItemInCartCard = (props: ItemInCartCardProps) => {
                   } else {
                         guestsStore.dispatch(removeItemFromGuestCartAction(props.itemInCart.phoneId));
                   }
-                  notifyService.success('Removed...')
+                  notifyService.error('Removed...');
             } catch (err: any) {
                   notifyService.error(err);
             }

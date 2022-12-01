@@ -8,6 +8,8 @@ import OrderModel from "../../Models/order-model";
 import UserModel from "../../Models/user-model";
 import { authStore, guestsStore, shoppingCartStore, store } from "../../Redux/Store";
 import { errStyle } from "../Auth-Area/Register";
+import CreditCard from "./CreditCard";
+import OrderConfirm from "./OrderConfirm";
 
 const colStyle: React.CSSProperties = {
       textAlign: 'center',
@@ -23,6 +25,20 @@ const OrderPage = () => {
       const [inCreditCard, setInCreditCard] = useState(false);
       const [itemsInCart, setItemsInCart] = useState<ItemInCartModel[]>();
       const { register, handleSubmit, formState, setValue } = useForm<OrderModel>();
+      const [show, setShow] = useState(false);
+      const [order, setOrder] = useState<OrderModel>();
+      const [cardHolderName, setCardHolderName] = useState<string>("");
+      const [cardNumber, setCardNumber] = useState<number>(0);
+      const [cardExpDate, setCardExpDate] = useState<number>(0);
+      const [cvc, setCvc] = useState<number>(0);
+
+      const handleClose = () => {
+            const q = window.confirm('Are you sure?');
+            if (q) {
+                  setShow(false)
+            }
+      };
+      const handleShow = () => setShow(true);;
 
       const getUser = useCallback(() => {
             const user = authStore.getState().user;
@@ -68,7 +84,8 @@ const OrderPage = () => {
       }, [getUser, getUserItems, itemsInCart, setValue, user, getTotalPrice]);
 
       const submit = (order: OrderModel) => {
-
+            setOrder(order);
+            handleShow();
             console.log(order);
       }
 
@@ -92,7 +109,7 @@ const OrderPage = () => {
                   {/* Check-out & Summery */}
                   <Row className="mt-2 p-3 flex-md-nowrap justify-content-center">
                         {/* Form */}
-                        <Col md='8' lg='8' xl='8' style={colStyle} >
+                        <Col md='8' lg='8' xl='8' style={colStyle}>
                               <Form onSubmit={handleSubmit(submit)}>
                                     <h1>CHECKOUT</h1>
 
@@ -102,6 +119,7 @@ const OrderPage = () => {
                                           </h6>
                                     </Form.Text>
 
+                                    {/* User-Details */}
                                     <Row>
                                           {/* Email */}
                                           <Col>
@@ -133,7 +151,10 @@ const OrderPage = () => {
                                                             {...register('fullName', {
                                                                   required: { value: true, message: "Full name is missing" },
                                                                   minLength: { value: 5, message: "Full name must be minimum 5 chars" },
-                                                                  maxLength: { value: 50, message: "Full name can't exceed 50 chars" }
+                                                                  maxLength: { value: 50, message: "Full name can't exceed 50 chars" },
+                                                                  onChange(event) {
+                                                                        setCardHolderName((event?.target as HTMLInputElement)?.value)
+                                                                  }
                                                             })} />
                                                       <span className="mb-2" style={errStyle}>
                                                             {formState.errors.fullName?.message}
@@ -149,13 +170,15 @@ const OrderPage = () => {
                                           </h6>
                                     </Form.Text>
 
+                                    {/* Shipping-Details */}
                                     <Row>
                                           {/* Zip Code */}
                                           <Col>
                                                 <FloatingLabel
                                                       label='Zip Code'>
                                                       <Form.Control
-                                                            type="number"
+                                                            type="tel"
+                                                            maxLength={5}
                                                             className={`form-control ${formState.errors.zipCode ? 'is-invalid' : ''}`}
                                                             {...register('zipCode', {
                                                                   required: { value: true, message: "Zip-code is missing" },
@@ -211,54 +234,64 @@ const OrderPage = () => {
                                           </h6>
                                     </Form.Text>
 
-                                    <Form.Check inline type="radio" label={"Credit-Card"} name={'card'} onChange={() => setInCreditCard(true)} />
+                                    {/* Payment method radio */}
+                                    <Row className="justify-content-center">
+                                          <Col sm='3'>
+                                                <Form.Check
+                                                      inline
+                                                      label={"Credit-Card"}
+                                                      type="radio"
+                                                      name={'card'}
+                                                      required
+                                                      onChange={() => setInCreditCard(true)}
+                                                />
+                                          </Col>
+                                          <Col sm='3'>
+                                                <Form.Check
+                                                      inline
+                                                      type="radio"
+                                                      label={"PayPal"}
+                                                      name={'card'}
+                                                      required
+                                                      onChange={() => setInCreditCard(false)}
+                                                />
+                                          </Col>
+                                    </Row>
 
-                                    <Form.Check inline type="radio" label={"PayPal"} name={'card'} onChange={() => setInCreditCard(false)} />
-
+                                    {/* Credit-Card details */}
                                     {inCreditCard === true &&
                                           <>
                                                 <Row>
                                                       <Col sm='6'>
-                                                            Card-Number
-                                                            <FloatingLabel
-                                                                  label={"XXXX-XXXX-XXXX-XXXX"}
-                                                                  className="mt-2"
-
-                                                            >
-                                                                  <Form.Control
-                                                                        id="creditCardNumberFields"
-                                                                        className={`form-control ${formState.errors?.paymentMethod?.creditCard?.cardNumber ? 'is-invalid' : ''} `}
-                                                                        type="tel"
-                                                                        maxLength={16}
-                                                                        {...register('paymentMethod.creditCard.cardNumber', {
-                                                                              required: { value: true, message: "Card number is missing" },
-                                                                              minLength: { value: 20, message: "Card number must be minimum 16 numbers" },
-                                                                              maxLength: { value: 20, message: "Card number can't exceed 16 numbers" }
-                                                                        })} />
-
-                                                                  <span className="mb-2" style={errStyle}>
-                                                                        {formState.errors.paymentMethod?.creditCard?.cardNumber?.message}
-                                                                  </span>
-                                                            </FloatingLabel>
+                                                            <CreditCard
+                                                                  name={cardHolderName}
+                                                                  number={cardNumber}
+                                                                  expDate={cardExpDate}
+                                                                  cvc={0} />
                                                       </Col>
-
                                                       <Col sm='6'>
-                                                            Exp. Date
                                                             <Row>
-                                                                  <Col sm='6'>
+
+                                                                  {/* Card number */}
+                                                                  <Col sm='12'>
+                                                                        Card-Number
                                                                         <FloatingLabel
-                                                                              label={"MM"}
+                                                                              label={"XXXX-XXXX-XXXX-XXXX"}
                                                                               className="mt-2"
                                                                         >
                                                                               <Form.Control
-                                                                                    id="creditCardNumberFields"
                                                                                     className={`form-control ${formState.errors?.paymentMethod?.creditCard?.cardNumber ? 'is-invalid' : ''} `}
                                                                                     type="tel"
-                                                                                    maxLength={4}
-                                                                                    {...register('paymentMethod.creditCard.expiredDate', {
+                                                                                    maxLength={16}
+                                                                                    {...register('paymentMethod.creditCard.cardNumber', {
                                                                                           required: { value: true, message: "Card number is missing" },
-                                                                                          minLength: { value: 20, message: "Card number must be minimum 16 numbers" },
-                                                                                          maxLength: { value: 20, message: "Card number can't exceed 16 numbers" }
+                                                                                          minLength: { value: 16, message: "Card number must be minimum 16 numbers" },
+                                                                                          maxLength: { value: 16, message: "Card number can't exceed 16 numbers" },
+                                                                                          onChange(event: SyntheticEvent) {
+                                                                                                const value = (event?.target as HTMLInputElement)?.value as any;
+                                                                                                setCardNumber(value);
+
+                                                                                          }
                                                                                     })} />
 
                                                                               <span className="mb-2" style={errStyle}>
@@ -266,39 +299,99 @@ const OrderPage = () => {
                                                                               </span>
                                                                         </FloatingLabel>
                                                                   </Col>
-                                                                  <Col sm='6'>
 
+                                                                  {/* Expire date */}
+                                                                  <Col sm='12'>
+                                                                        Exp. Date
+                                                                        <Row>
+                                                                              <Col sm='6'>
+                                                                                    <FloatingLabel
+                                                                                          label={"MM/YY"}
+                                                                                          className="mt-2"
+                                                                                    >
+                                                                                          <Form.Control
+                                                                                                className={`form-control ${formState.errors?.paymentMethod?.creditCard?.cardNumber ? 'is-invalid' : ''} `}
+                                                                                                type="number"
+                                                                                                maxLength={4}
+                                                                                                max={4}
+                                                                                                {...register('paymentMethod.creditCard.expiredDate.mm', {
+                                                                                                      required: { value: true, message: "Card expire date is missing" },
+                                                                                                      min: { value: 4, message: "Card expire date must be minimum 4 numbers" },
+                                                                                                      max: { value: 4, message: "Card expire date can't exceed 4 numbers" },
+                                                                                                      maxLength: { value: 4, message: 'sf' },
+                                                                                                      onChange(event: SyntheticEvent) {
+                                                                                                            const value = (event.target as HTMLInputElement).value as any;
+                                                                                                            setCardExpDate(value);
+                                                                                                      },
+                                                                                                })} />
 
-                                                                        <FloatingLabel
-                                                                              label={"YYYY"}
-                                                                              className="mt-2"
-                                                                        >
-                                                                              <Form.Control
-                                                                                    id="creditCardNumberFields"
-                                                                                    className={`form-control ${formState.errors?.paymentMethod?.creditCard?.cardNumber ? 'is-invalid' : ''} `}
-                                                                                    type="tel"
-                                                                                    maxLength={4}
-                                                                                    {...register('paymentMethod.creditCard.expiredDate', {
-                                                                                          required: { value: true, message: "Card number is missing" },
-                                                                                          minLength: { value: 20, message: "Card number must be minimum 16 numbers" },
-                                                                                          maxLength: { value: 20, message: "Card number can't exceed 16 numbers" }
-                                                                                    })} />
+                                                                                          <span className="mb-2" style={errStyle}>
+                                                                                                {formState.errors.paymentMethod?.creditCard?.expiredDate?.mm?.message}
+                                                                                          </span>
+                                                                                    </FloatingLabel>
+                                                                              </Col>
+                                                                              {/* Month */}
+                                                                              {/* <Col sm='6'>
+                                                                                    <FloatingLabel
+                                                                                          label={"MM"}
+                                                                                          className="mt-2"
+                                                                                    >
+                                                                                          <Form.Control
+                                                                                                className={`form-control ${formState.errors?.paymentMethod?.creditCard?.cardNumber ? 'is-invalid' : ''} `}
+                                                                                                type="number"
+                                                                                                maxLength={2}
+                                                                                                max={12}
+                                                                                                min={1}
+                                                                                                {...register('paymentMethod.creditCard.expiredDate.mm', {
+                                                                                                      required: { value: true, message: "Card expire date(MM) is missing" },
+                                                                                                      min: { value: 1, message: "Card expire date(MM) must be minimum 1 numbers" },
+                                                                                                      max: { value: 12, message: "Card expire date(MM) can't exceed 12th month" }
+                                                                                                })} />
 
-                                                                              <span className="mb-2" style={errStyle}>
-                                                                                    {formState.errors.paymentMethod?.creditCard?.cardNumber?.message}
-                                                                              </span>
-                                                                        </FloatingLabel>
+                                                                                          <span className="mb-2" style={errStyle}>
+                                                                                                {formState.errors.paymentMethod?.creditCard?.expiredDate?.mm?.message}
+                                                                                          </span>
+                                                                                    </FloatingLabel>
+                                                                              </Col> */}
+                                                                              {/* Year */}
+                                                                              {/* <Col sm='6'>
+                                                                                    <FloatingLabel
+                                                                                          label={"YYYY"}
+                                                                                          className="mt-2"
+                                                                                    >
+                                                                                          <Form.Control
+                                                                                                className={`form-control ${formState.errors?.paymentMethod?.creditCard?.expiredDate?.yyyy ? 'is-invalid' : ''} `}
+                                                                                                type="number"
+                                                                                                maxLength={4}
+                                                                                                max={2030}
+                                                                                                min={2022}
+                                                                                                {...register('paymentMethod.creditCard.expiredDate.yyyy', {
+                                                                                                      required: { value: true, message: "Card expire date(YYYY) is missing" },
+                                                                                                      min: { value: 4, message: "Card expire date(YYYY) must be minimum to the current year" },
+                                                                                                      max: { value: 2030, message: "Card expire date(YYYY) can't exceed 2030" },
+                                                                                                      onChange(event: SyntheticEvent) {
+                                                                                                            const value = (event?.target as HTMLInputElement)?.value as any;
+                                                                                                            setCardNumber(value);
+
+                                                                                                      }
+                                                                                                })} />
+
+                                                                                          <span className="mb-2" style={errStyle}>
+                                                                                                {formState.errors.paymentMethod?.creditCard?.expiredDate?.yyyy?.message}
+                                                                                          </span>
+                                                                                    </FloatingLabel>
+                                                                              </Col> */}
+                                                                        </Row>
                                                                   </Col>
                                                             </Row>
                                                       </Col>
+
                                                 </Row>
 
-
                                           </>
-
                                     }
-                                    <Button variant="success" type="submit" className="mt-3 mb-2">Confirm</Button>
 
+                                    <Button variant="success" type="submit" className="mt-3 mb-2">Confirm</Button>
                               </Form>
                         </Col>
 
@@ -360,6 +453,8 @@ const OrderPage = () => {
                               </Table>
                         </Col>
                   </Row>
+
+                  <OrderConfirm show={show} handleClose={handleClose} order={order} />
             </Container>
       )
 }

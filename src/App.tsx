@@ -19,13 +19,8 @@ import AddPhone from './Components/Phones-Area/AddPhone';
 import AboutPage from './Components/AboutArea/AboutPage';
 import OrderPage from './Components/Cart-Area/OrderPage';
 import { PayPalScriptProvider } from '@paypal/react-paypal-js';
+import 'react-credit-cards/es/styles-compiled.css';
 
-const initialOptions = {
-  "client-id": 'AQHfFUh7eN0RF70uWAcKJfsYUCjJEMHHTO7rkzAYPZLVYWAIG0aNYGfvd5bFgLibfRtYDRRdisI76fiL',
-  currency: "USD",
-  intent: "capture",
-  "data-client-token": "",
-};
 
 function App() {
   const [user, setUser] = useState<UserModel>();

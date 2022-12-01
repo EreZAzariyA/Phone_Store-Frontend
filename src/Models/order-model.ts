@@ -10,9 +10,11 @@ interface paymentMethodInterface {
       paypal?: {
             unknown: string;
       }
+
+
 }
 
-class OrderModel{
+class OrderModel {
       public email: string;
       public fullName: string;
       public zipCode: number;

@@ -17,7 +17,6 @@
     "notyf": "^3.10.0",
     "react": "^18.2.0",
     "react-bootstrap": "^2.5.0",
-    "react-credit-cards": "^0.8.3",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.36.0",
     "react-icons": "^4.4.0",
@@ -52,7 +51,8 @@
     ]
   },
   "devDependencies": {
-    "@types/react-credit-cards": "^0.8.1", 
-    "@types/react-star-ratings": "^2.3.0"
+    "@types/react-credit-cards": "^0.8.1",
+    "@types/react-star-ratings": "^2.3.0",
+    "react-credit-cards": "^0.8.3"
   }
 }

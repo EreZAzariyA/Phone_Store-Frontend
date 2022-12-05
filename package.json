@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@paypal/react-paypal-js": "^7.8.1",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -28,7 +27,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build npm install @types/react-credit-cards --force --save-dev",
+    "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -50,8 +49,7 @@
       "last 1 safari version"
     ]
   },
-  "devDependencies": {
-    "@types/react-credit-cards": "^0.8.1",
-    "@types/react-star-ratings": "^2.3.0"
+  "peerDependencies": {
+    "@types/react-credit-cards": "^0.8.1"
   }
 }

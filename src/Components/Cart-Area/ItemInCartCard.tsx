@@ -84,7 +84,7 @@ const ItemInCartCard = (props: ItemInCartCardProps) => {
       }
 
       return (
-            <Card className="m-1 w-auto" hidden={!phone}>
+            <Card className="m-1 p-1 w-auto text-decoration-none mb-3" hidden={!phone}>
                   <Button
                         size='sm'
                         variant="danger"
@@ -93,54 +93,49 @@ const ItemInCartCard = (props: ItemInCartCardProps) => {
                         -
                   </Button>
 
-                  <Card.Img variant="top" src={phone?.picture} height='150' alt='' />
+                  <Card.Img variant="top" src={phone?.picture} height={200} alt='' />
 
-                  <Card.Title>
-                        {phone?.name}
-                  </Card.Title>
-
-                  <Card.Text className="text-muted" as={Container}>
-                        <Row>
-                              <Col xs='8'>
-                                    {'$' + numberWithCommas(phone?.price)}
-                              </Col>
-
-                              <Col xs='4'>
-                                    x1
-                              </Col>
-                        </Row>
-
-                        {stock >= 2 &&
-                              <Row className="text-decoration-underline">
-                                    <Col xs='8'>
-                                          <p>
+                  <Card.Body>
+                        <Card.Title>
+                              {phone?.name}
+                        </Card.Title>
+                        <Card.Text className="text-muted mt-3 text-decoration-underline" as={Row}>
+                              {stock === 1 ?
+                                    <>
+                                          <Col xs='8'>
+                                                {'$' + numberWithCommas(phone?.price)}
+                                          </Col>
+                                          <Col xs='4'>
+                                                x1
+                                          </Col>
+                                    </>
+                                    :
+                                    <>
+                                          <Col xs='8'>
                                                 {'$' + numberWithCommas(stock * phone?.price)}
-                                          </p>
-                                    </Col>
-                                    <Col xs='4'>
-                                          <p>
+                                          </Col>
+                                          <Col xs='4'>
                                                 {'x' + stock}
-                                          </p>
-                                    </Col>
-                              </Row>
-                        }
-                  </Card.Text>
+                                          </Col>
+                                    </>
+                              }
+                        </Card.Text>
 
-                  <InputGroup size="sm" className="m-auto mt-2 mb-2 w-50">
+                        <InputGroup size="sm" className="justify-content-center mt-3">
+                              <Button variant="dark" onClick={plus} disabled={stock === 9}>
+                                    +
+                              </Button>
 
-                        <Button variant="dark" onClick={plus} disabled={stock === 9}>
-                              +
-                        </Button>
+                              <InputGroup.Text>
+                                    {stock}
+                              </InputGroup.Text>
 
-                        <InputGroup.Text>
-                              {stock}
-                        </InputGroup.Text>
-
-                        <Button variant="dark" onClick={minus} disabled={stock === 1}>
-                              -
-                        </Button>
-                  </InputGroup>
-            </Card>
+                              <Button variant="dark" onClick={minus} disabled={stock === 1}>
+                                    -
+                              </Button>
+                        </InputGroup>
+                  </Card.Body >
+            </Card >
       )
 }
 

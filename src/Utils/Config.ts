@@ -16,6 +16,11 @@ abstract class Config {
                   add_item_to_cart: "",
                   update: "",
                   remove: ""
+            },
+            orders: {
+                  newOrder: "",
+                  getUsersOrders: "",
+                  getGuestsOrder: ""
             }
       }
 
@@ -37,6 +42,11 @@ abstract class Config {
                         add_item_to_cart: baseUrl + "shopping-carts/add-item-to-cart/",
                         update: baseUrl + "shopping-carts/update-item-in-cart/",
                         remove: baseUrl + "shopping-carts/delete-from-cart/"
+                  },
+                  orders: {
+                        newOrder: baseUrl + "orders/",
+                        getUsersOrders: baseUrl + "orders/users-orders/:userEmail",
+                        getGuestsOrder: baseUrl + "orders/guests-orders/"
                   }
             }
       }

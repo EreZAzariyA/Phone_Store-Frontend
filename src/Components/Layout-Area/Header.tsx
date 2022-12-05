@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button, Col, Container, Dropdown, Nav, Navbar, Offcanvas, Row } from "react-bootstrap";
+import { Badge, Button, Col, Container, Dropdown, Nav, Navbar, Offcanvas, Row } from "react-bootstrap";
 import { FiShoppingCart } from "react-icons/fi";
 import { BiUser } from "react-icons/bi";
 import { NavLink } from "react-router-dom";
@@ -12,6 +12,7 @@ import { authServices } from "../../Services/AuthServices";
 import notifyService from "../../Services/NotifyService";
 import AdminPanel from "./AdminPanel";
 import { AiOutlineSetting } from "react-icons/ai";
+import OrderModel from "../../Models/order-model";
 
 export const logout = async () => {
       await authServices.logout();
@@ -20,6 +21,7 @@ export const logout = async () => {
 
 interface HeaderProps {
       user: UserModel;
+      orders: OrderModel[];
 }
 const Header = (props: HeaderProps) => {
       const [show, setShow] = useState(false);
@@ -84,6 +86,9 @@ const Header = (props: HeaderProps) => {
                                           &&
                                           <Nav.Link as={NavLink} to="/cart" className="m-1">
                                                 <FiShoppingCart color="white" size='25px' />
+                                                {props.orders &&
+                                                      <Badge bg="danger" className="m-1">{props.orders?.length}</Badge>
+                                                }
                                           </Nav.Link>
                                     }
                                     {props.user?.roleId === Role.Admin &&

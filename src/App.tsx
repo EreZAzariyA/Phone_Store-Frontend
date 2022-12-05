@@ -19,8 +19,8 @@ import AddPhone from './Components/Phones-Area/AddPhone';
 import AboutPage from './Components/AboutArea/AboutPage';
 import OrderPage from './Components/Cart-Area/OrderPage';
 import OrderModel from './Models/order-model';
-import 'react-credit-cards/es/styles-compiled.css';
 import ordersServices from './Services/OrdersServices';
+import 'react-credit-cards/es/styles-compiled.css';
 
 
 function App() {

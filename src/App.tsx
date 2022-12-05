@@ -76,8 +76,6 @@ function App() {
 
 
   return (
-
-
     <Container fluid>
       <Row>
         <Header user={user} orders={orders} />

@@ -2,20 +2,14 @@ import OrderModel from "../Models/order-model";
 
 
 export class OrdersState {
-      userOrders: OrderModel[] = null;
-      guestOrders: OrderModel[] = null;
+      orders: OrderModel[] = [];
 
-      // constructor() {
-      //       const orders = localStorage.getItem('orders');
-      //       if (orders) {
-      //             this.userOrders = JSON.parse(userOrders);
-      //       } else {
-      //             const guestsOrders = localStorage.getItem('guest-orders');
-      //             if (guestsOrders) {
-      //                   this.guestOrders = JSON.parse(guestsOrders);
-      //             }
-      //       }
-      // }
+      constructor() {
+            const orders = localStorage.getItem('orders');
+            if (orders) {
+                  this.orders = JSON.parse(orders);
+            }
+      }
 }
 
 export enum OrdersActionType {
@@ -47,13 +41,13 @@ export function ordersReducer(currentOrdersState: OrdersState = new OrdersState(
 
       switch (action.type) {
             case OrdersActionType.FetchUserOrders:
-                  newOrdersState.userOrders = action.payload;
-                  localStorage.setItem('orders', JSON.stringify(newOrdersState.userOrders));
+                  newOrdersState.orders = action.payload;
+                  localStorage.setItem('orders', JSON.stringify(newOrdersState.orders));
                   break;
 
             case OrdersActionType.FetchGuestOrders:
-                  newOrdersState.guestOrders = action.payload;
-                  localStorage.setItem('orders', JSON.stringify(newOrdersState.guestOrders));
+                  newOrdersState.orders = action.payload;
+                  localStorage.setItem('orders', JSON.stringify(newOrdersState.orders));
                   break;
 
             // case OrdersActionType.setNewOrder:
@@ -62,8 +56,9 @@ export function ordersReducer(currentOrdersState: OrdersState = new OrdersState(
             //       break;
 
             case OrdersActionType.RemoveUserOrders:
-                  newOrdersState.userOrders = null;
+                  newOrdersState.orders = [];
                   localStorage.removeItem('user-orders');
+                  break;
 
       }
 

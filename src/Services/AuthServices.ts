@@ -3,16 +3,14 @@ import jwtDecode from "jwt-decode";
 import CredentialsModel from "../Models/credentials-model";
 import UserModel from "../Models/user-model";
 import { loginAction, logoutAction, registerAction } from "../Redux/AuthState";
-import { fetchUserOrdersAction, removeUserOrders } from "../Redux/OrdersState";
+import { removeUserOrders } from "../Redux/OrdersState";
 import { fetchItemsFromShoppingCartAction, fetchShoppingCartAction, shoppingCartLogoutAction } from "../Redux/ShoppingCartState";
 import { authStore, ordersStore, shoppingCartStore } from "../Redux/Store";
 import config from "../Utils/Config";
-import ordersServices from "./OrdersServices";
 import shoppingCartServices from "./ShoppingCartsServices";
 
 
 class AuthServices {
-
 
       public async register(user: UserModel): Promise<void> {
             const response = await axios.post<string>(config.urls.auth.register, user);
@@ -45,10 +43,7 @@ class AuthServices {
             } else {
                   const itemsInCart = await shoppingCartServices.getItemsFromCartByCartId(shoppingCart.cartId);
                   shoppingCartStore.dispatch(fetchItemsFromShoppingCartAction(itemsInCart));
-
-                  const orders = await ordersServices.getUserOrders(user?.email);
-                  ordersStore.dispatch(fetchUserOrdersAction(orders));
-            }
+           }
 
       }
 

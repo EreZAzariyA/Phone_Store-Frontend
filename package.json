@@ -52,7 +52,7 @@
     ]
   },
   "devDependencies": {
-    "@types/react-credit-cards": "^0.8.1",
+    "@types/react-credit-cards": "^0.8.1", 
     "@types/react-star-ratings": "^2.3.0"
   }
 }

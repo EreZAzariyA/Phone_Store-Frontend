@@ -5,7 +5,7 @@ export class GuestsState {
       public itemsInGuestCart: ItemInCartModel[] = [];
 
       constructor() {
-            const itemsInGuestCart = localStorage.getItem("itemsInGuestCart");
+            const itemsInGuestCart = localStorage.getItem("items_in_guest_cart");
             if (itemsInGuestCart) {
                   this.itemsInGuestCart = JSON.parse(itemsInGuestCart);
             }
@@ -44,20 +44,20 @@ export function guestsReducer(currentGuestsState: GuestsState = new GuestsState(
 
             case GuestsActionType.AddItemIntoGuestCartAction:
                   newGuestsState.itemsInGuestCart.push(action.payload);
-                  localStorage.setItem('itemsInGuestCart', JSON.stringify(newGuestsState.itemsInGuestCart));
+                  localStorage.setItem('items_in_guest_cart', JSON.stringify(newGuestsState.itemsInGuestCart));
                   break;
 
             case GuestsActionType.UpdateItemInCart:
                   const newListToUpdate = newGuestsState.itemsInGuestCart.filter(item => item?.phoneId !== action.payload.phoneId);
                   newListToUpdate.push(action.payload);
 
-                  localStorage.setItem('itemsInGuestCart', JSON.stringify(newListToUpdate));
+                  localStorage.setItem('items_in_guest_cart', JSON.stringify(newListToUpdate));
                   break;
 
             case GuestsActionType.RemoveItemFromGuestCart:
                   const newList = newGuestsState.itemsInGuestCart.filter(i => i.phoneId !== action.payload);
                   newGuestsState.itemsInGuestCart = newList;
-                  localStorage.setItem('itemsInGuestCart', JSON.stringify(newGuestsState.itemsInGuestCart));
+                  localStorage.setItem('items_in_guest_cart', JSON.stringify(newGuestsState.itemsInGuestCart));
                   break;
       }
 

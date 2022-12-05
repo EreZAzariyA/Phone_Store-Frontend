@@ -12,7 +12,7 @@ import PhoneDetails from './Components/Phones-Area/PhonePage';
 import { BrandModel } from './Models/brand-model';
 import { PhoneModel } from './Models/phone-model';
 import UserModel from './Models/user-model';
-import { authStore, ordersStore, store } from './Redux/Store';
+import { authStore, store } from './Redux/Store';
 import brandsServices from './Services/BrandsServices';
 import phonesServices from './Services/PhonesServices';
 import AddPhone from './Components/Phones-Area/AddPhone';
@@ -58,33 +58,21 @@ function App() {
   }, []);
 
   const getOrders = useCallback(async () => {
-    if (!user) {
-      const guestOrders = await ordersServices.getGuestsOrders();
-      setOrders(guestOrders);
-    } else {
-      const userOrders = await ordersServices.getUserOrders(user?.email);
-      setOrders(userOrders);
+    const user = authStore.getState().user;
+    if (user) {
+      const orders = await ordersServices.getUserOrders(user?.email);
+      setOrders(orders);
+    } else if (!user) {
+      const orders = await ordersServices.getGuestsOrders();
+      setOrders(orders);
     }
-
-    const subscribe = ordersStore.subscribe(() => {
-      if (!user) {
-        const guestOrders = ordersStore.getState().guestOrders;
-        setOrders(guestOrders);
-      } else {
-        const userOrders = ordersStore.getState().userOrders;
-        setOrders(userOrders);
-      }
-    });
-
-    return () => subscribe();
-  }, [user]);
+  }, []);
 
   useEffect(() => {
     getUser();
     getData();
     getOrders();
   });
-
 
 
   return (

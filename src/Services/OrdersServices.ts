@@ -23,9 +23,9 @@ class OrdersServices {
 
       async getGuestsOrders(): Promise<OrderModel[]> {
             const response = await axios.get<OrderModel[]>(config.urls.orders.getGuestsOrder);
-            const orders = response.data;
-            ordersStore.dispatch(fetchGuestsOrdersAction(orders));
-            return orders;
+            const guestOrders = response.data;
+            ordersStore.dispatch(fetchGuestsOrdersAction(guestOrders));
+            return guestOrders;
       }
 
 }

@@ -51,7 +51,7 @@
     ]
   },
   "devDependencies": {
-    "@types/react-credit-cards": "^0.8.1 --legacy-peer-deps",
+    "@types/react-credit-cards": "^0.8.1",
     "@types/react-star-ratings": "^2.3.0",
     "react-credit-cards": "^0.8.3"
   }

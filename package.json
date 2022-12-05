@@ -28,7 +28,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "react-scripts build npm install @types/react-credit-cards --legacy-peer-deps --save-dev",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -52,7 +52,6 @@
   },
   "devDependencies": {
     "@types/react-credit-cards": "^0.8.1",
-    "@types/react-star-ratings": "^2.3.0",
-    "react-credit-cards": "^0.8.3"
+    "@types/react-star-ratings": "^2.3.0"
   }
 }

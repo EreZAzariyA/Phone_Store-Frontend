@@ -21,6 +21,7 @@ import OrderPage from './Components/Cart-Area/OrderPage';
 import OrderModel from './Models/order-model';
 import ordersServices from './Services/OrdersServices';
 import 'react-credit-cards/es/styles-compiled.css';
+import 'react-credit-cards/es/styles-compiled.scss';
 
 
 function App() {

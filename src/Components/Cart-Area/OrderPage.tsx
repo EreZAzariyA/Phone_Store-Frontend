@@ -79,7 +79,7 @@ const OrderPage = () => {
             getUser();
             getUserItems();
             setValue('email', user ? user?.email : null);
-            setValue('fullName', user ? user?.firstName + " " + user?.lastName : null);
+            setValue('fullName', user ? user?.firstName + " " + user?.lastName : "");
             getTotalPrice();
       }, [getUser, getUserItems, itemsInCart, setValue, user, getTotalPrice]);
 
@@ -340,7 +340,7 @@ const OrderPage = () => {
                                                             </FloatingLabel>
                                                       </Col>
 
-                                                      {/* Expire date */}
+                                                      {/* Security number*/}
                                                       <Col xs='6'>
                                                             <Form.Text>
                                                                   CVC

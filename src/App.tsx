@@ -20,7 +20,7 @@ import AboutPage from './Components/AboutArea/AboutPage';
 import OrderPage from './Components/Cart-Area/OrderPage';
 import OrderModel from './Models/order-model';
 import ordersServices from './Services/OrdersServices';
-import 'react-credit-cards/lib/styles-compiled.css';
+import 'react-credit-cards/es/styles-compiled.css';
 
 
 function App() {

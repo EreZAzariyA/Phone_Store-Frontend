@@ -1,4 +1,3 @@
-import { SyntheticEvent, useState } from "react";
 import Cards from "react-credit-cards";
 
 interface CreditCardProps {

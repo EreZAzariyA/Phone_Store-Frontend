@@ -1,4 +1,4 @@
-import Cards from "react-credit-cards";
+import Cards from "@repay/react-credit-card";
 
 interface CreditCardProps {
       name: string;
@@ -9,7 +9,7 @@ interface CreditCardProps {
 
 const CreditCard = (props: CreditCardProps) => {
       return (
-            <Cards cvc={props?.cvc} expiry={props?.expDate} name={props?.name} number={props?.number} />
+            <Cards cvc={props?.cvc.toString()} expiration={props?.expDate?.toString()} name={props?.name} number={props?.number?.toString()} />
       )
 }
 

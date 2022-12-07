@@ -9,7 +9,7 @@ import UserModel from "../../Models/user-model";
 import { authStore, guestsStore, shoppingCartStore, store } from "../../Redux/Store";
 import { errStyle } from "../Auth-Area/Register";
 import OrderConfirm from "./OrderConfirmModal";
-import Cards from "react-credit-cards";
+import Cards from "@repay/react-credit-card";
 
 const colStyle: React.CSSProperties = {
       textAlign: 'center',
@@ -277,9 +277,10 @@ const OrderPage = () => {
                                                       <Col>
                                                             <Cards
                                                                   name={cardHolderName || ""}
-                                                                  number={cardNumber}
-                                                                  expiry={cardExpDate}
-                                                                  cvc={cvc} />
+                                                                  number={cardNumber?.toString()}
+                                                                  expiration={cardExpDate?.toString()}
+                                                                  cvc={cvc?.toString()}
+                                                            />
                                                       </Col>
                                                 </Row>
                                                 <Row>

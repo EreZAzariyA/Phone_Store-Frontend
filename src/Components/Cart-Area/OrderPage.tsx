@@ -9,6 +9,7 @@ import UserModel from "../../Models/user-model";
 import { authStore, guestsStore, shoppingCartStore, store } from "../../Redux/Store";
 import { errStyle } from "../Auth-Area/Register";
 import OrderConfirm from "./OrderConfirmModal";
+import Cards from "react-credit-cards";
 
 const colStyle: React.CSSProperties = {
       textAlign: 'center',
@@ -95,6 +96,7 @@ const OrderPage = () => {
             const product = products?.find(p => p.phoneId === itemId);
             return product;
       }
+
 
       return (
             <Container>
@@ -272,13 +274,13 @@ const OrderPage = () => {
                                     {inCreditCard === true &&
                                           <>
                                                 <Row>
-                                                      {/* <Col>
-                                                            <CreditCard
+                                                      <Col>
+                                                            <Cards
                                                                   name={cardHolderName || ""}
                                                                   number={cardNumber}
-                                                                  expDate={cardExpDate}
+                                                                  expiry={cardExpDate}
                                                                   cvc={cvc} />
-                                                      </Col> */}
+                                                      </Col>
                                                 </Row>
                                                 <Row>
 

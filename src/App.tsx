@@ -98,9 +98,7 @@ function App() {
             </>
           }
           {/* Admin Panel */}
-          {user?.roleId === Role.Admin &&
-            <Route path='/products/new' element={<AddPhone />} />
-          }
+          <Route path='/products/new' element={<AddPhone />} />
 
           <Route path='*' element={<Navigate to="/" />} />
         </Routes>

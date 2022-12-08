@@ -8,7 +8,6 @@ import OrderModel from "../../Models/order-model";
 import UserModel from "../../Models/user-model";
 import { authStore, guestsStore, shoppingCartStore, store } from "../../Redux/Store";
 import { errStyle } from "../Auth-Area/Register";
-import CreditCard from "./CreditCard";
 import OrderConfirm from "./OrderConfirmModal";
 
 const colStyle: React.CSSProperties = {
@@ -17,8 +16,6 @@ const colStyle: React.CSSProperties = {
       borderRadius: '10px',
       margin: '5px'
 }
-
-
 
 const OrderPage = () => {
       const [user, setUser] = useState<UserModel>();
@@ -98,7 +95,6 @@ const OrderPage = () => {
             const product = products?.find(p => p.phoneId === itemId);
             return product;
       }
-
 
       return (
             <Container>

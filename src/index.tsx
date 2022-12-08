@@ -7,14 +7,10 @@ import { ThemeProvider } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { store } from './Redux/Store';
 import App from './App';
-import interceptorsService from './Services/InterceptorsService';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
-
-interceptorsService.createInterceptors();
-
 root.render(
   <React.StrictMode>
     <BrowserRouter>

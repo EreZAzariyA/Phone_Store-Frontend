@@ -20,7 +20,6 @@ import AboutPage from './Components/AboutArea/AboutPage';
 import OrderPage from './Components/Cart-Area/OrderPage';
 import OrderModel from './Models/order-model';
 import ordersServices from './Services/OrdersServices';
-import Role from './Models/role';
 
 
 function App() {

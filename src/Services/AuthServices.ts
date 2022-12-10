@@ -7,6 +7,7 @@ import { removeUserOrders } from "../Redux/OrdersState";
 import { fetchItemsFromShoppingCartAction, fetchShoppingCartAction, shoppingCartLogoutAction } from "../Redux/ShoppingCartState";
 import { authStore, ordersStore, shoppingCartStore } from "../Redux/Store";
 import config from "../Utils/Config";
+import ordersServices from "./OrdersServices";
 import shoppingCartServices from "./ShoppingCartsServices";
 
 
@@ -41,9 +42,10 @@ class AuthServices {
             if (!shoppingCart) {
                   console.log("You still don`t have a shopping cart. Create one to start shopping.");
             } else {
-                  const itemsInCart = await shoppingCartServices.getItemsFromCartByCartId(shoppingCart.cartId);
-                  shoppingCartStore.dispatch(fetchItemsFromShoppingCartAction(itemsInCart));
-           }
+                  await shoppingCartServices.getItemsFromCartByCartId(shoppingCart.cartId);
+
+                  await ordersServices.getUserOrders(user?.email);
+            }
 
       }
 

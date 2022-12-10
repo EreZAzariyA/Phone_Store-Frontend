@@ -1,7 +1,7 @@
 import { Button, FloatingLabel, Form } from "react-bootstrap"
 import { useForm } from "react-hook-form";
 import { AiOutlineArrowRight } from "react-icons/ai";
-import { NavLink, useNavigate } from "react-router-dom";
+import {NavLink, useNavigate } from "react-router-dom";
 import CredentialsModel from "../../Models/credentials-model";
 import { authServices } from "../../Services/AuthServices";
 import notifyService from "../../Services/NotifyService";

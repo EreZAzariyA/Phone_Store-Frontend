@@ -139,7 +139,7 @@ const PhonePage = () => {
                               {/* Image-carousel */}
                               <Col sm='6' xs='12'>
                                     {/* When image still lode from the server*/}
-                                    {phone?.picture === undefined && <Image src={undefineImage} width='70%' alt={"undefine image"} />
+                                    {phone?.picture === undefined && <Image src={undefineImage} width='60%' alt={"undefine image"} />
                                     }
 
                                     {/* When there is an image */}
@@ -147,12 +147,12 @@ const PhonePage = () => {
                                           <Carousel variant="dark">
                                                 <Carousel.Item>
                                                       {
-                                                            <Image src={phone?.picture} width='100%' alt={`${phone?.name + 'ImageURL'}`} />
+                                                            <Image src={phone?.picture} width='70%' alt={`${phone?.name + 'ImageURL'}`} />
                                                       }
                                                 </Carousel.Item>
                                                 <Carousel.Item>
                                                       {
-                                                            <Image src={phone?.picture} width='100%' alt={`${phone?.name + 'ImageURL'}`} />
+                                                            <Image src={phone?.picture} width='70%' alt={`${phone?.name + 'ImageURL'}`} />
                                                       }
                                                 </Carousel.Item>
                                           </Carousel>

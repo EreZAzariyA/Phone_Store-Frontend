@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { Button, Card, Col, Container, InputGroup, Row } from "react-bootstrap"
+import { Button, Card, Col, InputGroup, Row } from "react-bootstrap"
 import { numberWithCommas } from "../..";
 import ItemInCartModel from "../../Models/item-in-cart model"
 import { PhoneModel } from "../../Models/phone-model";
@@ -84,7 +84,7 @@ const ItemInCartCard = (props: ItemInCartCardProps) => {
       }
 
       return (
-            <Card className="m-1 p-1 w-auto text-decoration-none mb-3" hidden={!phone}>
+            <Card className="m-auto text-decoration-none mb-3" style={{ width: '15rem' }} hidden={!phone}>
                   <Button
                         size='sm'
                         variant="danger"
@@ -93,7 +93,7 @@ const ItemInCartCard = (props: ItemInCartCardProps) => {
                         -
                   </Button>
 
-                  <Card.Img variant="top" src={phone?.picture} height={200} alt='' />
+                  <Card.Img variant="top" src={phone?.picture} alt='' />
 
                   <Card.Body>
                         <Card.Title>

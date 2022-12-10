@@ -1,14 +1,17 @@
 import { useCallback, useEffect, useState } from "react";
-import { Button, Container, Row, Spinner } from "react-bootstrap"
+import { Button, Col, Container, Row, Spinner, Toast } from "react-bootstrap"
 import { NavLink } from "react-router-dom";
 import ItemInCartModel from "../../Models/item-in-cart model";
+import OrderModel from "../../Models/order-model";
 import UserModel from "../../Models/user-model";
-import { authStore, guestsStore, shoppingCartStore } from "../../Redux/Store";
+import { authStore, guestsStore, ordersStore, shoppingCartStore } from "../../Redux/Store";
+import LastOrder from "../OrdersArea/LastOrderToast";
 import ItemInCartCard from "./ItemInCartCard";
 
 const CartPage = () => {
       const [user, setUser] = useState<UserModel>();
       const [itemsInCart, setItemsInCart] = useState<ItemInCartModel[]>();
+      const [orders, setOrders] = useState<OrderModel[]>();
 
       // Get user OR guest items:
       const getItemsFromCart = useCallback(() => {
@@ -43,10 +46,24 @@ const CartPage = () => {
             return () => unsubscribe();
       }, []);
 
+      const getOrders = useCallback(async () => {
+            const orders = ordersStore.getState().orders;
+            setOrders(orders);
+            const subscribe = ordersStore.subscribe(() => {
+                  const orders = ordersStore.getState().orders;
+                  setOrders(orders);
+            });
+            return () => subscribe();
+      }, []);
+
+
+
+
       useEffect(() => {
-            getUser()
+            getUser();
             getItemsFromCart();
-      }, [getUser, getItemsFromCart]);
+            getOrders();
+      }, [getUser, getItemsFromCart, getOrders]);
 
       return (
             <Container>
@@ -59,12 +76,27 @@ const CartPage = () => {
 
                   {/* If there is no items */}
                   {itemsInCart?.length === 0 && <h4>Cart Is Empty</h4>}
-                  
+
                   {/* Mapping the items */}
                   <Row className="m-auto justify-content-center">
-                        {itemsInCart?.map(itemInCart =>
-                              <ItemInCartCard key={itemInCart?.phoneId} itemInCart={itemInCart} />
-                        )}
+                        {orders?.length > 0 &&
+                              <Col md='4'>
+                                    <>
+                                          <h5>You have {orders?.length} order`s on the way</h5>
+                                          {orders?.map(order =>
+                                                <LastOrder key={order?.orderId} order={order} />
+                                          )}
+                                    </>
+                              </Col>
+                        }
+
+                        <Col className="m-auto">
+                              <Row>
+                                    {itemsInCart?.map(itemInCart =>
+                                          <ItemInCartCard key={itemInCart?.phoneId} itemInCart={itemInCart} />
+                                    )}
+                              </Row>
+                        </Col>
                   </Row>
 
                   <NavLink to={itemsInCart?.length === 0 ? null : '/order'} >
@@ -73,7 +105,7 @@ const CartPage = () => {
                         </Button>
                   </NavLink>
 
-            </Container>
+            </Container >
       )
 }
 

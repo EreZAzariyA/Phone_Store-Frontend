@@ -12,12 +12,12 @@ import PhoneDetails from './Components/Phones-Area/PhonePage';
 import { BrandModel } from './Models/brand-model';
 import { PhoneModel } from './Models/phone-model';
 import UserModel from './Models/user-model';
-import { authStore, store } from './Redux/Store';
+import { authStore, ordersStore, store } from './Redux/Store';
 import brandsServices from './Services/BrandsServices';
 import phonesServices from './Services/PhonesServices';
 import AddPhone from './Components/Phones-Area/AddPhone';
 import AboutPage from './Components/AboutArea/AboutPage';
-import OrderPage from './Components/Cart-Area/OrderPage';
+import OrderPage from './Components/OrdersArea/OrderPage';
 import OrderModel from './Models/order-model';
 import ordersServices from './Services/OrdersServices';
 
@@ -27,7 +27,6 @@ function App() {
   const [phones, setPhones] = useState<PhoneModel[]>();
   const [brands, setBrands] = useState<BrandModel[]>();
   const [orders, setOrders] = useState<OrderModel[]>();
-
 
   const getData = useCallback(async () => {
     const phones = await phonesServices.getAllPhones();
@@ -47,31 +46,35 @@ function App() {
   const getUser = useCallback(() => {
     const user = authStore.getState().user;
     setUser(user);
+
     const unsubscribe = authStore.subscribe(() => {
       const user = authStore.getState().user;
       setUser(user);
     });
-    return () => {
-      unsubscribe();
-    }
+    return () => unsubscribe();
   }, []);
 
-  const getOrders = useCallback(async () => {
-    const user = authStore.getState().user;
+  const getOrders = useCallback(async (user: UserModel) => {
     if (user) {
       const orders = await ordersServices.getUserOrders(user?.email);
       setOrders(orders);
-    } else if (!user) {
+    } else if (user === null) {
       const orders = await ordersServices.getGuestsOrders();
       setOrders(orders);
     }
+
+    const subscribe = ordersStore.subscribe(() => {
+      const orders = ordersStore.getState().orders;
+      setOrders(orders);
+    });
+    return () => subscribe();
   }, []);
 
   useEffect(() => {
     getUser();
     getData();
-    getOrders();
-  });
+    getOrders(user);
+  }, [getUser, getData, getOrders, user]);
 
 
   return (

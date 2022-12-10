@@ -14,6 +14,7 @@ import AdminPanel from "./AdminPanel";
 import { AiOutlineSetting } from "react-icons/ai";
 import OrderModel from "../../Models/order-model";
 
+
 export const logout = async () => {
       await authServices.logout();
       notifyService.error("Your out...");
@@ -60,6 +61,9 @@ const Header = (props: HeaderProps) => {
                                     &&
                                     <Nav.Link as={NavLink} to="/cart">
                                           <FiShoppingCart color="white" className="mt-2" size='25px' />
+                                          {props.orders?.length > 0 &&
+                                                <Badge bg="danger" className="m-1">{props.orders?.length}</Badge>
+                                          }
                                     </Nav.Link>
                               }
                               {props.user?.roleId === Role.Admin &&
@@ -86,7 +90,7 @@ const Header = (props: HeaderProps) => {
                                           &&
                                           <Nav.Link as={NavLink} to="/cart" className="m-1">
                                                 <FiShoppingCart color="white" size='25px' />
-                                                {props.orders &&
+                                                {props.orders?.length > 0 &&
                                                       <Badge bg="danger" className="m-1">{props.orders?.length}</Badge>
                                                 }
                                           </Nav.Link>

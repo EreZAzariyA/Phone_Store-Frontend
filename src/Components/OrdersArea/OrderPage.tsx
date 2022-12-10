@@ -1,14 +1,16 @@
-import { SyntheticEvent, useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Button, Card, Col, Container, FloatingLabel, Form, Row, Spinner, Table } from "react-bootstrap";
 import { useForm } from "react-hook-form";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { numberWithCommas } from "../..";
 import ItemInCartModel from "../../Models/item-in-cart model";
 import OrderModel from "../../Models/order-model";
 import UserModel from "../../Models/user-model";
 import { authStore, guestsStore, shoppingCartStore, store } from "../../Redux/Store";
+import notifyService from "../../Services/NotifyService";
+import ordersServices from "../../Services/OrdersServices";
 import { errStyle } from "../Auth-Area/Register";
-import OrderConfirm from "./OrderConfirmModal";
+import OrderConfirm from "../Cart-Area/OrderConfirmModal";
 
 const colStyle: React.CSSProperties = {
       textAlign: 'center',
@@ -26,10 +28,11 @@ const OrderPage = () => {
       const { register, handleSubmit, formState, setValue } = useForm<OrderModel>();
       const [show, setShow] = useState(false);
       const [order, setOrder] = useState<OrderModel>();
-      const [cardHolderName, setCardHolderName] = useState<string>("");
-      const [cardNumber, setCardNumber] = useState<number>(0);
-      const [cardExpDate, setCardExpDate] = useState<number>(0);
-      const [cvc, setCvc] = useState<number>(0);
+      const navigate = useNavigate();
+      // const [cardHolderName, setCardHolderName] = useState<string>("");
+      // const [cardNumber, setCardNumber] = useState<number>(0);
+      // const [cardExpDate, setCardExpDate] = useState<number>(0);
+      // const [cvc, setCvc] = useState<number>(0);
 
 
       const handleClose = () => {
@@ -84,10 +87,15 @@ const OrderPage = () => {
 
 
 
-      const submit = (order: OrderModel) => {
+      const submit = async (order: OrderModel) => {
             setOrder(order);
             handleShow();
-            console.log(order);
+            try {
+                  await ordersServices.setNewOrder(order);
+                  navigate('/');
+            } catch (err: any) {
+                  notifyService.error("Some error");
+            }
       }
 
       const getProductByItemId = (itemId: string) => {
@@ -157,11 +165,9 @@ const OrderPage = () => {
                                                             {...register('fullName', {
                                                                   required: { value: true, message: "Full name is missing" },
                                                                   minLength: { value: 5, message: "Full name must be minimum 5 chars" },
-                                                                  maxLength: { value: 20, message: "Full name can't exceed 20 chars" },
-                                                                  pattern: { value: /^[a-zA-Z]+ [a-zA-Z]+$/, message: 'Invalid name' },
-                                                                  onChange(event) {
-                                                                        setCardHolderName((event?.target as HTMLInputElement)?.value)
-                                                                  }
+                                                                  maxLength: { value: 20, message: "Full name can't exceed 20 chars" }                                                                  // onChange(event) {
+                                                                  //       setCardHolderName((event?.target as HTMLInputElement)?.value)
+                                                                  // }
                                                             })} />
                                                       <span className="mb-2" style={errStyle}>
                                                             {formState.errors.fullName?.message}
@@ -299,10 +305,10 @@ const OrderPage = () => {
                                                                               required: { value: true, message: "Card number is missing" },
                                                                               minLength: { value: 16, message: "Card number must be minimum 16 numbers" },
                                                                               maxLength: { value: 16, message: "Card number can't exceed 16 numbers" },
-                                                                              onChange(event: SyntheticEvent) {
-                                                                                    const value = (event?.target as HTMLInputElement)?.value as any;
-                                                                                    setCardNumber(value);
-                                                                              }
+                                                                              // onChange(event: SyntheticEvent) {
+                                                                              //       const value = (event?.target as HTMLInputElement)?.value as any;
+                                                                              //       setCardNumber(value);
+                                                                              // }
                                                                         })} />
 
                                                                   <span className="mb-2" style={errStyle}>
@@ -327,10 +333,10 @@ const OrderPage = () => {
                                                                               required: { value: true, message: "Card expire date is missing" },
                                                                               maxLength: { value: 30, message: 'Error' },
                                                                               minLength: { value: 5, message: 'Expire date can`t be lass then 4 digits' },
-                                                                              onChange(event: SyntheticEvent) {
-                                                                                    const value = +(event.target as HTMLInputElement).value?.replace('-', '').replace('20', '');
-                                                                                    setCardExpDate(value);
-                                                                              }
+                                                                              // onChange(event: SyntheticEvent) {
+                                                                              //       const value = +(event.target as HTMLInputElement).value?.replace('-', '').replace('20', '');
+                                                                              //       setCardExpDate(value);
+                                                                              // }
                                                                         })} />
 
                                                                   <span className="mb-2" style={errStyle}>
@@ -356,10 +362,10 @@ const OrderPage = () => {
                                                                               required: { value: true, message: "Security number is missing" },
                                                                               maxLength: { value: 3, message: 'Security number can`t exceed 3 digits' },
                                                                               minLength: { value: 3, message: 'Security number must be 3 digits' },
-                                                                              onChange(event: SyntheticEvent) {
-                                                                                    const value = +(event.target as HTMLInputElement).value?.replace('-', '').replace('20', '');
-                                                                                    setCvc(value);
-                                                                              }
+                                                                              // onChange(event: SyntheticEvent) {
+                                                                              //       const value = +(event.target as HTMLInputElement).value?.replace('-', '').replace('20', '');
+                                                                              //       setCvc(value);
+                                                                              // }
                                                                         })} />
 
                                                                   <span className="mb-2" style={errStyle}>

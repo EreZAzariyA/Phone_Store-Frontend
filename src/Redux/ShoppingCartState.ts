@@ -91,7 +91,7 @@ export function shoppingCartReducer(currentShoppingCartState: ShoppingCartState 
                   localStorage.removeItem("shopping_cart");
                   localStorage.removeItem("items_in_cart");
                   newCartState.shoppingCart = null;
-                  newCartState.itemsInCart = null;
+                  newCartState.itemsInCart = [];
       }
 
 

@@ -17,7 +17,8 @@ function HomePage(props: HomePageProps): JSX.Element {
 
     return (
         <Container style={{ fontFamily: 'Crimson Pro, serif' }}>
-            <Row style={{ backgroundColor: 'black', borderRadius: '0 0 1rem 1rem' }}>
+            
+            <Row style={{ backgroundColor: 'black', borderRadius: '0 0 10px 10px' }}>
                 <Carousel variant="light">
                     <Carousel.Item>
                         <Image height='300' src={img} alt='' className='w-100' />

@@ -19,14 +19,11 @@ class ShoppingCartsServices {
 
       // Get items from cart by shopping-cart-id:
       public async getItemsFromCartByCartId(shoppingCartId: string): Promise<ItemInCartModel[]> {
-            if (shoppingCartStore.getState().itemsInCart?.length === 0 || !shoppingCartStore.getState().itemsInCart) {
-                  const response = await axios.get<ItemInCartModel[]>(config.urls.shopping_carts.items_in_cart + shoppingCartId);
-                  const itemsInCart = response.data;
-                  shoppingCartStore.dispatch(fetchItemsFromShoppingCartAction(itemsInCart));
-                  return itemsInCart;
-            }
-            const itemsInCart = shoppingCartStore.getState().itemsInCart;
+            const response = await axios.get<ItemInCartModel[]>(config.urls.shopping_carts.items_in_cart + shoppingCartId);
+            const itemsInCart = response.data;
+            shoppingCartStore.dispatch(fetchItemsFromShoppingCartAction(itemsInCart));
             return itemsInCart;
+
       }
 
       // Add item into shopping-cart:

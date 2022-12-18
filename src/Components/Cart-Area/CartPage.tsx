@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { Button, Col, Container, Row, Spinner, Toast } from "react-bootstrap"
+import { Button, Col, Container, Row, Spinner } from "react-bootstrap"
 import { NavLink } from "react-router-dom";
 import ItemInCartModel from "../../Models/item-in-cart model";
 import OrderModel from "../../Models/order-model";
@@ -72,8 +72,9 @@ const CartPage = () => {
                   {itemsInCart === undefined &&
                         <Spinner animation="border" role="status" className="p-4 m-4 me-auto">
                               <span className="visually-hidden">Loading...</span>
-                        </Spinner>}
-
+                        </Spinner>
+                  }
+                  
                   {/* If there is no items */}
                   {itemsInCart?.length === 0 && <h4>Cart Is Empty</h4>}
 
@@ -99,13 +100,13 @@ const CartPage = () => {
                         </Col>
                   </Row>
 
-                  <NavLink to={itemsInCart?.length === 0 ? null : '/order'} >
+                  <NavLink to={itemsInCart?.length === 0 ? null : '/order'}>
                         <Button className="mt-2" disabled={itemsInCart?.length === 0}>
                               Continue To Order
                         </Button>
                   </NavLink>
 
-            </Container >
+            </Container>
       )
 }
 

@@ -45,7 +45,7 @@ abstract class Config {
                   },
                   orders: {
                         newOrder: baseUrl + "orders/",
-                        getUsersOrders: baseUrl + "orders/users-orders/:userEmail",
+                        getUsersOrders: baseUrl + "orders/users-orders/",
                         getGuestsOrder: baseUrl + "orders/guests-orders/"
                   }
             }

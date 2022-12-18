@@ -63,8 +63,8 @@ export function shoppingCartReducer(currentShoppingCartState: ShoppingCartState 
                   break;
 
             case ShoppingCartActionType.FetchItemsFromCart:
-                  localStorage.setItem("items_in_cart", JSON.stringify(newCartState.itemsInCart));
                   newCartState.itemsInCart = action.payload;
+                  localStorage.setItem("items_in_cart", JSON.stringify(newCartState.itemsInCart));
                   break;
 
             case ShoppingCartActionType.AddItemToCart:

@@ -10,7 +10,7 @@ import { authStore, guestsStore, shoppingCartStore, store } from "../../Redux/St
 import notifyService from "../../Services/NotifyService";
 import ordersServices from "../../Services/OrdersServices";
 import { errStyle } from "../Auth-Area/Register";
-import OrderConfirm from "../Cart-Area/OrderConfirmModal";
+import OrderConfirm from "./OrderConfirmModal";
 
 const colStyle: React.CSSProperties = {
       textAlign: 'center',
@@ -22,26 +22,23 @@ const colStyle: React.CSSProperties = {
 const OrderPage = () => {
       const [user, setUser] = useState<UserModel>();
       const [isGuest, setIsGuest] = useState(false);
+      const [order, setOrder] = useState<OrderModel>();
       const [totalPrice, setTotalPrice] = useState(0);
       const [inCreditCard, setInCreditCard] = useState(false);
       const [itemsInCart, setItemsInCart] = useState<ItemInCartModel[]>();
       const { register, handleSubmit, formState, setValue } = useForm<OrderModel>();
       const [show, setShow] = useState(false);
-      const [order, setOrder] = useState<OrderModel>();
       const navigate = useNavigate();
-      // const [cardHolderName, setCardHolderName] = useState<string>("");
-      // const [cardNumber, setCardNumber] = useState<number>(0);
-      // const [cardExpDate, setCardExpDate] = useState<number>(0);
-      // const [cvc, setCvc] = useState<number>(0);
 
 
       const handleClose = () => {
             const q = window.confirm('Are you sure?');
             if (q) {
-                  setShow(false)
+                  setShow(false);
+                  navigate('/');
             }
       };
-      const handleShow = () => setShow(true);;
+      const handleShow = () => setShow(true);
 
       const getUser = useCallback(() => {
             const user = authStore.getState().user;
@@ -80,19 +77,21 @@ const OrderPage = () => {
       useEffect(() => {
             getUser();
             getUserItems();
-            setValue('email', user ? user?.email : null);
-            setValue('fullName', user ? user?.firstName + " " + user?.lastName : "");
             getTotalPrice();
+            if (user) {
+                  setValue('email', user.email);
+                  setValue('fullName', user.firstName + " " + user.lastName);
+            }
       }, [getUser, getUserItems, itemsInCart, setValue, user, getTotalPrice]);
 
 
 
-      const submit = async (order: OrderModel) => {
-            setOrder(order);
+      const submit = async (orderToSet: OrderModel) => {
             handleShow();
             try {
-                  await ordersServices.setNewOrder(order);
-                  navigate('/');
+                  const order = await ordersServices.setNewOrder(orderToSet);
+                  setOrder(order);
+                  notifyService.success("Ok");
             } catch (err: any) {
                   notifyService.error("Some error");
             }
@@ -122,10 +121,8 @@ const OrderPage = () => {
                               <Form onSubmit={handleSubmit(submit)}>
                                     <h1>CHECKOUT</h1>
 
-                                    <Form.Text style={{ textAlign: 'justify' }}>
-                                          <h6>
-                                                User Details
-                                          </h6>
+                                    <Form.Text style={{ textAlign: 'justify' }} as='h6'>
+                                          User Details
                                     </Form.Text>
 
                                     {/* User-Details */}
@@ -137,6 +134,7 @@ const OrderPage = () => {
                                                             className={`form-control ${formState.errors.email ? 'is-invalid' : ''}`}
                                                             type="email"
                                                             disabled={!isGuest}
+                                                            autoFocus
                                                             {...register('email', {
                                                                   required: { value: true, message: "Email is missing" },
                                                                   minLength: { value: 3, message: "Email must be minimum 3 chars" },
@@ -165,9 +163,7 @@ const OrderPage = () => {
                                                             {...register('fullName', {
                                                                   required: { value: true, message: "Full name is missing" },
                                                                   minLength: { value: 5, message: "Full name must be minimum 5 chars" },
-                                                                  maxLength: { value: 20, message: "Full name can't exceed 20 chars" }                                                                  // onChange(event) {
-                                                                  //       setCardHolderName((event?.target as HTMLInputElement)?.value)
-                                                                  // }
+                                                                  maxLength: { value: 20, message: "Full name can't exceed 20 chars" }
                                                             })} />
                                                       <span className="mb-2" style={errStyle}>
                                                             {formState.errors.fullName?.message}
@@ -177,10 +173,8 @@ const OrderPage = () => {
                                     </Row>
 
                                     <hr />
-                                    <Form.Text style={{ textAlign: 'justify' }}>
-                                          <h6>
-                                                Shopping Details
-                                          </h6>
+                                    <Form.Text style={{ textAlign: 'justify' }} as='h6'>
+                                          Shopping Details
                                     </Form.Text>
 
                                     {/* Shipping-Details */}
@@ -244,10 +238,8 @@ const OrderPage = () => {
                                     </Row>
 
                                     <hr />
-                                    <Form.Text style={{ textAlign: 'justify' }}>
-                                          <h6>
-                                                Payment-Method
-                                          </h6>
+                                    <Form.Text style={{ textAlign: 'justify' }} as='h6'>
+                                          Payment-Method
                                     </Form.Text>
 
                                     {/* Payment method radio */}
@@ -276,107 +268,84 @@ const OrderPage = () => {
 
                                     {/* Credit-Card details */}
                                     {inCreditCard === true &&
-                                          <>
-                                                <Row>
-                                                      {/* <Col>
-                                                            <CreditCard
-                                                                  name={cardHolderName || ""}
-                                                                  number={cardNumber}
-                                                                  expDate={cardExpDate}
-                                                                  cvc={cvc} />
-                                                      </Col> */}
-                                                </Row>
-                                                <Row>
+                                          <Row>
+                                                {/* Card number */}
+                                                <Col sm='12' className="mt-2">
+                                                      <Form.Text>
+                                                            Card-Number
+                                                      </Form.Text>
+                                                      <FloatingLabel
+                                                            label={"XXXX-XXXX-XXXX-XXXX"}
+                                                            className="mt-2"
+                                                      >
+                                                            <Form.Control
+                                                                  autoFocus
+                                                                  className={`form-control ${formState.errors.paymentMethod?.creditCard?.cardNumber ? 'is-invalid' : ''} `}
+                                                                  type="tel"
 
-                                                      {/* Card number */}
-                                                      <Col sm='12' className="mt-2">
-                                                            <Form.Text>
-                                                                  Card-Number
-                                                            </Form.Text>
-                                                            <FloatingLabel
-                                                                  label={"XXXX-XXXX-XXXX-XXXX"}
-                                                                  className="mt-2"
-                                                            >
-                                                                  <Form.Control
-                                                                        className={`form-control ${formState.errors.paymentMethod?.creditCard?.cardNumber ? 'is-invalid' : ''} `}
-                                                                        type="tel"
-                                                                        maxLength={16}
-                                                                        {...register('paymentMethod.creditCard.cardNumber', {
-                                                                              required: { value: true, message: "Card number is missing" },
-                                                                              minLength: { value: 16, message: "Card number must be minimum 16 numbers" },
-                                                                              maxLength: { value: 16, message: "Card number can't exceed 16 numbers" },
-                                                                              // onChange(event: SyntheticEvent) {
-                                                                              //       const value = (event?.target as HTMLInputElement)?.value as any;
-                                                                              //       setCardNumber(value);
-                                                                              // }
-                                                                        })} />
+                                                                  maxLength={16}
+                                                                  {...register('paymentMethod.creditCard.cardNumber', {
+                                                                        required: { value: true, message: "Card number is missing" },
+                                                                        minLength: { value: 16, message: "Card number must be minimum 16 numbers" },
+                                                                        maxLength: { value: 16, message: "Card number can't exceed 16 numbers" }
+                                                                  })} />
 
-                                                                  <span className="mb-2" style={errStyle}>
-                                                                        {formState.errors.paymentMethod?.creditCard?.cardNumber?.message}
-                                                                  </span>
-                                                            </FloatingLabel>
-                                                      </Col>
+                                                            <span className="mb-2" style={errStyle}>
+                                                                  {formState.errors.paymentMethod?.creditCard?.cardNumber?.message}
+                                                            </span>
+                                                      </FloatingLabel>
+                                                </Col>
 
-                                                      {/* Expire date */}
-                                                      <Col xs='6'>
-                                                            <Form.Text>
-                                                                  Exp. Date
-                                                            </Form.Text>
-                                                            <FloatingLabel
-                                                                  label={"MM/YY"}
-                                                                  className="mt-2"
-                                                            >
-                                                                  <Form.Control
-                                                                        className={`form-control ${formState.errors.paymentMethod?.creditCard?.expiredDate ? 'is-invalid' : ''} `}
-                                                                        type="month"
-                                                                        {...register('paymentMethod.creditCard.expiredDate', {
-                                                                              required: { value: true, message: "Card expire date is missing" },
-                                                                              maxLength: { value: 30, message: 'Error' },
-                                                                              minLength: { value: 5, message: 'Expire date can`t be lass then 4 digits' },
-                                                                              // onChange(event: SyntheticEvent) {
-                                                                              //       const value = +(event.target as HTMLInputElement).value?.replace('-', '').replace('20', '');
-                                                                              //       setCardExpDate(value);
-                                                                              // }
-                                                                        })} />
+                                                {/* Expire date */}
+                                                <Col xs='6'>
+                                                      <Form.Text>
+                                                            Exp. Date
+                                                      </Form.Text>
+                                                      <FloatingLabel
+                                                            label={"MM/YY"}
+                                                            className="mt-2"
+                                                      >
+                                                            <Form.Control
+                                                                  className={`form-control ${formState.errors.paymentMethod?.creditCard?.expiredDate ? 'is-invalid' : ''} `}
+                                                                  type="month"
+                                                                  {...register('paymentMethod.creditCard.expiredDate', {
+                                                                        required: { value: true, message: "Card expire date is missing" },
+                                                                        maxLength: { value: 30, message: 'Error' },
+                                                                        minLength: { value: 5, message: 'Expire date can`t be lass then 4 digits' }
+                                                                  })} />
 
-                                                                  <span className="mb-2" style={errStyle}>
-                                                                        {formState.errors.paymentMethod?.creditCard?.expiredDate?.message}
-                                                                  </span>
-                                                            </FloatingLabel>
-                                                      </Col>
+                                                            <span className="mb-2" style={errStyle}>
+                                                                  {formState.errors.paymentMethod?.creditCard?.expiredDate?.message}
+                                                            </span>
+                                                      </FloatingLabel>
+                                                </Col>
 
-                                                      {/* Security number*/}
-                                                      <Col xs='6'>
-                                                            <Form.Text>
-                                                                  CVC
-                                                            </Form.Text>
-                                                            <FloatingLabel
-                                                                  label={'cvc'}
-                                                                  className="mt-2"
-                                                            >
-                                                                  <Form.Control
-                                                                        className={`form-control ${formState.errors.paymentMethod?.creditCard?.securityNumber ? 'is-invalid' : ''} `}
-                                                                        type="tel"
-                                                                        maxLength={3}
-                                                                        {...register('paymentMethod.creditCard.securityNumber', {
-                                                                              required: { value: true, message: "Security number is missing" },
-                                                                              maxLength: { value: 3, message: 'Security number can`t exceed 3 digits' },
-                                                                              minLength: { value: 3, message: 'Security number must be 3 digits' },
-                                                                              // onChange(event: SyntheticEvent) {
-                                                                              //       const value = +(event.target as HTMLInputElement).value?.replace('-', '').replace('20', '');
-                                                                              //       setCvc(value);
-                                                                              // }
-                                                                        })} />
+                                                {/* Security number*/}
+                                                <Col xs='6'>
+                                                      <Form.Text>
+                                                            CVC
+                                                      </Form.Text>
+                                                      <FloatingLabel
+                                                            label={'cvc'}
+                                                            className="mt-2"
+                                                      >
+                                                            <Form.Control
+                                                                  className={`form-control ${formState.errors.paymentMethod?.creditCard?.securityNumber ? 'is-invalid' : ''} `}
+                                                                  type="tel"
+                                                                  maxLength={3}
+                                                                  {...register('paymentMethod.creditCard.securityNumber', {
+                                                                        required: { value: true, message: "Security number is missing" },
+                                                                        maxLength: { value: 3, message: 'Security number can`t exceed 3 digits' },
+                                                                        minLength: { value: 3, message: 'Security number must be 3 digits' }
+                                                                  })} />
 
-                                                                  <span className="mb-2" style={errStyle}>
-                                                                        {formState.errors.paymentMethod?.creditCard?.securityNumber?.message}
+                                                            <span className="mb-2" style={errStyle}>
+                                                                  {formState.errors.paymentMethod?.creditCard?.securityNumber?.message}
 
-                                                                  </span>
-                                                            </FloatingLabel>
-                                                      </Col>
-                                                </Row>
-
-                                          </>
+                                                            </span>
+                                                      </FloatingLabel>
+                                                </Col>
+                                          </Row>
                                     }
 
                                     <Button variant="success" type="submit" className="mt-3 mb-2">Confirm Order</Button>

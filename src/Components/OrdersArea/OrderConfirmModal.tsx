@@ -2,7 +2,6 @@ import { useCallback, useState } from "react";
 import { Modal, Spinner } from "react-bootstrap";
 import OrderModel from "../../Models/order-model"
 import notifyService from "../../Services/NotifyService";
-import ordersServices from "../../Services/OrdersServices";
 
 
 interface OrderConfirmProps {
@@ -12,23 +11,16 @@ interface OrderConfirmProps {
 }
 
 const OrderConfirm = (props: OrderConfirmProps) => {
-
       const [success, setSuccess] = useState<boolean>();
-      const [order, setOrder] = useState<OrderModel>();
 
       const orderConfirm = useCallback(async () => {
             try {
-                  const order = await ordersServices.setNewOrder(props.order);
-                  setOrder(order);
                   setSuccess(true);
-
             } catch (err: any) {
                   setSuccess(false);
                   notifyService.error(err);
             }
-      }, [props.order]);
-
-
+      }, []);
 
       return (
             <Modal show={props.show} onShow={orderConfirm} onHide={props.handleClose} centered>
@@ -55,7 +47,7 @@ const OrderConfirm = (props: OrderConfirmProps) => {
                                     <p>
                                           Your order will be get to you at:
                                           <br />
-                                          {new Date(order?.receivingDeliveryDate).toDateString()}
+                                          {new Date(props.order?.receivingDeliveryDate).toDateString()}
                                     </p>
                               </>
 

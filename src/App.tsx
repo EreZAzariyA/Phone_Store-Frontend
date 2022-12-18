@@ -22,6 +22,7 @@ import OrderModel from './Models/order-model';
 import ordersServices from './Services/OrdersServices';
 
 
+
 function App() {
   const [user, setUser] = useState<UserModel>();
   const [phones, setPhones] = useState<PhoneModel[]>();
@@ -43,6 +44,24 @@ function App() {
     return () => subscribe();
   }, []);
 
+  const getOrders = useCallback(async () => {
+    if (user?.email) {
+      const orders = await ordersServices.getUserOrders(user?.email);
+      setOrders(orders);
+    } else if (user === null) {
+      const orders = await ordersServices.getGuestsOrders();
+      setOrders(orders);
+
+    }
+
+    const subscribe = ordersStore.subscribe(() => {
+      const orders = ordersStore.getState().orders;
+      setOrders(orders);
+      console.log("++++++");
+    });
+    return () => subscribe();
+  }, [user]);
+
   const getUser = useCallback(() => {
     const user = authStore.getState().user;
     setUser(user);
@@ -54,27 +73,12 @@ function App() {
     return () => unsubscribe();
   }, []);
 
-  const getOrders = useCallback(async (user: UserModel) => {
-    if (user) {
-      const orders = await ordersServices.getUserOrders(user?.email);
-      setOrders(orders);
-    } else if (user === null) {
-      const orders = await ordersServices.getGuestsOrders();
-      setOrders(orders);
-    }
-
-    const subscribe = ordersStore.subscribe(() => {
-      const orders = ordersStore.getState().orders;
-      setOrders(orders);
-    });
-    return () => subscribe();
-  }, []);
-
   useEffect(() => {
     getUser();
     getData();
-    getOrders(user);
-  }, [getUser, getData, getOrders, user]);
+    getOrders();
+
+  }, [getUser, getData, user, getOrders]);
 
 
   return (

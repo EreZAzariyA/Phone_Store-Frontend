@@ -27,8 +27,9 @@ class OrdersServices {
             ordersStore.dispatch(fetchGuestsOrdersAction(guestOrders));
             return guestOrders;
       }
-
 }
+
+
 
 const ordersServices = new OrdersServices();
 export default ordersServices;

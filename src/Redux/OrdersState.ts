@@ -55,10 +55,10 @@ export function ordersReducer(currentOrdersState: OrdersState = new OrdersState(
                   localStorage.setItem('orders', JSON.stringify(newOrdersState.orders));
                   break;
 
-            case OrdersActionType.RemoveUserOrders:
-                  newOrdersState.orders = [];
-                  localStorage.removeItem('orders');
-                  break;
+            // case OrdersActionType.RemoveUserOrders:
+            //       newOrdersState.orders = [];
+            //       localStorage.removeItem('orders');
+            //       break;
 
       }
 

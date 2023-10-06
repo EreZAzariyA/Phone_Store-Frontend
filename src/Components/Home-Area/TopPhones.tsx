@@ -6,6 +6,7 @@ import { PhoneModel } from "../../Models/phone-model";
 import { Button, Card, Container, Row } from "react-bootstrap";
 import undefineImage from "../../Assets/undefine-card-img.jpg";
 import { message } from "antd";
+import { toUpperCase } from "../../Utils/helpers";
 
 const TopThreeProducts = () => {
   const [topThree, setTopThree] = useState<PhoneModel[]>([]);
@@ -48,11 +49,11 @@ const TopThreeProducts = () => {
           >
             <Card.Img variant="top" height='200' src={getProductById(item._id)?.picture} />
             <Card.Title style={{ color: "black" }}>
-              {getProductById(item._id)?.name}
+              {toUpperCase(getProductById(item._id)?.name)}
             </Card.Title>
 
             <Button size='sm' variant="dark" className="w-auto m-auto mt-1 mb-1">
-              Go see
+              {toUpperCase('go see')}
             </Button>
           </Card>
           ))

@@ -1,7 +1,6 @@
 import { BrandModel } from "../../Models/brand-model";
-import notifyService from "../../Services/NotifyService";
 import brandsServices from "../../Services/BrandsServices";
-import { Button, Checkbox, Form, Input, message } from "antd";
+import { Button, Checkbox, Col, Form, Input, Row, Space, message } from "antd";
 
 interface AddBrandProps {
   brand?: BrandModel,
@@ -31,25 +30,34 @@ const AddBrand = (props: AddBrandProps) => {
       message.success(msg);
       props.onBack();
     } catch (err: any) {
-      notifyService.error(err);
+      message.error(err);
     }
   };
 
   return (
-    <Form onFinish={submit} initialValues={initialValues}>
-      <Button type="link" onClick={() => props.onBack()}>Go Back</Button>
-      <Form.Item label="Brand Name" name={'brand'}>
-        <Input type="text" required />
-      </Form.Item>
-      <Form.Item label="Brand Image" name={'img'}>
-        <Input type="text" required />
-      </Form.Item>
-      <Form.Item label="On Top" name={'on_top'} valuePropName="checked">
-        <Checkbox />
-      </Form.Item>
+    <Space direction="vertical" style={{ width: '100%' }}>
+      <Row justify={'start'} align={'middle'}>
+        <Col>
+          <Button type="link" onClick={() => props.onBack()}>Go Back</Button>
+        </Col>
+      </Row>
 
-      <Button htmlType="submit">Done</Button>
-    </Form>
+      <Form onFinish={submit} initialValues={initialValues}>
+        <Form.Item label="Brand Name" name={'brand'}>
+          <Input type="text" required />
+        </Form.Item>
+
+        <Form.Item label="Brand Image" name={'img'}>
+          <Input type="text" required />
+        </Form.Item>
+ 
+        <Form.Item label="On Top" name={'on_top'} valuePropName="checked">
+          <Checkbox />
+        </Form.Item>
+
+        <Button htmlType="submit">Done</Button>
+      </Form>
+    </Space>
   );
 };
 

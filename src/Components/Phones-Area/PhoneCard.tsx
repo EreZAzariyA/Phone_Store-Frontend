@@ -1,13 +1,16 @@
-import { NavLink } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { PhoneModel } from "../../Models/phone-model"
-import { Button, Card, Carousel, Image, Row } from "react-bootstrap";
+import { Button, Card, Carousel, Image } from "react-bootstrap";
 import undefineImage from "../../Assets/undefine-card-img.jpg";
+import { toUpperCase } from "../../Utils/helpers";
 
 interface PhoneCardProps {
   phone: PhoneModel;
 };
 
 const PhoneCard = (props: PhoneCardProps) => {
+  const navigate = useNavigate();
+
   return (
     <Card
       style={{ width: '15rem' }}
@@ -27,20 +30,14 @@ const PhoneCard = (props: PhoneCardProps) => {
           </Carousel>
         </div>
       )}
-      {/* <Card.Img src={props.phone.picture} alt={`${props.phone.name}-image`}/> */}
-
-      <Card.Title>
-        {props.phone?.name}
-      </Card.Title>
-
-      <Row className="m-auto">
-        <NavLink to={`/phone/${props.phone._id}`}>
-            <Button size="sm" variant="dark" className="mb-2">
-              See Product
-            </Button>
-        </NavLink>
-      </Row>
-
+      <Card.Title className="mt-2">{toUpperCase(props.phone?.name)}</Card.Title>
+      <Button
+        size="sm"
+        variant="light"
+        onClick={() => navigate(`/phone/${props.phone._id}`)}
+      >
+        See Product
+      </Button>
     </Card>
   );
 };

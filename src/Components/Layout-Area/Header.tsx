@@ -137,27 +137,34 @@ const NavItems = (isMd: boolean, user: UserModel) => {
       {isMd && <hr />}
 
       <Nav.Item>
-        <Nav.Link eventKey={2} as={NavLink} to='/brands'>
+        <Nav.Link eventKey={2} as={NavLink} to='/phones'>
+          Phones
+        </Nav.Link>
+      </Nav.Item>
+      {isMd && <hr />}
+
+      <Nav.Item>
+        <Nav.Link eventKey={3} as={NavLink} to='/brands'>
           Brands
         </Nav.Link>
       </Nav.Item>
       {isMd && <hr />}
 
       <Nav.Item>
-        <Nav.Link eventKey={3} as={NavLink} to='/accessories'>
+        <Nav.Link eventKey={4} as={NavLink} to='/accessories'>
           Accessories
         </Nav.Link>
       </Nav.Item>
       {isMd && <hr />}
 
       <Nav.Item>
-        <Nav.Link eventKey={4} as={NavLink} to='/about'>
+        <Nav.Link eventKey={5} as={NavLink} to='/about'>
           About
         </Nav.Link>
       </Nav.Item>
 
       {/* LG nav items */}
-      {!isMd &&
+      {!isMd && (
         <Nav.Item style={{ position: 'absolute', right: '0' }}>
           {!user && (
             <Nav.Link as={NavLink} to="/auth/login">
@@ -187,7 +194,7 @@ const NavItems = (isMd: boolean, user: UserModel) => {
             </Dropdown>
           )}
         </Nav.Item>
-      }
+      )}
 
       {/* MD nav items */}
       {isMd && (

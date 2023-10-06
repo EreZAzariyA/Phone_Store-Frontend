@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import store from "../../Redux/Store";
-import storeServices from "../../Services/StoreServices";
 import { BrandModel } from "../../Models/brand-model";
-import { Button, Card, Container, Row } from "react-bootstrap";
+import storeServices from "../../Services/StoreServices";
 import undefineImage from "../../Assets/undefine-card-img.jpg";
+import { toUpperCase } from "../../Utils/helpers";
 import { message } from "antd";
+import { Button, Card, Container, Row } from "react-bootstrap";
 
 const TopBrands = () => {
   const [topBrands, setTopBrands] = useState<BrandModel[]>([]);
@@ -13,17 +14,12 @@ const TopBrands = () => {
 
   useEffect(() => {
     setIsLoading(true);
-    const getTopBrands = async () => {
-      try {
-        const topBrands = await storeServices.getTopBrands();
-        setTopBrands(topBrands);
-        setIsLoading(false);
-      } catch (err: any) {
-        message.error(err.message);
-      }
-    };
-
-    getTopBrands();
+    storeServices.getTopBrands().then((topBrands) => {
+      setTopBrands(topBrands);
+      setIsLoading(false);
+    }).catch((err: any) => {
+      message.error(err.message);
+    });
   }, []);
 
   const getBrandById = (_id: string) => {
@@ -46,7 +42,7 @@ const TopBrands = () => {
           >
             <Card.Img variant="top" height='200' src={getBrandById(brand._id)?.img} />
             <Card.Title style={{ color: "black" }}>
-              {brand.brand}
+              {toUpperCase(brand.brand)}
             </Card.Title>
 
             <Button size='sm' variant="dark" className="w-auto m-auto mt-1 mb-1">

@@ -7,3 +7,7 @@ export function numberWithCommas(x: number) {
 export const asPriceNum = (num: number, digits: number = 2) => {
   return Number(num).toFixed(digits);
 };
+
+export const toUpperCase = (str: string = '') => {
+  return str.at(0).toUpperCase() + str.slice(1);
+};

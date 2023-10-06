@@ -7,6 +7,7 @@ import { NavLink } from "react-router-dom";
 import TopThreeProducts from "./TopPhones";
 import TopBrands from "./TopBrands";
 import { FcNext } from "react-icons/fc";
+import { toUpperCase } from "../../Utils/helpers";
 
 interface HomePageProps {
   brands: BrandModel[];
@@ -57,14 +58,13 @@ function HomePage(props: HomePageProps): JSX.Element {
                 className="m-1 p-1 w-auto text-decoration-none mb-3"
               >
                 <Card.Img variant="top" height={'150'} src={brand?.img} />
+                <Card.Title>{toUpperCase(brand.brand)}</Card.Title>
 
-                <Card.Body>
-                  <NavLink to={`/brands/${brand._id}`}>
-                    <Button variant="light">
-                      Shop <FcNext />
-                    </Button>
-                  </NavLink>
-                </Card.Body>
+                <NavLink to={`/brands/${brand._id}`}>
+                  <Button variant="light">
+                    Shop <FcNext />
+                  </Button>
+                </NavLink>
               </Card>
             )}
           </Row>

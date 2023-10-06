@@ -332,7 +332,7 @@ const OrderPage = () => {
           <h1>Summery</h1>
           <br />
           {itemsInCart === undefined && <Spinner animation="border" />}
-          <Row className="flex-sm-nowrap justify-content-center">
+          <Row className="flex-column flex-sm-nowrap justify-content-center">
             {itemsInCart.map((i) =>
               <Col md='12' sm='6' key={i.phone_id}>
                 <Card className='m-1 p-1 w-auto text-decoration-none mb-3'>

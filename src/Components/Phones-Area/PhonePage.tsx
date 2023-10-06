@@ -10,6 +10,7 @@ import OthersPhones from "./OthersPhones";
 import { myLorem, numberWithCommas } from "../../Utils/helpers";
 import { message } from "antd";
 import { Button, Carousel, Col, Container, Image, InputGroup, Row } from "react-bootstrap"
+import { FcOk } from "react-icons/fc";
 
 const PhonePage = () => {
   const { phoneId } = useParams();
@@ -63,11 +64,11 @@ const PhonePage = () => {
     <>
       {!isInCart ? (
         <Button size="sm" className="p-1" variant='dark' onClick={addToCart}>
-          Add To Cart ✔
+          Add To Cart
         </Button>
       ) : (
-        <Button size="sm" className="p-1" variant='success' onClick={addToCart}>
-          In-Cart
+        <Button size="sm" className="p-1" variant='success'>
+          In-Cart <FcOk />
         </Button>
       )}
     </>
@@ -160,7 +161,7 @@ const PhonePage = () => {
               {myLorem}
             </Row>
           </Col>
-          <Col md='4'>
+          <Col md='4' className="mt-3">
             <h3 className="text-decoration-underline">In The Box</h3>
           </Col>
         </Row>

@@ -2,8 +2,6 @@ import { Button, Card } from "react-bootstrap";
 import { BrandModel } from "../../Models/brand-model";
 import { toUpperCase } from "../../Utils/helpers";
 import { NavLink } from "react-router-dom";
-import { FcNext } from "react-icons/fc";
-
 
 interface BrandCardProps {
   brand: BrandModel;
@@ -12,18 +10,20 @@ interface BrandCardProps {
 const BrandCard = (props: BrandCardProps) => {
   return (
     <Card
-      key={props.brand._id}
-      style={{ width: '15rem' }}
-      className="m-1 p-1 w-auto text-decoration-none mb-3"
+      as={NavLink}
+      to={`/brands/${props.brand._id}`}
+      className="ps-product-card"
+      style={{ width: '240px' }}
     >
-      <Card.Img variant="top" height={'150'} src={props.brand.img} />
-      <Card.Title>{toUpperCase(props.brand.brand)}</Card.Title>
-
-      <NavLink to={`/brands/${props.brand._id}`}>
-        <Button variant="light">
-          Shop <FcNext />
+      <div style={{ overflow: 'hidden' }}>
+        <Card.Img variant="top" src={props.brand.img} style={{ height: '160px', objectFit: 'cover' }} />
+      </div>
+      <Card.Body>
+        <Card.Title>{toUpperCase(props.brand.brand)}</Card.Title>
+        <Button className="ps-btn-outline-gold" size="sm">
+          Shop
         </Button>
-      </NavLink>
+      </Card.Body>
     </Card>
   );
 };

@@ -8,14 +8,9 @@ import AddBrand from "./AddBrand";
 import notifyService from "../../Services/NotifyService";
 import brandsServices from "../../Services/BrandsServices";
 import { toUpperCase } from "../../Utils/helpers";
-import { Card, Popconfirm, Row, Space } from "antd";
-import { Button } from "react-bootstrap";
-import { FcNext } from "react-icons/fc";
-import { AiOutlineEdit } from "react-icons/ai";
-import { MdDeleteOutline } from "react-icons/md";
+import { Popconfirm } from "antd";
+import { FiArrowRight, FiEdit2, FiTrash2, FiPlus } from "react-icons/fi";
 import "./brands.css";
-
-const { Meta } = Card;
 
 const steps = {
   New_Brand: "New_Brand",
@@ -34,14 +29,13 @@ const BrandsArea = () => {
     try {
       if (btnType === 'delete') {
         await brandsServices.deleteBrand(brand._id);
-        notifyService.success(`Brand '${brand.brand}' Removed Successfully`);
+        notifyService.success(`Brand '${brand.brand}' removed successfully`);
       }
       if (btnType === 'edit') {
         setBrand(brand);
         setStep(steps.Update_Brand);
       }
     } catch (err: any) {
-      console.log(err);
       notifyService.error(err.message);
     }
   };
@@ -49,70 +43,70 @@ const BrandsArea = () => {
   const onBack = (): void => setStep(null);
 
   return (
-    <Space direction="vertical" style={{ width: '100%' }}>
-    {!step && (
-      <>
-        <h1>All Brands</h1>
-        <Row align={'middle'} justify={'center'} gutter={[10, 10]}>
-          {brands.map((brand) =>
-            <Card
-              key={brand._id}
-              style={{ width: '15rem' }}
-              hoverable
-              className="m-1"
-              cover={<img src={brand.img} alt={`${brand.brand}-img`} />}
-            >
-              {isAdmin && (
-                <div className="d-flex justify-content-end btn-toolbar admin-buttons">
-                  <div className="btn-group">
-                    <button
-                      className="btn btn-sm btn-secondary"
-                      onClick={() => handleBtn('edit', brand)}
-                    >
-                      <AiOutlineEdit />
+    <div style={{ width: '100%' }}>
+      {!step && (
+        <div className="ps-catalog-page">
+          <div className="ps-catalog-header">
+            <div>
+              <h1 className="ps-section-title" style={{ textAlign: 'left', marginBottom: '4px' }}>All Brands</h1>
+              <p style={{ color: 'var(--ps-text-muted)', fontSize: '0.9rem', margin: 0 }}>
+                {brands.length} collections
+              </p>
+            </div>
+            {isAdmin && (
+              <button className="ps-catalog-add-btn" onClick={() => setStep(steps.New_Brand)}>
+                <FiPlus size={16} /> Add Brand
+              </button>
+            )}
+          </div>
+          <div className="ps-section-divider" style={{ margin: '0 0 36px 0' }} />
+
+          <div className="ps-catalog-grid">
+            {brands.map((brand) => (
+              <div className="ps-catalog-card" key={brand._id}>
+                {/* Admin overlay */}
+                {isAdmin && (
+                  <div className="ps-catalog-admin-overlay">
+                    <button className="ps-catalog-admin-btn" onClick={() => handleBtn('edit', brand)}>
+                      <FiEdit2 size={13} />
                     </button>
-                    <Popconfirm
-                      title="Are you sure?"
-                      onConfirm={() => handleBtn('delete', brand)}
-                    >
-                      <button
-                        className="btn btn-sm btn-danger"
-                      >
-                        <MdDeleteOutline />
+                    <Popconfirm title="Delete this brand?" onConfirm={() => handleBtn('delete', brand)}>
+                      <button className="ps-catalog-admin-btn ps-catalog-admin-btn-danger">
+                        <FiTrash2 size={13} />
                       </button>
                     </Popconfirm>
                   </div>
-                </div>
-              )}
-                <Meta title={toUpperCase(brand.brand)} />
+                )}
 
-              <Button
-                className="mt-3"
-                variant="light"
-                onClick={() => navigate(`/brands/${brand._id}`)}
-              >
-                {isAdmin ? 'Check' : 'Shop'} <FcNext />
-              </Button>
-            </Card>
-          )}
-        </Row>
-        {isAdmin && (
-          <button className="btn btn-success" onClick={() => setStep(steps.New_Brand)}>Add new brand</button>
-        )}
-      </>
-    )}
-    {(step && step === steps.New_Brand) && (
-      <AddBrand
-        onBack={onBack}
-      />
-    )}
-    {(brand && step === steps.Update_Brand) && (
-      <AddBrand
-        brand={brand}
-        onBack={onBack}
-      />
-    )}
-    </Space>
+                <div
+                  className="ps-catalog-card-link"
+                  onClick={() => navigate(`/brands/${brand._id}`)}
+                  style={{ cursor: 'pointer' }}
+                >
+                  <div className="ps-catalog-card-img">
+                    <img src={brand.img} alt={brand.brand} />
+                  </div>
+                  <div className="ps-catalog-card-body">
+                    <h5 className="ps-catalog-card-name">{toUpperCase(brand.brand)}</h5>
+                    <div className="ps-catalog-card-footer">
+                      <span className="ps-catalog-card-action">
+                        Explore <FiArrowRight size={12} />
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+      {(step && step === steps.New_Brand) && (
+        <AddBrand onBack={onBack} />
+      )}
+      {(brand && step === steps.Update_Brand) && (
+        <AddBrand brand={brand} onBack={onBack} />
+      )}
+    </div>
   );
 };
 

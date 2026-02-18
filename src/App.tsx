@@ -11,9 +11,11 @@ import BrandPage from './Components/Brands-Area/BrandPage';
 import PhonePage from './Components/Phones-Area/PhonePage';
 import CartPage from './Components/Cart-Area/CartPage';
 import OrderPage from './Components/OrdersArea/OrderPage';
+import MyOrdersPage from './Components/OrdersArea/MyOrdersPage';
+import GuestOrdersPage from './Components/OrdersArea/GuestOrdersPage';
+import AdminOrdersPage from './Components/OrdersArea/AdminOrdersPage';
+import OrderDetailPage from './Components/OrdersArea/OrderDetailPage';
 import AboutPage from './Components/AboutArea/AboutPage';
-
-import { Container, Row } from 'react-bootstrap';
 import { AdminTopPhones } from './Components/Admin/TopPhones';
 import { AdminTopBrands } from './Components/Admin/TopBrands';
 import { isAdmin } from './Utils/helpers';
@@ -23,12 +25,9 @@ function App() {
   const admin = isAdmin(user);
 
   return (
-    <Container fluid>
-      <Row>
-        <Header />
-      </Row>
-
-      <Row>
+    <>
+      <Header />
+      <main className="ps-main">
         <Routes>
           <Route path='/' element={<HomePage />} />
           <Route path='/phones' element={<PhonesArea />} />
@@ -36,11 +35,13 @@ function App() {
           <Route path='/brands' element={<BrandsArea />} />
           <Route path='/brands/:brand_id' element={<BrandPage />} />
           <Route path='/about' element={<AboutPage />} />
-          
+
           {user && (
             <>
               <Route path='/cart' element={<CartPage />} />
               <Route path='/order' element={<OrderPage />} />
+              <Route path='/my-orders' element={<MyOrdersPage />} />
+              <Route path='/order-detail/:orderId' element={<OrderDetailPage />} />
             </>
           )}
           {!user && (
@@ -55,13 +56,16 @@ function App() {
             <>
               <Route path='admin/top-phones' element={<AdminTopPhones />} />
               <Route path='admin/top-brands' element={<AdminTopBrands />} />
+              <Route path='admin/orders' element={<AdminOrdersPage />} />
+              <Route path='admin/order/:orderId' element={<OrderDetailPage />} />
+              <Route path='admin/guest-orders' element={<GuestOrdersPage />} />
             </>
           )}
 
           <Route path='*' element={<Navigate to="/" />} />
         </Routes>
-      </Row>
-    </Container>
+      </main>
+    </>
   );
 }
 

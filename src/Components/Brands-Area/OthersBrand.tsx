@@ -2,34 +2,47 @@ import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "../../Redux/Store";
 import { toUpperCase } from "../../Utils/helpers";
-import { Card, Button } from "react-bootstrap";
-import { FcNext } from "react-icons/fc";
+import { FiArrowRight } from "react-icons/fi";
 
 interface OthersBrandsProps {
   brand_id: string;
-};
+}
 
 const OthersBrands = (props: OthersBrandsProps) => {
   const navigate = useNavigate();
   const brands = useSelector((state: RootState) => state.store.brands);
-  const othersBrands = [...brands || []].filter((brand) => brand._id !== props.brand_id);
+  const othersBrands = [...(brands || [])].filter((brand) => brand._id !== props.brand_id);
+
+  if (!othersBrands || othersBrands.length === 0) {
+    return (
+      <p style={{ color: 'var(--ps-text-muted)', fontSize: '0.9rem', textAlign: 'center', padding: '20px 0' }}>
+        No other brands available.
+      </p>
+    );
+  }
 
   return (
     <>
-      {othersBrands.map((brand) =>
-        <Card
+      {othersBrands.map((brand) => (
+        <div
           key={brand._id}
-          style={{ width: '15rem', cursor: 'pointer' }}
-          className="m-1 p-1 w-auto text-decoration-none mb-3"
+          className="ps-catalog-card"
           onClick={() => navigate(`/brands/${brand._id}`)}
+          style={{ cursor: 'pointer' }}
         >
-          <Card.Img variant="top" height='150px' src={brand.img} alt={brand.brand + ' ImageURL'} />
-          <Card.Title className="mt-2">{toUpperCase(brand.brand)}</Card.Title>
-          <Button variant="light" size="sm">
-            Shop <FcNext />
-          </Button>
-        </Card>
-      )}
+          <div className="ps-catalog-card-img">
+            <img src={brand.img} alt={brand.brand} />
+          </div>
+          <div className="ps-catalog-card-body">
+            <h5 className="ps-catalog-card-name">{toUpperCase(brand.brand)}</h5>
+            <div className="ps-catalog-card-footer">
+              <span className="ps-catalog-card-action">
+                Explore <FiArrowRight size={12} />
+              </span>
+            </div>
+          </div>
+        </div>
+      ))}
     </>
   );
 };

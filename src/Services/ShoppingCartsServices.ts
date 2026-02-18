@@ -3,7 +3,7 @@ import config from "../Utils/Config";
 import store from "../Redux/Store";
 import ItemInCartModel from "../Models/item-in-cart model";
 import ShoppingCartModel from "../Models/shopping-cart model";
-import { addProductToCartAction, fetchShoppingCartAction, removeProductFromCartAction, updateProductInCartAction} from "../Redux/slicers/shopping-cart-slicer";
+import { addProductToCartAction, fetchShoppingCartAction, removeProductFromCartAction, resetCartAction, updateProductInCartAction} from "../Redux/slicers/shopping-cart-slicer";
 
 class ShoppingCartsServices {
   public async getShoppingCartByUserId(userId: string): Promise<ShoppingCartModel> {
@@ -42,6 +42,11 @@ class ShoppingCartsServices {
   public async removePhoneFromCart(phoneIdToRemove: string, cartId: string): Promise<void> {
     await axios.delete(config.urls.shopping_carts.remove + phoneIdToRemove + "/" + cartId);
     store.dispatch(removeProductFromCartAction(phoneIdToRemove));
+  };
+
+  public async clearShoppingCart(cartId: string): Promise<void> {
+    await axios.delete(config.urls.shopping_carts.clear + cartId);
+    store.dispatch(resetCartAction());
   };
 };
 const shoppingCartServices = new ShoppingCartsServices();

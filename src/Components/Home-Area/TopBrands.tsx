@@ -3,10 +3,10 @@ import { NavLink } from "react-router-dom";
 import store from "../../Redux/Store";
 import { BrandModel } from "../../Models/brand-model";
 import storeServices from "../../Services/StoreServices";
-import undefineImage from "../../Assets/undefine-card-img.jpg";
+
 import { toUpperCase } from "../../Utils/helpers";
 import { message } from "antd";
-import { Button, Card, Container, Row } from "react-bootstrap";
+import { Button, Card } from "react-bootstrap";
 
 const TopBrands = () => {
   const [topBrands, setTopBrands] = useState<BrandModel[]>([]);
@@ -28,85 +28,49 @@ const TopBrands = () => {
   };
 
   return (
-    <Container className='w-auto'>
-      <h1>Top 3 Brands</h1>
-
-      <Row className="flex-nowrap overflow-auto m-auto">
+    <>
+      <div className="ps-card-row">
         {!isLoading && topBrands.map((brand) =>
           <Card
             key={brand._id}
             as={NavLink}
             to={`/brands/${brand._id}`}
-            style={{ width: '15rem' }}
-            className="m-1 p-1 w-auto text-decoration-none mb-3"
+            className="ps-product-card"
+            style={{ width: '280px' }}
           >
-            <Card.Img variant="top" height='200' src={getBrandById(brand._id)?.img} />
-            <Card.Title style={{ color: "black" }}>
-              {toUpperCase(brand.brand)}
-            </Card.Title>
-
-            <Button size='sm' variant="dark" className="w-auto m-auto mt-1 mb-1">
-              Go see
-            </Button>
+            <div style={{ overflow: 'hidden' }}>
+              <Card.Img variant="top" src={getBrandById(brand._id)?.img} />
+            </div>
+            <Card.Body>
+              <Card.Title>{toUpperCase(brand.brand)}</Card.Title>
+              <Button className="ps-btn-outline-gold" size="sm">
+                Explore
+              </Button>
+            </Card.Body>
           </Card>
         )}
-        {isLoading && <UndefineTopBrands />}
-      </Row>
-      <hr className='m-auto mt-2 mb-2' />
-    </Container>
+        {isLoading && <SkeletonCards />}
+      </div>
+    </>
   );
 };
 
 export default TopBrands;
 
-const UndefineTopBrands = () => (
+const SkeletonCards = () => (
   <>
-    <Card
-      style={{ width: '15rem' }}
-      className="m-1 p-1 text-decoration-none mb-3"
-    >
-      <Card.Img variant="top" height='150' src={undefineImage} />
-      <Card.Body>
-        <p className="w-50 placeholder placeholder-wave placeholder-xs" />
-        <br />
-        <p className="w-75 placeholder placeholder-wave placeholder-xs" />
-        <br />
-        <Button disabled>
-
-        </Button>
-      </Card.Body>
-    </Card>
-
-    <Card
-      style={{ width: '15rem' }}
-      className="m-1 p-1 text-decoration-none mb-3"
-    >
-      <Card.Img variant="top" height='150' src={undefineImage} />
-      <Card.Body>
-        <p className="w-50 placeholder placeholder-wave placeholder-xs" />
-        <br />
-        <p className="w-75 placeholder placeholder-wave placeholder-xs" />
-        <br />
-        <Button disabled>
-
-        </Button>
-      </Card.Body>
-    </Card>
-
-    <Card
-      style={{ width: '15rem' }}
-      className="m-1 p-1 text-decoration-none mb-3"
-    >
-      <Card.Img variant="top" height='150' src={undefineImage} />
-      <Card.Body>
-        <p className="w-50 placeholder placeholder-wave placeholder-xs" />
-        <br />
-        <p className="w-75 placeholder placeholder-wave placeholder-xs" />
-        <br />
-        <Button disabled>
-
-        </Button>
-      </Card.Body>
-    </Card>
+    {[1, 2, 3].map((i) => (
+      <Card key={i} className="ps-skeleton-card" style={{ width: '280px' }}>
+        <div className="ps-skeleton-img" />
+        <Card.Body className="text-center">
+          <p className="placeholder-wave mb-2">
+            <span className="placeholder col-8" style={{ background: 'var(--ps-elevated)' }} />
+          </p>
+          <p className="placeholder-wave">
+            <span className="placeholder col-5" style={{ background: 'var(--ps-elevated)' }} />
+          </p>
+        </Card.Body>
+      </Card>
+    ))}
   </>
 );

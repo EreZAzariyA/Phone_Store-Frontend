@@ -1,18 +1,15 @@
 import { useState } from "react";
-import { Card, Popconfirm, Row, Space } from "antd";
+import { Popconfirm } from "antd";
 import { useSelector } from "react-redux";
 import { RootState } from "../../Redux/Store";
 import { NavLink } from "react-router-dom";
-import { Button } from "react-bootstrap";
-import { FcNext } from "react-icons/fc";
-import { MdDeleteOutline } from "react-icons/md";
-import { AiOutlineEdit } from "react-icons/ai";
 import Role from "../../Models/role";
 import { PhoneModel } from "../../Models/phone-model";
 import AddPhone from "./AddPhone";
 import phonesServices from "../../Services/PhonesServices";
 import notifyService from "../../Services/NotifyService";
-import { toUpperCase } from "../../Utils/helpers";
+import { toUpperCase, asPriceNum } from "../../Utils/helpers";
+import { FiArrowRight, FiStar, FiEdit2, FiTrash2, FiPlus } from "react-icons/fi";
 
 const steps = {
   New_Phone: "New_Phone",
@@ -29,14 +26,13 @@ const PhonesArea = () => {
     try {
       if (btnType === 'delete') {
         await phonesServices.deletePhoneById(phone._id);
-        notifyService.success(`Phone '${phone.name}' Removed Successfully`);
+        notifyService.success(`Phone '${phone.name}' removed successfully`);
       }
       if (btnType === 'edit') {
         setPhone(phone);
         setStep(steps.Update_Phone);
       }
     } catch (err: any) {
-      console.log(err);
       notifyService.error(err.message);
     }
   };
@@ -44,54 +40,65 @@ const PhonesArea = () => {
   const onBack = (): void => setStep(null);
 
   return (
-    <Space direction="vertical" style={{ width: '100%' }}>
+    <div style={{ width: '100%' }}>
       {!step && (
-        <>
-          <h1>All Phones</h1>
-          <Row align={'middle'} justify={'center'} gutter={[10, 10]}>
-            {phones.map((phone) =>
-              <Card
-                key={phone._id}
-                style={{ width: '15rem' }}
-                hoverable
-                className="m-1"
-                cover={<img src={phone.picture} alt={`${phone.name}-img`} />}
-              >
+        <div className="ps-catalog-page">
+          <div className="ps-catalog-header">
+            <div>
+              <h1 className="ps-section-title" style={{ textAlign: 'left', marginBottom: '4px' }}>All Phones</h1>
+              <p style={{ color: 'var(--ps-text-muted)', fontSize: '0.9rem', margin: 0 }}>
+                {phones.length} products
+              </p>
+            </div>
+            {isAdmin && (
+              <button className="ps-catalog-add-btn" onClick={() => setStep(steps.New_Phone)}>
+                <FiPlus size={16} /> Add Phone
+              </button>
+            )}
+          </div>
+          <div className="ps-section-divider" style={{ margin: '0 0 36px 0' }} />
+
+          <div className="ps-catalog-grid">
+            {phones.map((phone) => (
+              <div className="ps-catalog-card" key={phone._id}>
+                {/* Admin overlay */}
                 {isAdmin && (
-                  <div className="d-flex justify-content-end btn-toolbar admin-buttons">
-                    <div className="btn-group">
-                      <button
-                        className="btn btn-sm btn-secondary"
-                        onClick={() => handleBtn('edit', phone)}
-                      >
-                        <AiOutlineEdit />
+                  <div className="ps-catalog-admin-overlay">
+                    <button className="ps-catalog-admin-btn" onClick={() => handleBtn('edit', phone)}>
+                      <FiEdit2 size={13} />
+                    </button>
+                    <Popconfirm title="Delete this phone?" onConfirm={() => handleBtn('delete', phone)}>
+                      <button className="ps-catalog-admin-btn ps-catalog-admin-btn-danger">
+                        <FiTrash2 size={13} />
                       </button>
-                      <Popconfirm
-                        title="Are you sure?"
-                        onConfirm={() => handleBtn('delete', phone)}
-                      >
-                        <button
-                          className="btn btn-sm btn-danger"
-                        >
-                          <MdDeleteOutline />
-                        </button>
-                      </Popconfirm>
-                    </div>
+                    </Popconfirm>
                   </div>
                 )}
-                <Card.Meta title={toUpperCase(phone.name)} />
-                <NavLink to={`/phones/${phone._id}`}>
-                  <Button className="mt-3" variant="light">
-                    Shop <FcNext />
-                  </Button>
+
+                <NavLink to={`/phone/${phone._id}`} className="ps-catalog-card-link">
+                  <div className="ps-catalog-card-img">
+                    <img src={phone.picture} alt={phone.name} />
+                  </div>
+                  <div className="ps-catalog-card-body">
+                    <h5 className="ps-catalog-card-name">{toUpperCase(phone.name)}</h5>
+                    {phone.rating > 0 && (
+                      <div className="ps-catalog-card-rating">
+                        <FiStar size={12} fill="#c9a96e" color="#c9a96e" />
+                        <span>{phone.rating}</span>
+                      </div>
+                    )}
+                    <div className="ps-catalog-card-footer">
+                      <span className="ps-catalog-card-price">${asPriceNum(phone.price)}</span>
+                      <span className="ps-catalog-card-action">
+                        Shop <FiArrowRight size={12} />
+                      </span>
+                    </div>
+                  </div>
                 </NavLink>
-              </Card>
-            )}
-          </Row>
-          {isAdmin && (
-            <button className="btn btn-success" onClick={() => setStep(steps.New_Phone)}>Add new phone</button>
-          )}
-        </>
+              </div>
+            ))}
+          </div>
+        </div>
       )}
       {(step && step === steps.New_Phone) && (
         <AddPhone onBack={onBack} />
@@ -99,7 +106,7 @@ const PhonesArea = () => {
       {(step && step === steps.Update_Phone) && (
         <AddPhone onBack={onBack} phone={phone} />
       )}
-    </Space>
+    </div>
   );
 };
 

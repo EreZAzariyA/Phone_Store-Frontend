@@ -1,44 +1,36 @@
-import { useNavigate } from "react-router-dom";
-import { PhoneModel } from "../../Models/phone-model"
-import { Button, Card, Carousel, Image } from "react-bootstrap";
-import undefineImage from "../../Assets/undefine-card-img.jpg";
-import { toUpperCase } from "../../Utils/helpers";
+import { NavLink } from "react-router-dom";
+import { PhoneModel } from "../../Models/phone-model";
+import { toUpperCase, asPriceNum } from "../../Utils/helpers";
+import { FiArrowRight, FiStar } from "react-icons/fi";
 
 interface PhoneCardProps {
   phone: PhoneModel;
-};
+}
 
 const PhoneCard = (props: PhoneCardProps) => {
-  const navigate = useNavigate();
-
   return (
-    <Card
-      style={{ width: '15rem' }}
-      className="m-1 p-1 w-auto text-decoration-none mb-3"
-    >
-      {!props.phone?.picture ? (
-        <Image src={undefineImage} height='200' alt={"undefine image"} />
-      ) : (
-        <div style={{ width: '200px'}}>
-          <Carousel variant="dark">
-            <Carousel.Item className="mr-2">
-              <Card.Img src={props.phone?.picture} height='200' alt={`${props.phone?.name + 'ImageURL'}`} />
-            </Carousel.Item>
-            <Carousel.Item className="mr-2">
-              <Card.Img src={props.phone?.picture} height='200' alt={`${props.phone?.name + 'ImageURL'}`} />
-            </Carousel.Item>
-          </Carousel>
+    <NavLink to={`/phone/${props.phone._id}`} className="ps-catalog-card-link">
+      <div className="ps-catalog-card">
+        <div className="ps-catalog-card-img">
+          <img src={props.phone?.picture} alt={props.phone?.name} />
         </div>
-      )}
-      <Card.Title className="mt-2">{toUpperCase(props.phone?.name)}</Card.Title>
-      <Button
-        size="sm"
-        variant="light"
-        onClick={() => navigate(`/phone/${props.phone._id}`)}
-      >
-        See Product
-      </Button>
-    </Card>
+        <div className="ps-catalog-card-body">
+          <h5 className="ps-catalog-card-name">{toUpperCase(props.phone?.name)}</h5>
+          {props.phone?.rating > 0 && (
+            <div className="ps-catalog-card-rating">
+              <FiStar size={12} fill="#c9a96e" color="#c9a96e" />
+              <span>{props.phone.rating}</span>
+            </div>
+          )}
+          <div className="ps-catalog-card-footer">
+            <span className="ps-catalog-card-price">${asPriceNum(props.phone?.price)}</span>
+            <span className="ps-catalog-card-action">
+              Shop <FiArrowRight size={12} />
+            </span>
+          </div>
+        </div>
+      </div>
+    </NavLink>
   );
 };
 

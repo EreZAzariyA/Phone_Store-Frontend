@@ -3,8 +3,8 @@ import { NavLink } from "react-router-dom";
 import store from "../../Redux/Store";
 import storeServices from "../../Services/StoreServices";
 import { PhoneModel } from "../../Models/phone-model";
-import { Button, Card, Container, Row } from "react-bootstrap";
-import undefineImage from "../../Assets/undefine-card-img.jpg";
+import { Button, Card } from "react-bootstrap";
+
 import { message } from "antd";
 import { toUpperCase } from "../../Utils/helpers";
 
@@ -33,79 +33,53 @@ const TopThreeProducts = () => {
   };
 
   return (
-    <Container className='w-auto'>
-      <h1>
-        Top 3 Products
-      </h1>
-
-      <Row className="flex-nowrap overflow-auto m-auto">
+    <>
+      <div className="ps-card-row">
         {!isLoading && topThree.map((item) => (
           <Card
             key={item._id}
             as={NavLink}
             to={`/phone/${item._id}`}
-            style={{ width: '15rem' }}
-            className="m-1 p-1 w-auto text-decoration-none mb-3"
+            className="ps-product-card"
+            style={{ width: '280px' }}
           >
-            <Card.Img variant="top" height='200' src={getProductById(item._id)?.picture} />
-            <Card.Title style={{ color: "black" }}>
-              {toUpperCase(getProductById(item._id)?.name)}
-            </Card.Title>
-
-            <Button size='sm' variant="dark" className="w-auto m-auto mt-1 mb-1">
-              {toUpperCase('go see')}
-            </Button>
+            <div style={{ overflow: 'hidden' }}>
+              <Card.Img variant="top" src={getProductById(item._id)?.picture} />
+            </div>
+            <Card.Body>
+              <Card.Title>{toUpperCase(getProductById(item._id)?.name)}</Card.Title>
+              <Button className="ps-btn-outline-gold" size="sm">
+                View Product
+              </Button>
+            </Card.Body>
           </Card>
-          ))
-        }
+        ))}
 
-        {isLoading && <UndefineTopThree />}
-      </Row>
-      <p className="text-muted">Based on users orders</p>
-      <hr className='m-auto mt-2 mb-2' />
-    </Container>
-  )
-}
+        {isLoading && <SkeletonCards />}
+      </div>
+      <p className="text-muted-custom text-center mt-3" style={{ fontSize: '0.85rem' }}>
+        Based on user orders
+      </p>
+    </>
+  );
+};
 
-export default TopThreeProducts
+export default TopThreeProducts;
 
-const UndefineTopThree = () => (
+const SkeletonCards = () => (
   <>
-    <Card className="m-1 p-1 w-auto">
-      <Card.Img variant="top" height='150' src={undefineImage} />
-      <Card.Body>
-        <p className="w-50 placeholder placeholder-wave placeholder-xs" />
-        <br />
-        <p className="w-75 placeholder placeholder-wave placeholder-xs" />
-        <br />
-        <Button disabled>
-
-        </Button>
-      </Card.Body>
-    </Card>
-    <Card className="m-1 p-1 w-auto">
-      <Card.Img variant="top" height='150' src={undefineImage} />
-      <Card.Body>
-        <p className="w-50 placeholder placeholder-wave placeholder-xs" />
-        <br />
-        <p className="w-75 placeholder placeholder-wave placeholder-xs" />
-        <br />
-        <Button disabled>
-
-        </Button>
-      </Card.Body>
-    </Card>
-    <Card className="m-1 p-1 w-auto">
-      <Card.Img variant="top" height='150' src={undefineImage} />
-      <Card.Body >
-        <p className="w-50 placeholder placeholder-wave placeholder-xs" />
-        <br />
-        <p className="w-75 placeholder placeholder-wave placeholder-xs" />
-        <br />
-        <Button disabled>
-
-        </Button>
-      </Card.Body>
-    </Card>
+    {[1, 2, 3].map((i) => (
+      <Card key={i} className="ps-skeleton-card" style={{ width: '280px' }}>
+        <div className="ps-skeleton-img" />
+        <Card.Body className="text-center">
+          <p className="placeholder-wave mb-2">
+            <span className="placeholder col-8" style={{ background: 'var(--ps-elevated)' }} />
+          </p>
+          <p className="placeholder-wave">
+            <span className="placeholder col-5" style={{ background: 'var(--ps-elevated)' }} />
+          </p>
+        </Card.Body>
+      </Card>
+    ))}
   </>
 );

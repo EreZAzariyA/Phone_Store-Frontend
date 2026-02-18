@@ -15,12 +15,16 @@ abstract class Config {
       items_in_cart: "",
       add_item_to_cart: "",
       update: "",
-      remove: ""
+      remove: "",
+      clear: ""
     },
     orders: {
       newOrder: "",
       getUsersOrders: "",
-      getGuestsOrder: ""
+      getGuestsOrder: "",
+      getAllOrders: "",
+      getOrderDetail: "",
+      updateStatus: ""
     }
   };
 
@@ -41,12 +45,16 @@ abstract class Config {
         items_in_cart: baseUrl + "shopping-carts/items-in-cart/",
         add_item_to_cart: baseUrl + "shopping-carts/add-item-to-cart/",
         update: baseUrl + "shopping-carts/update-item-in-cart/",
-        remove: baseUrl + "shopping-carts/delete-from-cart/"
+        remove: baseUrl + "shopping-carts/delete-from-cart/",
+        clear: baseUrl + "shopping-carts/clear-cart/"
       },
       orders: {
         newOrder: baseUrl + "orders/",
         getUsersOrders: baseUrl + "orders/users-orders/",
-        getGuestsOrder: baseUrl + "orders/guests-orders/"
+        getGuestsOrder: baseUrl + "orders/guests-orders/",
+        getAllOrders: baseUrl + "orders/all",
+        getOrderDetail: baseUrl + "orders/detail/",
+        updateStatus: baseUrl + "orders/status/"
       }
     }
   };

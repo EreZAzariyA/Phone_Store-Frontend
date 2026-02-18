@@ -2,21 +2,17 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import { NavLink, useNavigate } from "react-router-dom";
+import { PayPalButtons, usePayPalScriptReducer } from "@paypal/react-paypal-js";
 import { RootState } from "../../Redux/Store";
 import OrderModel from "../../Models/order-model";
 import OrderConfirm from "./OrderConfirmModal";
 import notifyService from "../../Services/NotifyService";
 import ordersServices from "../../Services/OrdersServices";
+import shoppingCartServices from "../../Services/ShoppingCartsServices";
 import { errStyle } from "../Auth-Area/Register";
-import { Button, Card, Col, Container, FloatingLabel, Form, Row, Spinner, Table } from "react-bootstrap";
+import { Button, FloatingLabel, Form, Spinner } from "react-bootstrap";
 import { asPriceNum } from "../../Utils/helpers";
-
-const colStyle: React.CSSProperties = {
-  textAlign: 'center',
-  backgroundColor: 'white',
-  borderRadius: '10px',
-  margin: '5px'
-};
+import { FiArrowLeft, FiCheckCircle } from "react-icons/fi";
 
 const shipmentCost = 50;
 
@@ -25,12 +21,28 @@ const OrderPage = () => {
   const user = useSelector((state: RootState) => state.auth.user);
   const phones = useSelector((state: RootState) => state.store.phones);
   const itemsInCart = useSelector((state: RootState) => state.shoppingCart.products);
-  const { register, handleSubmit, formState, setValue } = useForm<OrderModel>();
+  const cartId = useSelector((state: RootState) => state.shoppingCart._id);
+  const { register, handleSubmit, formState, setValue, unregister, trigger } = useForm<OrderModel>();
 
   const [order, setOrder] = useState<OrderModel>();
   const [totalPrice, setTotalPrice] = useState(0);
-  const [inCreditCard, setInCreditCard] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState<'credit' | 'paypal' | null>(null);
   const [show, setShow] = useState(false);
+  const [paypalApproved, setPaypalApproved] = useState(false);
+  const [paypalTransactionId, setPaypalTransactionId] = useState<string>("");
+  const [{ isPending: isPayPalPending }] = usePayPalScriptReducer();
+
+  const selectCreditCard = () => {
+    setPaymentMethod('credit');
+    setPaypalApproved(false);
+    setPaypalTransactionId("");
+    unregister('paymentMethod.paypal');
+  };
+
+  const selectPaypal = () => {
+    setPaymentMethod('paypal');
+    unregister('paymentMethod.creditCard');
+  };
 
   const isGuest = !user ? true : false;
   if (user) {
@@ -53,343 +65,402 @@ const OrderPage = () => {
     }
   }, [itemsInCart]);
 
+  const grandTotal = totalPrice + shipmentCost + (17 / 100) * totalPrice;
+
   const submit = async (orderToSet: OrderModel) => {
+    // If PayPal is selected, we need the paypal approval
+    if (paymentMethod === 'paypal') {
+      if (!paypalApproved || !paypalTransactionId) {
+        notifyService.error("Please complete PayPal payment first");
+        return;
+      }
+      orderToSet.paymentMethod = {
+        paypal: { transactionId: paypalTransactionId }
+      };
+    }
+
+    // Attach product snapshots to the order
+    const vatAmount = (17 / 100) * totalPrice;
+    orderToSet.products = itemsInCart?.map((item) => {
+      const product = getProductByItemId(item.phone_id);
+      return {
+        phone_id: item.phone_id,
+        name: product?.name || 'Unknown Product',
+        picture: product?.picture || '',
+        price: product?.price || 0,
+        amount: item.amount,
+        total_price: item.total_price
+      };
+    }) || [];
+    orderToSet.subtotal = totalPrice;
+    orderToSet.shippingCost = shipmentCost;
+    orderToSet.vat = Number(vatAmount.toFixed(2));
+    orderToSet.grandTotal = Number(grandTotal.toFixed(2));
+
     handleShow();
     try {
       const order = await ordersServices.setNewOrder(orderToSet);
       setOrder(order);
-      notifyService.success("Ok");
+
+      // Clear the shopping cart after successful order
+      if (cartId) {
+        await shoppingCartServices.clearShoppingCart(cartId);
+      }
+
+      notifyService.success("Order placed successfully!");
     } catch (err: any) {
       notifyService.error("Some error");
     }
   };
 
   const getProductByItemId = (itemId: string) => {
-    const phone = phones.find((phone) => phone._id === itemId);
-    return phone;
+    return phones.find((phone) => phone._id === itemId);
   };
 
   const handleClose = () => {
-    const q = window.confirm('Are you sure?');
-    if (q) {
-      setShow(false);
-      navigate('/');
-    }
+    setShow(false);
+    navigate('/');
   };
 
   const handleShow = () => setShow(true);
 
+  // Validate shipping/user fields before allowing PayPal checkout
+  const validateBeforePayPal = async (): Promise<boolean> => {
+    const isValid = await trigger(['email', 'fullName', 'zipCode', 'city', 'address']);
+    return isValid;
+  };
+
   return (
-    <Container fluid>
-      <Row>
-        <Col>
-          <NavLink to='/cart' className="float-start">
-            Go Back
-          </NavLink>
-        </Col>
-      </Row>
+    <div className="ps-order-page">
+      <NavLink to="/cart" className="ps-order-back">
+        <FiArrowLeft /> Back to Cart
+      </NavLink>
 
-      <Row className="mt-2 p-3 flex-md-nowrap justify-content-center">
-        <Col md={8} style={colStyle}>
+      <div className="ps-order-grid">
+        {/* Checkout Form */}
+        <div className="ps-order-card">
           <Form onSubmit={handleSubmit(submit)}>
-            <h1>CHECKOUT</h1>
-            <Form.Text style={{ textAlign: 'justify' }} as='h6'>
-              User Details
-            </Form.Text>
+            <h2>Checkout</h2>
+            <p style={{ color: 'var(--ps-text-muted)', fontSize: '0.9rem', marginBottom: '24px' }}>
+              Complete your order details below
+            </p>
 
-            <Row>
-                  {/* Email */}
-                  <Col>
-                        <FloatingLabel label={"Email"}>
-                              <Form.Control
-                                    className={`form-control ${formState.errors.email ? 'is-invalid' : ''}`}
-                                    type="email"
-                                    disabled={!isGuest}
-                                    autoFocus
-                                    {...register('email', {
-                                          required: { value: true, message: "Email is missing" },
-                                          minLength: { value: 3, message: "Email must be minimum 3 chars" },
-                                          maxLength: { value: 50, message: "Email can't exceed 50 chars" },
-                                          pattern: {
-                                                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                                                message: "Invalid email address"
-                                          }
-                                    })} />
+            <h6>User Details</h6>
 
-                              <span className="mb-2" style={errStyle}>
-                                    {formState.errors.email?.message}
-                              </span>
-                        </FloatingLabel>
-                  </Col>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+              <FloatingLabel label="Email">
+                <Form.Control
+                  type="email"
+                  disabled={!isGuest}
+                  autoFocus
+                  placeholder="Email"
+                  {...register('email', {
+                    required: { value: true, message: "Email is missing" },
+                    minLength: { value: 3, message: "Email must be minimum 3 chars" },
+                    maxLength: { value: 50, message: "Email can't exceed 50 chars" },
+                    pattern: {
+                      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                      message: "Invalid email address"
+                    }
+                  })}
+                />
+                <span style={errStyle}>{formState.errors.email?.message}</span>
+              </FloatingLabel>
 
-                  {/* Full name */}
-                  <Col>
-                        <FloatingLabel
-                              label='Full Name'>
-                              <Form.Control
-                                    className={`form-control ${formState.errors.fullName ? 'is-invalid' : ''}`}
-                                    type="text"
-                                    maxLength={20}
-                                    disabled={!isGuest}
-                                    {...register('fullName', {
-                                          required: { value: true, message: "Full name is missing" },
-                                          minLength: { value: 5, message: "Full name must be minimum 5 chars" },
-                                          maxLength: { value: 20, message: "Full name can't exceed 20 chars" }
-                                    })} />
-                              <span className="mb-2" style={errStyle}>
-                                    {formState.errors.fullName?.message}
-                              </span>
-                        </FloatingLabel>
-                  </Col>
-            </Row>
+              <FloatingLabel label="Full Name">
+                <Form.Control
+                  type="text"
+                  maxLength={20}
+                  disabled={!isGuest}
+                  placeholder="Full Name"
+                  {...register('fullName', {
+                    required: { value: true, message: "Full name is missing" },
+                    minLength: { value: 5, message: "Full name must be minimum 5 chars" },
+                    maxLength: { value: 20, message: "Full name can't exceed 20 chars" }
+                  })}
+                />
+                <span style={errStyle}>{formState.errors.fullName?.message}</span>
+              </FloatingLabel>
+            </div>
 
             <hr />
-            <Form.Text style={{ textAlign: 'justify' }} as='h6'>
-              Shopping Details
-            </Form.Text>
+            <h6>Shipping Details</h6>
 
-            {/* Shipping-Details */}
-            <Row>
-                  {/* Zip Code */}
-                  <Col>
-                        <FloatingLabel
-                              label='Zip Code'>
-                              <Form.Control
-                                    type="tel"
-                                    maxLength={5}
-                                    className={`form-control ${formState.errors.zipCode ? 'is-invalid' : ''}`}
-                                    {...register('zipCode', {
-                                          required: { value: true, message: "Zip-code is missing" },
-                                          minLength: { value: 5, message: "Zip-code must be minimum 5 numbers" },
-                                          maxLength: { value: 5, message: "Zip-code can't exceed 5 numbers" },
-                                          pattern: { value: /^[A-Za-z0-9]+$/i, message: 'Invalid Zip-code' },
-                                    })} />
-                              <span className="mb-2" style={errStyle}>
-                                    {formState.errors.zipCode?.message}
-                              </span>
-                        </FloatingLabel>
-                  </Col>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
+              <FloatingLabel label="Zip Code">
+                <Form.Control
+                  type="tel"
+                  maxLength={5}
+                  placeholder="Zip Code"
+                  {...register('zipCode', {
+                    required: { value: true, message: "Zip-code is missing" },
+                    minLength: { value: 5, message: "Zip-code must be 5 digits" },
+                    maxLength: { value: 5, message: "Zip-code must be 5 digits" },
+                    pattern: { value: /^[A-Za-z0-9]+$/i, message: 'Invalid Zip-code' },
+                  })}
+                />
+                <span style={errStyle}>{formState.errors.zipCode?.message}</span>
+              </FloatingLabel>
 
-                  {/* City */}
-                  <Col>
-                        <FloatingLabel
-                              label={"City"}>
-                              <Form.Control type="text"
-                                    className={`form-control ${formState.errors.city ? 'is-invalid' : ''}`}
-                                    {...register('city', {
-                                          required: { value: true, message: "City is missing" },
-                                          minLength: { value: 3, message: "City must be minimum 3 chars" },
-                                          maxLength: { value: 50, message: "City can't exceed 50 chars" }
-                                    })} />
-                              <span className="mb-2" style={errStyle}>
-                                    {formState.errors.city?.message}
-                              </span>
-                        </FloatingLabel>
-                  </Col>
+              <FloatingLabel label="City">
+                <Form.Control
+                  type="text"
+                  placeholder="City"
+                  {...register('city', {
+                    required: { value: true, message: "City is missing" },
+                    minLength: { value: 3, message: "City must be minimum 3 chars" },
+                    maxLength: { value: 50, message: "City can't exceed 50 chars" }
+                  })}
+                />
+                <span style={errStyle}>{formState.errors.city?.message}</span>
+              </FloatingLabel>
+            </div>
 
-                  {/* Address */}
-                  <Col xs='12'>
-                        <FloatingLabel
-                              label={"Address"}
-                              className="mt-2">
-                              <Form.Control
-                                    className={`form-control ${formState.errors.address ? 'is-invalid' : ''}`}
-                                    type="text"
-                                    {...register('address', {
-                                          required: { value: true, message: "Address is missing" },
-                                          minLength: { value: 3, message: "Address must be minimum 3 chars" },
-                                          maxLength: { value: 70, message: "Address can't exceed 70 chars" }
-                                    })} />
-
-                              <span className="mb-2" style={errStyle}>
-                                    {formState.errors.address?.message}
-                              </span>
-                        </FloatingLabel>
-                  </Col>
-            </Row>
+            <FloatingLabel label="Address">
+              <Form.Control
+                type="text"
+                placeholder="Address"
+                {...register('address', {
+                  required: { value: true, message: "Address is missing" },
+                  minLength: { value: 3, message: "Address must be minimum 3 chars" },
+                  maxLength: { value: 70, message: "Address can't exceed 70 chars" }
+                })}
+              />
+              <span style={errStyle}>{formState.errors.address?.message}</span>
+            </FloatingLabel>
 
             <hr />
-            <Form.Text style={{ textAlign: 'justify' }} as='h6'>
-              Payment-Method
-            </Form.Text>
+            <h6>Payment Method</h6>
 
-            {/* Payment method radio */}
-            <Row className="justify-content-center">
-              <Col xs='6' sm='4'>
-                    <Form.Check
-                          inline
-                          label={"Credit-Card"}
-                          type="radio"
-                          name={'card'}
-                          required
-                          onChange={() => setInCreditCard(true)}
-                    />
-              </Col>
-              <Col xs='6' sm='4'>
-                    <Form.Check
-                          inline
-                          type="radio"
-                          label={"PayPal"}
-                          name={'card'}
-                          required
-                          onChange={() => setInCreditCard(false)}
-                    />
-              </Col>
-            </Row>
+            <div style={{ display: 'flex', gap: '24px', marginBottom: '16px' }}>
+              <Form.Check
+                inline
+                label="Credit Card"
+                type="radio"
+                name="card"
+                required
+                onChange={selectCreditCard}
+              />
+              <Form.Check
+                inline
+                type="radio"
+                label="PayPal"
+                name="card"
+                required
+                onChange={selectPaypal}
+              />
+            </div>
 
-            {/* Credit-Card details */}
-            {inCreditCard === true &&
-              <Row>
-                {/* Card number */}
-                <Col sm='12' className="mt-2">
-                  <Form.Text>
-                    Card-Number
-                  </Form.Text>
+            {paymentMethod === 'credit' && (
+              <>
+                <FloatingLabel label="XXXX-XXXX-XXXX-XXXX" className="mb-3">
+                  <Form.Control
+                    autoFocus
+                    type="tel"
+                    maxLength={16}
+                    placeholder="Card Number"
+                    {...register('paymentMethod.creditCard.cardNumber', {
+                      required: { value: true, message: "Card number is missing" },
+                      minLength: { value: 16, message: "Card number must be 16 digits" },
+                      maxLength: { value: 16, message: "Card number must be 16 digits" }
+                    })}
+                  />
+                  <span style={errStyle}>
+                    {formState.errors.paymentMethod?.creditCard?.cardNumber?.message}
+                  </span>
+                </FloatingLabel>
 
-                    <FloatingLabel
-                      label={"XXXX-XXXX-XXXX-XXXX"}
-                      className="mt-2"
-                    >
-                      <Form.Control
-                        autoFocus
-                        className={`form-control ${formState.errors.paymentMethod?.creditCard?.cardNumber ? 'is-invalid' : ''} `}
-                        type="tel"
-                        maxLength={16}
-                        {...register('paymentMethod.creditCard.cardNumber', {
-                          required: { value: true, message: "Card number is missing" },
-                          minLength: { value: 16, message: "Card number must be minimum 16 numbers" },
-                          maxLength: { value: 16, message: "Card number can't exceed 16 numbers" }
-                        })}
-                      />
-
-                      <span className="mb-2" style={errStyle}>
-                        {formState.errors.paymentMethod?.creditCard?.cardNumber?.message}
-                      </span>
-                    </FloatingLabel>
-                </Col>
-
-                {/* Expire date */}
-                <Col xs='6'>
-                  <Form.Text>
-                    Exp. Date
-                  </Form.Text>
-
-                  <FloatingLabel
-                    label={"MM/YY"}
-                    className="mt-2"
-                  >
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                  <FloatingLabel label="MM/YY">
                     <Form.Control
-                      className={`form-control ${formState.errors.paymentMethod?.creditCard?.expiredDate ? 'is-invalid' : ''} `}
                       type="month"
+                      placeholder="Exp. Date"
                       {...register('paymentMethod.creditCard.expiredDate', {
-                        required: { value: true, message: "Card expire date is missing" },
+                        required: { value: true, message: "Expiry date is missing" },
                         maxLength: { value: 30, message: 'Error' },
-                        minLength: { value: 5, message: 'Expire date can`t be lass then 4 digits' }
+                        minLength: { value: 5, message: 'Invalid expiry date' }
                       })}
-                      />
-
-                    <span className="mb-2" style={errStyle}>
+                    />
+                    <span style={errStyle}>
                       {formState.errors.paymentMethod?.creditCard?.expiredDate?.message}
                     </span>
                   </FloatingLabel>
-                </Col>
 
-                {/* Security number*/}
-                <Col xs='6'>
-                  <Form.Text>
-                    CVC
-                  </Form.Text>
-
-                  <FloatingLabel
-                    label={'cvc'}
-                    className="mt-2"
-                  >
+                  <FloatingLabel label="CVC">
                     <Form.Control
-                      className={`form-control ${formState.errors.paymentMethod?.creditCard?.securityNumber ? 'is-invalid' : ''} `}
                       type="tel"
                       maxLength={3}
+                      placeholder="CVC"
                       {...register('paymentMethod.creditCard.securityNumber', {
-                        required: { value: true, message: "Security number is missing" },
-                        maxLength: { value: 3, message: 'Security number can`t exceed 3 digits' },
-                        minLength: { value: 3, message: 'Security number must be 3 digits' }
+                        required: { value: true, message: "CVC is missing" },
+                        maxLength: { value: 3, message: 'CVC must be 3 digits' },
+                        minLength: { value: 3, message: 'CVC must be 3 digits' }
                       })}
                     />
-
-                    <span className="mb-2" style={errStyle}>
+                    <span style={errStyle}>
                       {formState.errors.paymentMethod?.creditCard?.securityNumber?.message}
                     </span>
                   </FloatingLabel>
-                </Col>
-              </Row>
-            }
+                </div>
 
-            <Button variant="success" type="submit" className="mt-3 mb-2">Confirm Order</Button>
-          </Form>
-        </Col>
-
-        {/* Products List */}
-        <Col md={4} style={colStyle}>
-          <h1>Summery</h1>
-          <br />
-          {itemsInCart === undefined && <Spinner animation="border" />}
-          <Row className="flex-column flex-sm-nowrap justify-content-center">
-            {itemsInCart.map((i) =>
-              <Col md='12' sm='6' key={i.phone_id}>
-                <Card className='m-1 p-1 w-auto text-decoration-none mb-3'>
-                  <Row>
-                    <Col md='5' sm='12'>
-                      <Card.Img src={getProductByItemId(i?.phone_id)?.picture} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt='' />
-                    </Col>
-                    <Col md='7' sm='12'>
-                      <Card.Title>
-                        {getProductByItemId(i?.phone_id)?.name}
-                      </Card.Title>
-                      <Card.Text className="text-muted">
-                        {`${asPriceNum(getProductByItemId(i?.phone_id)?.price) + '$'} x ${i?.amount}`}
-                        <br />
-                        <span className="text-decoration-underline">
-                          {asPriceNum(getProductByItemId(i?.phone_id)?.price * i?.amount) + '$'}
-                        </span>
-                      </Card.Text>
-                    </Col>
-                  </Row>
-                </Card>
-              </Col>
+                <Button className="ps-btn-gold w-100 mt-4" type="submit" style={{ padding: '14px' }}>
+                  Confirm Order
+                </Button>
+              </>
             )}
-          </Row>
-          <Table variant="light" hover striped className="mt-2">
-            <tbody>
-              <tr>
-                <td>
-                  Total
-                </td>
-                <th>
-                  {asPriceNum(totalPrice + shipmentCost) + '$'}
-                </th>
-              </tr>
-              <tr>
-                <td>
-                  Shipping (Included)
-                </td>
-                <th>
-                  {shipmentCost}$
-                </th>
-              </tr>
-              <tr>
-                <td>
-                  Vat (Included 17%)
-                </td>
-                <th>
-                  {((17 / 100) * totalPrice).toFixed(2) + '$'}
-                </th>
-              </tr>
-            </tbody>
-          </Table>
-        </Col>
-      </Row>
+
+            {paymentMethod === 'paypal' && (
+              <div className="ps-paypal-section">
+                {/* PayPal approved indicator */}
+                {paypalApproved ? (
+                  <div className="ps-paypal-approved">
+                    <FiCheckCircle size={24} />
+                    <div>
+                      <strong>PayPal Payment Approved</strong>
+                      <p>Transaction ID: {paypalTransactionId}</p>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="ps-paypal-buttons-wrapper">
+                    <p style={{ color: 'var(--ps-text-muted)', fontSize: '0.85rem', marginBottom: '16px' }}>
+                      Click the PayPal button below to complete your payment securely.
+                    </p>
+
+                    {isPayPalPending ? (
+                      <div style={{ textAlign: 'center', padding: '24px' }}>
+                        <Spinner animation="border" size="sm" style={{ color: 'var(--ps-gold)' }} />
+                        <p style={{ color: 'var(--ps-text-muted)', marginTop: '8px', fontSize: '0.85rem' }}>
+                          Loading PayPal...
+                        </p>
+                      </div>
+                    ) : (
+                      <PayPalButtons
+                        style={{
+                          layout: "vertical",
+                          color: "gold",
+                          shape: "rect",
+                          label: "paypal",
+                          height: 45
+                        }}
+                        createOrder={(data, actions) => {
+                          return actions.order.create({
+                            intent: "CAPTURE",
+                            purchase_units: [{
+                              amount: {
+                                value: grandTotal.toFixed(2),
+                                currency_code: "USD"
+                              },
+                              description: `Phone Store Order - ${itemsInCart?.length || 0} items`
+                            }]
+                          });
+                        }}
+                        onApprove={async (data, actions) => {
+                          try {
+                            const details = await actions.order.capture();
+                            const transactionId = details.id || data.orderID;
+                            setPaypalTransactionId(transactionId);
+                            setPaypalApproved(true);
+                            setValue('paymentMethod.paypal.transactionId', transactionId);
+                            notifyService.success("PayPal payment approved!");
+                          } catch (err: any) {
+                            notifyService.error("PayPal payment failed. Please try again.");
+                          }
+                        }}
+                        onError={(err) => {
+                          console.error("PayPal error:", err);
+                          notifyService.error("PayPal encountered an error. Please try again.");
+                        }}
+                        onCancel={() => {
+                          notifyService.error("PayPal payment was cancelled.");
+                        }}
+                        onClick={async (data, actions) => {
+                          // Validate the form fields before proceeding with PayPal
+                          const isValid = await validateBeforePayPal();
+                          if (!isValid) {
+                            notifyService.error("Please fill in all required fields first.");
+                            return actions.reject();
+                          }
+                          return actions.resolve();
+                        }}
+                      />
+                    )}
+                  </div>
+                )}
+
+                {/* Show confirm button only after PayPal approval */}
+                {paypalApproved && (
+                  <Button className="ps-btn-gold w-100 mt-3" type="submit" style={{ padding: '14px' }}>
+                    Place Order
+                  </Button>
+                )}
+              </div>
+            )}
+
+            {/* Show confirm button when no payment method selected */}
+            {paymentMethod === null && (
+              <p style={{ color: 'var(--ps-text-muted)', fontSize: '0.85rem', textAlign: 'center', marginTop: '16px' }}>
+                Select a payment method to continue
+              </p>
+            )}
+          </Form>
+        </div>
+
+        {/* Order Summary */}
+        <div className="ps-order-card">
+          <h2>Summary</h2>
+          <p style={{ color: 'var(--ps-text-muted)', fontSize: '0.9rem', marginBottom: '24px' }}>
+            {itemsInCart?.length || 0} {itemsInCart?.length === 1 ? 'item' : 'items'}
+          </p>
+
+          {itemsInCart === undefined && (
+            <div style={{ textAlign: 'center', padding: '20px' }}>
+              <Spinner animation="border" size="sm" style={{ color: 'var(--ps-gold)' }} />
+            </div>
+          )}
+
+          <div>
+            {itemsInCart?.map((i) => {
+              const product = getProductByItemId(i?.phone_id);
+              return (
+                <div className="ps-order-summary-item" key={i.phone_id}>
+                  <img src={product?.picture} alt={product?.name || ''} />
+                  <div className="ps-summary-info">
+                    <div className="ps-summary-name">{product?.name}</div>
+                    <div className="ps-summary-qty">
+                      ${asPriceNum(product?.price)} &times; {i?.amount}
+                    </div>
+                  </div>
+                  <div className="ps-summary-price">
+                    ${asPriceNum((product?.price || 0) * i?.amount)}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="ps-order-totals">
+            <div className="ps-totals-row">
+              <span>Subtotal</span>
+              <span>${asPriceNum(totalPrice)}</span>
+            </div>
+            <div className="ps-totals-row">
+              <span>Shipping</span>
+              <span>${asPriceNum(shipmentCost)}</span>
+            </div>
+            <div className="ps-totals-row">
+              <span>VAT (17%)</span>
+              <span>${((17 / 100) * totalPrice).toFixed(2)}</span>
+            </div>
+            <div className="ps-totals-row ps-totals-grand">
+              <span>Total</span>
+              <span>${asPriceNum(grandTotal)}</span>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <OrderConfirm show={show} handleClose={handleClose} order={order} />
-    </Container>
+    </div>
   );
 };
 

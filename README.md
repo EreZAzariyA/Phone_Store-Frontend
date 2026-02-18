@@ -1,7 +1,7 @@
 <div align="center">
  
-# Phone Store - Online Web. (Frontend)
-###  ***Project Uploaded To AWS-Amplify: [Visit-Store](https://master.d3eqhxr7e40pa9.amplifyapp.com/)***
+# Phone Store - Online Web (Frontend)
+###  ***Project Uploaded To Vercel: [Visit-Store](https://ea-phone-store.vercel.app/)***
 
 ### Built With
  [![Typescript][Typescript.com]][Typescript-url]

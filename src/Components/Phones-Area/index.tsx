@@ -17,7 +17,7 @@ const steps = {
 };
 
 const PhonesArea = () => {
-  const phones = useSelector((state: RootState) => state.store.phones);
+  const phones = useSelector((state: RootState) => state.store.phones || []);
   const [phone, setPhone] = useState<PhoneModel>(null);
   const [step, setStep] = useState(null);
   const isAdmin = useSelector((state: RootState) => state.auth.user?.roleId === Role.Admin) || false;

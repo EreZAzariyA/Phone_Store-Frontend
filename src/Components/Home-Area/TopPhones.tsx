@@ -1,16 +1,18 @@
 import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
-import store from "../../Redux/Store";
+import { RootState } from "../../Redux/Store";
 import storeServices from "../../Services/StoreServices";
 import { PhoneModel } from "../../Models/phone-model";
 import { Button, Card } from "react-bootstrap";
 
 import { message } from "antd";
 import { toUpperCase } from "../../Utils/helpers";
+import { useSelector } from "react-redux";
 
 const TopThreeProducts = () => {
   const [topThree, setTopThree] = useState<PhoneModel[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const phones = useSelector((state: RootState) => state.store.phones);
 
   useEffect(() => {
     setIsLoading(true);
@@ -28,7 +30,7 @@ const TopThreeProducts = () => {
   }, []);
 
   const getProductById = (_id: string) => {
-    const product = store.getState().store.phones.find(phone => phone._id === _id);
+    const product = phones.find(phone => phone._id === _id);
     return product;
   };
 
@@ -37,17 +39,17 @@ const TopThreeProducts = () => {
       <div className="ps-card-row">
         {!isLoading && topThree.map((item) => (
           <Card
-            key={item._id}
+            key={item?._id}
             as={NavLink}
-            to={`/phone/${item._id}`}
+            to={`/phone/${item?._id}`}
             className="ps-product-card"
             style={{ width: '280px' }}
           >
             <div style={{ overflow: 'hidden' }}>
-              <Card.Img variant="top" src={getProductById(item._id)?.picture} />
+              <Card.Img variant="top" src={getProductById(item?._id)?.picture} />
             </div>
             <Card.Body>
-              <Card.Title>{toUpperCase(getProductById(item._id)?.name)}</Card.Title>
+              <Card.Title>{toUpperCase(getProductById(item?._id)?.name)}</Card.Title>
               <Button className="ps-btn-outline-gold" size="sm">
                 View Product
               </Button>

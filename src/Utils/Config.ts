@@ -62,7 +62,7 @@ abstract class Config {
 
 class DevelopmentConfig extends Config {
   public constructor() {
-    super("http://127.0.0.1:5001/api/");
+    super("https://4fda-2a00-a041-f222-6200-fa75-a4ff-fe58-1527.ngrok-free.app/api/");
   };
 };
 

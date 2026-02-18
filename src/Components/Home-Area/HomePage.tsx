@@ -7,7 +7,7 @@ import BrandCard from "../Brands-Area/BrandCard";
 import { Container } from "react-bootstrap";
 
 function HomePage(): JSX.Element {
-  const store = useSelector((state: RootState) => state.store);
+  const brands = useSelector((state: RootState) => state.store.brands || []);
 
   return (
     <>
@@ -36,7 +36,7 @@ function HomePage(): JSX.Element {
           <h2 className="ps-section-title">Our Brands</h2>
           <hr className="ps-section-divider" />
           <div className="ps-card-row">
-            {store.brands.map((brand) =>
+            {brands.map((brand) =>
               <BrandCard key={brand._id} brand={brand} />
             )}
           </div>

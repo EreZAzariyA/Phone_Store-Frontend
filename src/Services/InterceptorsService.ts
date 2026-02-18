@@ -7,10 +7,10 @@ class InterceptorsService {
     axios.interceptors.request.use((request)=>{
       const token = store.getState().auth.token;
       if (token) {
-        request.headers = {
-          authorization: "Bearer " + token
-        };
+        request.headers['Authorization'] = `Bearer ${token}`;
       }
+      request.headers["ngrok-skip-browser-warning"] = true;
+      request.withCredentials = true;
 
       return request;
     });

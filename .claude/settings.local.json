@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(netstat -ano)",
+      "Bash(findstr :3000)",
+      "mcp__Claude_in_Chrome__list_connected_browsers"
+    ]
+  }
+}
